@@ -1,56 +1,52 @@
 import React from 'react';
-import { Outlet, Link } from 'react-router-dom';
-import { GraduationCap, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Outlet } from 'react-router-dom';
+import { Sparkles, CheckCircle2 } from 'lucide-react';
+import { BrandLogo } from '@/components/common/BrandLogo';
 
 export const AuthLayout: React.FC = () => {
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex font-sans">
+    <div className="min-h-screen bg-[#020617] text-white flex font-sans selection:bg-[#10B981] selection:text-white">
       
-      {/* Left Feature Container (Hidden on mobile) */}
-      <div className="hidden lg:flex lg:w-1/2 bg-[#0F172A] text-white p-12 flex-col justify-between relative overflow-hidden">
-        {/* Background Blobs */}
-        <div className="absolute top-1/4 right-10 w-80 h-80 bg-[#059669]/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-10 left-10 w-64 h-64 bg-[#10B981]/20 rounded-full blur-3xl" />
+      {/* Left Feature Column */}
+      <div className="hidden lg:flex lg:w-1/2 bg-[#0F172A] text-white p-12 flex-col justify-between relative overflow-hidden border-r border-white/10">
+        {/* Background Ambient Glows */}
+        <div className="absolute top-1/4 right-10 w-96 h-96 bg-[#10B981]/15 rounded-full blur-3xl" />
+        <div className="absolute bottom-10 left-10 w-80 h-80 bg-[#059669]/15 rounded-full blur-3xl" />
 
-        {/* Brand */}
-        <Link to="/" className="flex items-center gap-2.5 z-10">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#059669] to-[#10B981] flex items-center justify-center text-white shadow-lg shadow-emerald-900/40">
-            <GraduationCap className="w-6 h-6" />
-          </div>
-          <span className="font-heading font-bold text-2xl text-white tracking-tight">
-            Edu<span className="text-[#34D399]">Flow</span>
-          </span>
-        </Link>
+        {/* Official Brand Logo */}
+        <div className="z-10">
+          <BrandLogo size="lg" showSubtitle={true} />
+        </div>
 
-        {/* Center Quote & Feature Cards */}
+        {/* Center Quote & Features */}
         <div className="space-y-6 max-w-lg z-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[#34D399] text-xs font-semibold">
-            <Sparkles className="w-4 h-4" /> Enterprise Learning Portal
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#10B981]/10 border border-[#10B981]/20 text-[#34D399] text-xs font-semibold">
+            <Sparkles className="w-4 h-4" /> Next-Gen AI Learning Portal
           </div>
 
           <h2 className="font-heading font-extrabold text-3xl sm:text-4xl text-white leading-tight">
-            Empowering students and faculty with modern education tools.
+            Learn Smarter with Artificial Intelligence.
           </h2>
 
-          <div className="space-y-3 text-sm text-slate-300">
+          <div className="space-y-3 text-xs sm:text-sm text-[#94A3B8]">
             <div className="flex items-center gap-2.5">
-              <CheckCircle2 className="w-5 h-5 text-[#34D399]" />
-              <span>AI-assisted tutoring & automated homework grading</span>
+              <CheckCircle2 className="w-5 h-5 text-[#10B981]" />
+              <span>24/7 AI tutor & automatic assignment grading</span>
             </div>
             <div className="flex items-center gap-2.5">
-              <CheckCircle2 className="w-5 h-5 text-[#34D399]" />
-              <span>Tamper-proof ISO digital certificate issuance</span>
+              <CheckCircle2 className="w-5 h-5 text-[#10B981]" />
+              <span>Tamper-proof ISO digital certificate verification</span>
             </div>
             <div className="flex items-center gap-2.5">
-              <CheckCircle2 className="w-5 h-5 text-[#34D399]" />
-              <span>SAML SSO & Google Workspace integration</span>
+              <CheckCircle2 className="w-5 h-5 text-[#10B981]" />
+              <span>SAML SSO & Google Workspace enterprise integration</span>
             </div>
           </div>
         </div>
 
         {/* Footer info */}
-        <div className="text-xs text-slate-500 z-10">
-          © {new Date().getFullYear()} EduFlow LMS. Built with Slate 900 + Emerald Theme.
+        <div className="text-xs text-[#94A3B8] z-10">
+          © {new Date().getFullYear()} ShaivikaLMSPlatform Inc. All rights reserved.
         </div>
       </div>
 
