@@ -25,7 +25,7 @@ export const CoursesList: React.FC = () => {
       avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
       rating: 4.9,
       reviews: 1280,
-      students: '1,420',
+      students: '14,200',
       duration: '42 hrs',
       category: 'Development',
       level: 'Advanced',
@@ -46,7 +46,7 @@ export const CoursesList: React.FC = () => {
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
       rating: 5.0,
       reviews: 940,
-      students: '2,100',
+      students: '21,000',
       duration: '36 hrs',
       category: 'AI & Data',
       level: 'Intermediate',
@@ -67,7 +67,7 @@ export const CoursesList: React.FC = () => {
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
       rating: 4.8,
       reviews: 750,
-      students: '980',
+      students: '9,800',
       duration: '28 hrs',
       category: 'Design',
       level: 'Beginner to Pro',
@@ -88,7 +88,7 @@ export const CoursesList: React.FC = () => {
       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
       rating: 4.9,
       reviews: 610,
-      students: '1,150',
+      students: '11,500',
       duration: '50 hrs',
       category: 'DevOps',
       level: 'Advanced',
@@ -114,34 +114,34 @@ export const CoursesList: React.FC = () => {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E2E8F0]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
         <div>
-          <div className="flex items-center gap-2 text-xs text-slate-500 mb-1 font-medium">
-            <Link to="/dashboard" className="hover:text-[#059669]">Dashboard</Link>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-            <span className="font-semibold text-[#059669]">Course Catalog</span>
+          <div className="flex items-center gap-2 text-xs text-[#94A3B8] mb-1 font-medium">
+            <Link to="/dashboard" className="hover:text-[#10B981]">Dashboard</Link>
+            <ChevronRight className="w-3.5 h-3.5 text-[#94A3B8]" />
+            <span className="font-semibold text-[#10B981]">Course Catalog</span>
           </div>
-          <h1 className="font-heading font-bold text-2xl sm:text-3xl text-[#111827]">
+          <h1 className="font-heading font-bold text-2xl sm:text-3xl text-white">
             Enterprise Course Catalog
           </h1>
-          <p className="text-xs sm:text-sm text-[#475569] mt-0.5">
-            Browse 250+ enterprise tracks with interactive video modules and certifications.
+          <p className="text-xs sm:text-sm text-[#94A3B8] mt-0.5">
+            Browse 250+ enterprise AI tracks with live interactive code sandboxes.
           </p>
         </div>
       </div>
 
       {/* Search & Filter Bar */}
-      <div className="bg-white p-4 rounded-2xl border border-[#E2E8F0] shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="bg-[#0F172A] p-4 rounded-2xl border border-white/10 shadow-lg flex flex-col md:flex-row items-center justify-between gap-4">
         
         {/* Search */}
         <div className="relative w-full md:w-96">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by title, instructor, or topic..."
-            className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl py-2 pl-9 pr-4 text-xs sm:text-sm text-[#111827] focus:outline-none focus:border-[#059669]"
+            placeholder="Search by title, instructor, or AI topic..."
+            className="w-full bg-[#020617] border border-white/10 rounded-xl py-2 pl-9 pr-4 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#10B981]"
           />
         </div>
 
@@ -153,8 +153,8 @@ export const CoursesList: React.FC = () => {
               onClick={() => setSelectedCategory(cat)}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
                 selectedCategory === cat
-                  ? 'bg-[#059669] text-white shadow-sm'
-                  : 'bg-[#F8FAFC] text-slate-600 hover:bg-slate-100'
+                  ? 'bg-[#10B981] text-white shadow-md'
+                  : 'bg-[#020617] text-[#94A3B8] hover:text-white border border-white/10'
               }`}
             >
               {cat}
@@ -167,7 +167,7 @@ export const CoursesList: React.FC = () => {
       {/* Courses Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredCourses.map((course) => (
-          <div key={course.id} className="lms-card p-0 overflow-hidden flex flex-col group">
+          <div key={course.id} className="glass-card p-0 overflow-hidden flex flex-col group">
             {/* Thumbnail */}
             <div className="relative h-48 overflow-hidden bg-slate-900">
               <img
@@ -175,43 +175,43 @@ export const CoursesList: React.FC = () => {
                 alt={course.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              <div className="absolute top-3 left-3 bg-[#0F172A]/80 backdrop-blur-md text-white text-xs px-2.5 py-1 rounded-lg font-medium">
+              <div className="absolute top-3 left-3 bg-[#020617]/80 backdrop-blur-md text-white text-xs px-2.5 py-1 rounded-lg font-medium border border-white/10">
                 {course.category}
               </div>
-              <div className="absolute top-3 right-3 bg-[#059669] text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow-md">
+              <div className="absolute top-3 right-3 bg-[#10B981] text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow-md">
                 {course.badge}
               </div>
             </div>
 
-            {/* Card Content */}
+            {/* Content */}
             <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-1 text-amber-500 font-semibold">
+                  <div className="flex items-center gap-1 text-amber-400 font-semibold">
                     <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
                     <span>{course.rating}</span>
-                    <span className="text-slate-400 font-normal">({course.reviews})</span>
+                    <span className="text-[#94A3B8] font-normal">({course.reviews})</span>
                   </div>
-                  <span className="text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md font-medium">
+                  <span className="text-[#94A3B8] bg-[#020617] px-2 py-0.5 rounded-md font-medium border border-white/10">
                     {course.level}
                   </span>
                 </div>
 
-                <h3 className="font-heading font-bold text-lg text-[#111827] group-hover:text-[#059669] transition-colors line-clamp-2">
+                <h3 className="font-heading font-bold text-lg text-white group-hover:text-[#10B981] transition-colors line-clamp-2">
                   {course.title}
                 </h3>
               </div>
 
               {/* Instructor */}
-              <div className="flex items-center gap-3 pt-2 border-t border-[#E2E8F0]">
+              <div className="flex items-center gap-3 pt-2 border-t border-white/10">
                 <img
                   src={course.avatar}
                   alt={course.instructor}
-                  className="w-9 h-9 rounded-full object-cover border border-[#E2E8F0]"
+                  className="w-9 h-9 rounded-full object-cover border border-[#10B981]"
                 />
                 <div className="text-xs">
-                  <span className="font-semibold text-[#111827] block">{course.instructor}</span>
-                  <span className="text-slate-400 block">{course.role}</span>
+                  <span className="font-semibold text-white block">{course.instructor}</span>
+                  <span className="text-[#94A3B8] block">{course.role}</span>
                 </div>
               </div>
 
@@ -219,13 +219,13 @@ export const CoursesList: React.FC = () => {
               <div className="pt-2 flex gap-2">
                 <button
                   onClick={() => setSelectedCourseModal(course)}
-                  className="flex-1 btn-secondary text-xs py-2 justify-center"
+                  className="flex-1 btn-glass-secondary text-xs py-2 justify-center"
                 >
                   Syllabus
                 </button>
                 <button
                   onClick={() => toast.success(`Enrolled in ${course.title}!`)}
-                  className="flex-1 btn-primary text-xs py-2 justify-center"
+                  className="flex-1 btn-emerald-primary text-xs py-2 justify-center"
                 >
                   Enroll Now
                 </button>
@@ -237,42 +237,42 @@ export const CoursesList: React.FC = () => {
 
       {/* Course Detail Modal */}
       {selectedCourseModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl space-y-6 border border-[#E2E8F0] animate-in zoom-in-95 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-4">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#0F172A] rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl space-y-6 border border-white/10 animate-in zoom-in-95 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-white/10 pb-4">
               <div>
-                <span className="text-xs font-bold text-[#059669] bg-emerald-50 px-2.5 py-0.5 rounded-full">
+                <span className="text-xs font-bold text-[#34D399] bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
                   {selectedCourseModal.category} • {selectedCourseModal.level}
                 </span>
-                <h3 className="font-heading font-bold text-xl text-[#111827] mt-1">
+                <h3 className="font-heading font-bold text-xl text-white mt-1">
                   {selectedCourseModal.title}
                 </h3>
               </div>
               <button
                 onClick={() => setSelectedCourseModal(null)}
-                className="text-slate-400 hover:text-[#111827] p-1"
+                className="text-[#94A3B8] hover:text-white p-1"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Syllabus Breakdown */}
+            {/* Syllabus */}
             <div className="space-y-3">
-              <h4 className="font-heading font-semibold text-sm text-[#111827]">Curriculum Breakdown</h4>
+              <h4 className="font-heading font-semibold text-sm text-white">Curriculum Breakdown</h4>
               <div className="space-y-2">
                 {selectedCourseModal.syllabus.map((item: string, idx: number) => (
-                  <div key={idx} className="p-3 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] flex items-center gap-3 text-xs text-[#111827]">
-                    <PlayCircle className="w-4 h-4 text-[#059669] flex-shrink-0" />
+                  <div key={idx} className="p-3 rounded-xl bg-[#020617] border border-white/10 flex items-center gap-3 text-xs text-slate-200">
+                    <PlayCircle className="w-4 h-4 text-[#10B981] flex-shrink-0" />
                     <span>{item}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="pt-4 border-t border-[#E2E8F0] flex justify-end gap-3">
+            <div className="pt-4 border-t border-white/10 flex justify-end gap-3">
               <button
                 onClick={() => setSelectedCourseModal(null)}
-                className="btn-secondary text-xs py-2 px-4"
+                className="btn-glass-secondary text-xs py-2 px-4"
               >
                 Close
               </button>
@@ -281,7 +281,7 @@ export const CoursesList: React.FC = () => {
                   toast.success(`Successfully enrolled in ${selectedCourseModal.title}!`);
                   setSelectedCourseModal(null);
                 }}
-                className="btn-primary text-xs py-2 px-5"
+                className="btn-emerald-primary text-xs py-2 px-5"
               >
                 Confirm Enrollment
               </button>
