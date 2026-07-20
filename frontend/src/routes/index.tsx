@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { PublicLayout } from '@/layouts/PublicLayout';
 import { AuthLayout } from '@/layouts/AuthLayout';
 import { DashboardLayout } from '@/layouts/DashboardLayout';
+import { LandingPage } from '@/pages/LandingPage';
 import { Login } from '@/pages/auth/Login';
 import { Register } from '@/pages/auth/Register';
 import { Dashboard } from '@/pages/dashboard/Dashboard';
@@ -12,7 +13,7 @@ const router = createBrowserRouter([
     path: '/',
     element: <PublicLayout />,
     children: [
-      { index: true, element: <div>Home Page</div> },
+      { index: true, element: <LandingPage /> },
     ],
   },
   {

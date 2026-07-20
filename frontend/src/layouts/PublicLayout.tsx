@@ -1,13 +1,18 @@
+import React from 'react';
 import { Outlet } from 'react-router-dom';
+import { Navbar } from '@/components/common/Navbar';
+import { Footer } from '@/components/common/Footer';
+import { AIAssistantWidget } from '@/components/ai/AIAssistantWidget';
 
-export const PublicLayout = () => {
+export const PublicLayout: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <header className="h-16 border-b border-border flex items-center px-6">Header Placeholder</header>
+    <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
+      <Navbar />
       <main className="flex-1">
         <Outlet />
       </main>
-      <footer className="h-16 border-t border-border flex items-center px-6">Footer Placeholder</footer>
+      <Footer />
+      <AIAssistantWidget />
     </div>
   );
 };
