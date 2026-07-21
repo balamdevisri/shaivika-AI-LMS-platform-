@@ -225,8 +225,8 @@ export const LandingPage: React.FC = () => {
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12 overflow-hidden">
         
         {/* Background Ambient Glows */}
-        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-[#10B981]/15 rounded-full blur-3xl animate-glow-emerald pointer-events-none" />
-        <div className="absolute bottom-10 left-10 w-[400px] h-[400px] bg-[#059669]/15 rounded-full blur-3xl animate-glow-emerald pointer-events-none" />
+        <div className="absolute top-0 right-1/4 w-125 h-125 bg-[#10B981]/15 rounded-full blur-3xl animate-glow-emerald pointer-events-none" />
+        <div className="absolute bottom-10 left-10 w-100 h-100 bg-[#059669]/15 rounded-full blur-3xl animate-glow-emerald pointer-events-none" />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
@@ -315,7 +315,7 @@ export const LandingPage: React.FC = () => {
 
                   {/* Progress Bar */}
                   <div className="w-full h-3 bg-[#020617] rounded-full overflow-hidden p-0.5 border border-white/10">
-                    <div className="h-full bg-gradient-to-r from-[#059669] to-[#10B981] rounded-full w-[92%]" />
+                    <div className="h-full bg-linear-to-r from-[#059669] to-[#10B981] rounded-full w-[92%]" />
                   </div>
 
                   <div className="grid grid-cols-2 gap-3 pt-2">
@@ -337,7 +337,7 @@ export const LandingPage: React.FC = () => {
               <motion.div
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute -top-6 -left-6 z-20 bg-[#111827]/90 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-white/10 flex items-center gap-3.5 hidden sm:flex"
+                className="absolute -top-6 -left-6 z-20 bg-[#111827]/90 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-white/10 hidden items-center gap-3.5 sm:flex"
               >
                 <div className="w-10 h-10 rounded-xl bg-[#10B981]/20 text-[#10B981] flex items-center justify-center font-bold">
                   <Users className="w-5 h-5" />
@@ -352,7 +352,7 @@ export const LandingPage: React.FC = () => {
               <motion.div
                 animate={{ y: [0, 10, 0] }}
                 transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-                className="absolute -bottom-6 -right-4 z-20 bg-[#111827]/90 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-white/10 flex items-center gap-3.5 hidden sm:flex"
+                className="absolute -bottom-6 -right-4 z-20 bg-[#111827]/90 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-white/10 hidden items-center gap-3.5 sm:flex"
               >
                 <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-[#34D399] flex items-center justify-center font-bold">
                   <FileCheck className="w-5 h-5" />
@@ -454,7 +454,7 @@ export const LandingPage: React.FC = () => {
       <section id="ai-features" className="bg-[#0F172A]/90 py-20 border-y border-white/10 relative overflow-hidden">
         
         {/* Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#10B981]/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-150 bg-[#10B981]/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 relative z-10">
           <div className="text-center max-w-2xl mx-auto space-y-3">
@@ -474,7 +474,7 @@ export const LandingPage: React.FC = () => {
               const Icon = tool.icon;
               return (
                 <div key={idx} className="glass-card p-6 space-y-4 border border-white/10 group">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#059669]/20 to-[#10B981]/30 text-[#34D399] flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <div className="w-12 h-12 rounded-2xl bg-linear-to-tr from-[#059669]/20 to-[#10B981]/30 text-[#34D399] flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Icon className="w-6 h-6" />
                   </div>
                   <h3 className="font-heading font-bold text-lg text-white group-hover:text-[#10B981] transition-colors">
@@ -550,7 +550,7 @@ export const LandingPage: React.FC = () => {
                       <span className="text-[#10B981]">{course.progress}%</span>
                     </div>
                     <div className="w-full h-2 bg-[#020617] rounded-full overflow-hidden border border-white/10">
-                      <div className="h-full bg-gradient-to-r from-[#059669] to-[#10B981] rounded-full" style={{ width: `${course.progress}%` }} />
+                      <div className="h-full bg-linear-to-r from-[#059669] to-[#10B981] rounded-full" style={{ width: `${course.progress}%` }} />
                     </div>
                   </div>
                 </div>
@@ -638,7 +638,7 @@ export const LandingPage: React.FC = () => {
                 <ul className="space-y-2.5 pt-4 border-t border-white/10 text-xs text-slate-200">
                   {plan.features.map((feat, fIdx) => (
                     <li key={fIdx} className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-[#10B981] flex-shrink-0" />
+                      <Check className="w-4 h-4 text-[#10B981] shrink-0" />
                       <span>{feat}</span>
                     </li>
                   ))}
@@ -719,18 +719,18 @@ export const LandingPage: React.FC = () => {
                 <input
                   type="text"
                   placeholder="Full Name"
-                  className="bg-[#0F172A] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#10B981]"
+                  className="bg-[#0F172A] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-emerald-500"
                 />
                 <input
                   type="email"
                   placeholder="Work Email"
-                  className="bg-[#0F172A] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#10B981]"
+                  className="bg-[#0F172A] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-emerald-500"
                 />
               </div>
               <textarea
                 rows={3}
                 placeholder="Institution & student headcount..."
-                className="w-full bg-[#0F172A] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-[#10B981]"
+                className="w-full bg-[#0F172A] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-emerald-500"
               />
               <button type="submit" className="btn-emerald-primary w-full justify-center text-xs py-3">
                 <span>Submit Inquiry</span>

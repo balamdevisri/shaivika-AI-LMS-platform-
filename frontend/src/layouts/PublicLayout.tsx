@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Navbar } from '@/components/common/Navbar';
 import { Footer } from '@/components/common/Footer';
-import { AIAssistantWidget } from '@/components/ai/AIAssistantWidget';
+
 import { LoadingScreen } from '@/components/common/LoadingScreen';
 
 export const PublicLayout: React.FC = () => {
@@ -17,7 +17,7 @@ export const PublicLayout: React.FC = () => {
           <Outlet />
         </main>
         <Footer />
-        <AIAssistantWidget />
+        {/* <AIAssistantWidget /> */}
       </div>
     </>
   );

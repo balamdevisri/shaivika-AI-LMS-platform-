@@ -17,7 +17,7 @@ import {
   Layers,
 } from 'lucide-react';
 import { BrandLogo } from '@/components/common/BrandLogo';
-import { AIAssistantWidget } from '@/components/ai/AIAssistantWidget';
+
 
 export const DashboardLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -154,7 +154,7 @@ export const DashboardLayout: React.FC = () => {
               <input
                 type="text"
                 placeholder="Search AI modules, quizzes, assignments..."
-                className="w-full bg-[#020617] border border-white/10 rounded-xl py-1.5 pl-9 pr-4 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#10B981]"
+                className="w-full bg-[#020617] border border-white/10 rounded-xl py-1.5 pl-9 pr-4 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-emerald-500"
               />
             </div>
           </div>
@@ -240,7 +240,7 @@ export const DashboardLayout: React.FC = () => {
       </div>
 
       {/* Floating AI Assistant Widget */}
-      <AIAssistantWidget />
+      {/* <AIAssistantWidget /> */}
     </div>
   );
 };
