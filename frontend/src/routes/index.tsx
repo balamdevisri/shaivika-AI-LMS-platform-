@@ -5,8 +5,17 @@ import { DashboardLayout } from '@/layouts/DashboardLayout';
 import { LandingPage } from '@/pages/LandingPage';
 import { Login } from '@/pages/auth/Login';
 import { Register } from '@/pages/auth/Register';
+import { ForgotPassword } from '@/pages/auth/ForgotPassword';
+import { VerifyEmail } from '@/pages/auth/VerifyEmail';
+import { Unauthorized } from '@/pages/auth/Unauthorized';
 import { Dashboard } from '@/pages/dashboard/Dashboard';
+import { Profile } from '@/pages/dashboard/Profile';
 import { CoursesList } from '@/pages/courses/CoursesList';
+import { AdminDashboard } from '@/pages/admin/AdminDashboard';
+import { AdminCourses } from '@/pages/admin/AdminCourses';
+import { AdminStudents } from '@/pages/admin/AdminStudents';
+import { StudentRoute } from '@/components/auth/StudentRoute';
+import { AdminRoute } from '@/components/auth/AdminRoute';
 
 const router = createBrowserRouter([
   {
@@ -14,6 +23,8 @@ const router = createBrowserRouter([
     element: <PublicLayout />,
     children: [
       { index: true, element: <LandingPage /> },
+      { path: 'courses', element: <CoursesList /> },
+      { path: 'unauthorized', element: <Unauthorized /> },
     ],
   },
   {
@@ -22,15 +33,41 @@ const router = createBrowserRouter([
     children: [
       { path: 'login', element: <Login /> },
       { path: 'register', element: <Register /> },
+      { path: 'forgot-password', element: <ForgotPassword /> },
+      { path: 'verify-email', element: <VerifyEmail /> },
     ],
   },
+  // Student Protected Routes (/dashboard, /courses, /profile)
   {
-    path: '/dashboard',
-    element: <DashboardLayout />,
+    path: '/',
+    element: (
+      <StudentRoute>
+        <DashboardLayout />
+      </StudentRoute>
+    ),
     children: [
-      { index: true, element: <Dashboard /> },
-      { path: 'courses', element: <CoursesList /> },
+      { path: 'dashboard', element: <Dashboard /> },
+      { path: 'profile', element: <Profile /> },
     ],
+  },
+  // Admin Protected Routes (/admin/dashboard, /admin/courses, /admin/students)
+  {
+    path: '/admin',
+    element: (
+      <AdminRoute>
+        <DashboardLayout />
+      </AdminRoute>
+    ),
+    children: [
+      { path: 'dashboard', element: <AdminDashboard /> },
+      { path: 'courses', element: <AdminCourses /> },
+      { path: 'students', element: <AdminStudents /> },
+    ],
+  },
+  // Fallback 404 / Unauthorized redirect
+  {
+    path: '*',
+    element: <Unauthorized />,
   },
 ]);
 
