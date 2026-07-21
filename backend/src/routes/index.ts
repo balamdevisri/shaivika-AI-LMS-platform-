@@ -10,6 +10,10 @@ import aiRoutes from '../modules/ai/ai.routes';
 
 const router = Router();
 
+router.get('/', (req, res) => {
+  res.json({ message: 'Backend Connected Successfully' });
+});
+
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/courses', courseRoutes);

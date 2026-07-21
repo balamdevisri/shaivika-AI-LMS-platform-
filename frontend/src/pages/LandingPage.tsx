@@ -4,9 +4,7 @@ import { motion } from 'framer-motion';
 import {
   Sparkles,
   ArrowRight,
-  CheckCircle2,
   Award,
-  Users,
   BarChart3,
   Bot,
   Code2,
@@ -15,14 +13,15 @@ import {
   Zap,
   Star,
   ChevronDown,
-  PlayCircle,
   Send,
   Calendar,
   FileText,
   Briefcase,
   Layers,
   Check,
+  Play,
 } from 'lucide-react';
+import { VideoPlayer } from '@/components/common/VideoPlayer';
 
 export const LandingPage: React.FC = () => {
   // FAQ state
@@ -221,88 +220,80 @@ export const LandingPage: React.FC = () => {
   return (
     <div className="pt-24 space-y-28 sm:space-y-36">
       
-      {/* ----------------- 1. HERO SECTION ----------------- */}
-      <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12 overflow-hidden">
+      {/* ----------------- 1. HERO SECTION (2-COLUMN SPLIT SAAS LAYOUT) ----------------- */}
+      <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16 overflow-hidden">
         
+<<<<<<< HEAD
         {/* Background Ambient Glows */}
         <div className="absolute top-0 right-1/4 w-125 h-125 bg-[#10B981]/15 rounded-full blur-3xl animate-glow-emerald pointer-events-none" />
         <div className="absolute bottom-10 left-10 w-100 h-100 bg-[#059669]/15 rounded-full blur-3xl animate-glow-emerald pointer-events-none" />
+=======
+        {/* Background Ambient Glows & Radial Gradients */}
+        <div className="absolute top-0 right-10 w-[550px] h-[550px] bg-emerald-500/15 rounded-full blur-[120px] pointer-events-none animate-pulse" />
+        <div className="absolute bottom-10 left-10 w-[450px] h-[450px] bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none animate-pulse" />
+>>>>>>> 7ce5ae8 (feat: Add Firebase Authentication, RBAC, custom Video Player, and Express backend integration)
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        {/* 2-Column Responsive Grid (Desktop 50/50, Tablet 60/40, Mobile Vertical Stack) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           
-          {/* Left Column: Headline & CTA */}
+          {/* ========================== LEFT COLUMN (50%) ========================== */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="lg:col-span-6 space-y-6 text-center lg:text-left"
+            initial={{ opacity: 0, x: -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+            className="lg:col-span-6 space-y-8 text-left"
           >
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-[#10B981]/20 text-[#10B981] text-xs font-semibold tracking-wide">
-              <Sparkles className="w-4 h-4 text-[#10B981]" />
-              <span>Next-Gen AI Learning Platform</span>
+            {/* 1. Small Badge */}
+            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs sm:text-sm font-semibold tracking-wide backdrop-blur-xl shadow-lg shadow-emerald-950/20">
+              <Sparkles className="w-4 h-4 text-emerald-400" />
+              <span>✨ AI Powered Learning Platform</span>
             </div>
 
-            <h1 className="font-heading font-extrabold text-4xl sm:text-5xl lg:text-6xl text-white leading-[1.15] tracking-tight">
-              Learn Smarter <br />
-              <span className="text-gradient-emerald-white">with AI</span>
+            {/* 2. Main Heading */}
+            <h1 className="font-heading font-extrabold text-3xl sm:text-4xl lg:text-6xl text-white tracking-tight leading-[1.12]">
+              Learn Smarter with{' '}
+              <span className="block mt-1 bg-gradient-to-r from-emerald-400 via-emerald-300 to-teal-200 bg-clip-text text-transparent">
+                SHAIVIKA AI LMS
+              </span>
             </h1>
 
-            <p className="text-base sm:text-lg text-[#94A3B8] leading-relaxed max-w-xl mx-auto lg:mx-0">
-              Experience the next generation of learning powered by Artificial Intelligence. Personal mentor, smart homework grading, and interactive coding sandboxes in one sleek platform.
+            {/* 3. Description */}
+            <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-xl font-normal">
+              SHAIVIKA LMS empowers learners with AI-assisted education, interactive learning paths, practical projects, and personalized mentorship, making technical education smarter, faster, and more accessible.
             </p>
 
-            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-              <Link to="/dashboard" className="btn-emerald-primary text-base px-8 py-3.5 w-full sm:w-auto">
-                <span>Get Started</span>
+            {/* 4. Two Premium CTA Buttons */}
+            <div className="pt-2 flex flex-col sm:flex-row items-center gap-4">
+              <Link
+                to="/dashboard"
+                className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-bold rounded-xl shadow-lg shadow-emerald-900/30 hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer text-base"
+              >
+                <span>🚀 Start Learning</span>
                 <ArrowRight className="w-5 h-5" />
               </Link>
-              <a href="#courses" className="btn-glass-secondary text-base px-8 py-3.5 w-full sm:w-auto">
-                <PlayCircle className="w-5 h-5 text-[#10B981]" />
-                <span>Explore Courses</span>
-              </a>
-            </div>
 
-            {/* Quick Trust Badges */}
-            <div className="pt-6 border-t border-white/10 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-xs text-[#94A3B8]">
-              <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-[#10B981]" /> Free 14-day Pro Trial
-              </span>
-              <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-[#10B981]" /> No credit card required
-              </span>
-              <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-[#10B981]" /> SOC2 Certified Security
-              </span>
+              <a
+                href="#courses"
+                className="w-full sm:w-auto px-8 py-3.5 bg-slate-900/80 hover:bg-slate-800 text-white border border-slate-700/80 hover:border-emerald-500/40 font-semibold rounded-xl backdrop-blur-md hover:scale-105 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer text-base"
+              >
+                <Play className="w-4 h-4 fill-current text-emerald-400" />
+                <span>▶ Watch Demo</span>
+              </a>
             </div>
           </motion.div>
 
-          {/* Right Column: 3D AI Dashboard Illustration & Floating Cards */}
+          {/* ========================== RIGHT COLUMN (50%) ========================== */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.9, delay: 0.2 }}
-            className="lg:col-span-6 relative"
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
+            className="lg:col-span-6 relative flex justify-center"
           >
-            <div className="relative mx-auto max-w-lg lg:max-w-none">
-              
-              {/* Main AI Dashboard Container */}
-              <div className="bg-[#0F172A] rounded-3xl p-6 shadow-2xl border border-white/10 text-white relative z-10">
-                
-                {/* Mock Header bar */}
-                <div className="flex items-center justify-between pb-4 border-b border-white/10">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-rose-500" />
-                    <div className="w-3 h-3 rounded-full bg-amber-500" />
-                    <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                    <span className="ml-2 text-xs font-mono text-[#94A3B8]">shaivika.ai/dashboard</span>
-                  </div>
-                  <span className="text-xs bg-[#10B981]/20 text-[#34D399] px-2.5 py-0.5 rounded-full font-semibold flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 bg-[#10B981] rounded-full animate-ping" />
-                    AI Engine Active
-                  </span>
-                </div>
+            {/* Blurred Emerald & Cyan Glow Spheres Behind Video */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/3 -translate-y-1/3 w-72 h-72 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none" />
 
+<<<<<<< HEAD
                 {/* Dashboard Inner Graphic */}
                 <div className="pt-5 space-y-4">
                   <div className="flex items-center justify-between">
@@ -364,6 +355,16 @@ export const LandingPage: React.FC = () => {
               </motion.div>
 
             </div>
+=======
+            {/* Clean Minimal Floating Glass Video Card */}
+            <motion.div
+              animate={{ y: [0, -12, 0] }}
+              transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+              className="relative w-full max-w-xl p-1 sm:p-1.5 rounded-[28px] bg-slate-900/40 backdrop-blur-2xl border border-emerald-500/20 shadow-2xl shadow-emerald-950/60 hover:shadow-emerald-500/20 hover:border-emerald-500/40 transition-all duration-500"
+            >
+              <VideoPlayer src="/videos/Lmsvideo.mp4" />
+            </motion.div>
+>>>>>>> 7ce5ae8 (feat: Add Firebase Authentication, RBAC, custom Video Player, and Express backend integration)
           </motion.div>
 
         </div>

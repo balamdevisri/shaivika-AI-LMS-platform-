@@ -1,57 +1,167 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { Sparkles, CheckCircle2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Sparkles, CheckCircle2, GraduationCap, BookOpen, Bot, Star } from 'lucide-react';
 import { BrandLogo } from '@/components/common/BrandLogo';
 
 export const AuthLayout: React.FC = () => {
-  return (
-    <div className="min-h-screen bg-[#020617] text-white flex font-sans selection:bg-[#10B981] selection:text-white">
-      
-      {/* Left Feature Column */}
-      <div className="hidden lg:flex lg:w-1/2 bg-[#0F172A] text-white p-12 flex-col justify-between relative overflow-hidden border-r border-white/10">
-        {/* Background Ambient Glows */}
-        <div className="absolute top-1/4 right-10 w-96 h-96 bg-[#10B981]/15 rounded-full blur-3xl" />
-        <div className="absolute bottom-10 left-10 w-80 h-80 bg-[#059669]/15 rounded-full blur-3xl" />
+  // 4 Animated Stat Cards
+  const stats = [
+    { icon: GraduationCap, number: '50K+', label: 'Students' },
+    { icon: BookOpen, number: '250+', label: 'Courses' },
+    { icon: Bot, number: '24/7', label: 'AI Tutor' },
+    { icon: Star, number: '99%', label: 'Satisfaction' },
+  ];
 
-        {/* Official Brand Logo */}
-        <div className="z-10">
+  return (
+    <div className="min-h-screen bg-[#020617] text-white flex font-sans selection:bg-[#10B981] selection:text-slate-950">
+      
+      {/* ==================== LEFT HERO COLUMN ==================== */}
+      <div className="hidden lg:flex lg:w-1/2 bg-slate-950 text-white p-12 flex-col justify-between relative overflow-hidden border-r border-slate-800/80">
+        
+        {/* Animated 60fps Mesh Gradient & Soft Moving Gradient Blobs */}
+        <motion.div
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.15, 0.25, 0.15],
+            rotate: [0, 45, 0],
+          }}
+          transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute top-1/4 -right-10 w-[500px] h-[500px] bg-emerald-500/20 rounded-full blur-[120px] pointer-events-none"
+        />
+        <motion.div
+          animate={{
+            scale: [1.2, 1, 1.2],
+            opacity: [0.1, 0.2, 0.1],
+            rotate: [45, 0, 45],
+          }}
+          transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute bottom-10 -left-10 w-[450px] h-[450px] bg-cyan-500/15 rounded-full blur-[100px] pointer-events-none"
+        />
+
+        {/* Floating Glowing Emerald Particles */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {[...Array(6)].map((_, i) => (
+            <motion.div
+              key={i}
+              initial={{
+                x: Math.random() * 400,
+                y: Math.random() * 600,
+                opacity: 0.2,
+                scale: Math.random() * 0.8 + 0.4,
+              }}
+              animate={{
+                y: [Math.random() * 600, Math.random() * 600 - 100],
+                opacity: [0.2, 0.6, 0.2],
+              }}
+              transition={{
+                duration: 8 + i * 2,
+                repeat: Infinity,
+                ease: 'easeInOut',
+              }}
+              className="absolute w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_12px_#10B981]"
+            />
+          ))}
+        </div>
+
+        {/* Subtle Moving Light Rays Overlay */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-500/10 via-transparent to-transparent pointer-events-none" />
+
+        {/* Brand Header */}
+        <div className="z-10 relative">
           <BrandLogo size="lg" showSubtitle={true} />
         </div>
 
-        {/* Center Quote & Features */}
-        <div className="space-y-6 max-w-lg z-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#10B981]/10 border border-[#10B981]/20 text-[#34D399] text-xs font-semibold">
-            <Sparkles className="w-4 h-4" /> Next-Gen AI Learning Portal
-          </div>
+        {/* Center Headline & Features */}
+        <div className="space-y-8 max-w-lg z-10 relative">
+          
+          {/* Pill Badge */}
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold backdrop-blur-md shadow-lg shadow-emerald-950/20"
+          >
+            <Sparkles className="w-4 h-4 text-emerald-400" />
+            <span>✨ AI Powered Learning Platform</span>
+          </motion.div>
 
-          <h2 className="font-heading font-extrabold text-3xl sm:text-4xl text-white leading-tight">
-            Learn Smarter with Artificial Intelligence.
-          </h2>
+          {/* Headline */}
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+            className="font-heading font-extrabold text-3xl lg:text-4xl text-white leading-tight tracking-tight"
+          >
+            Learn Smarter with{' '}
+            <span className="bg-gradient-to-r from-emerald-400 via-emerald-300 to-teal-200 bg-clip-text text-transparent">
+              SHAIVIKA AI LMS
+            </span>
+          </motion.h2>
 
-          <div className="space-y-3 text-xs sm:text-sm text-[#94A3B8]">
+          {/* Key Bullet Highlights */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="space-y-3.5 text-xs sm:text-sm text-slate-300 font-normal"
+          >
             <div className="flex items-center gap-2.5">
-              <CheckCircle2 className="w-5 h-5 text-[#10B981]" />
-              <span>24/7 AI tutor & automatic assignment grading</span>
+              <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+              <span>24/7 Personal AI Tutor with real-time code assistant</span>
             </div>
             <div className="flex items-center gap-2.5">
-              <CheckCircle2 className="w-5 h-5 text-[#10B981]" />
-              <span>Tamper-proof ISO digital certificate verification</span>
+              <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+              <span>Tamper-proof ISO authenticated digital certificates</span>
             </div>
             <div className="flex items-center gap-2.5">
-              <CheckCircle2 className="w-5 h-5 text-[#10B981]" />
-              <span>SAML SSO & Google Workspace enterprise integration</span>
+              <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+              <span>Interactive coding sandboxes & automated grading engine</span>
             </div>
-          </div>
+          </motion.div>
+
+          {/* 4 Animated Statistics Cards */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="grid grid-cols-2 gap-3 pt-2"
+          >
+            {stats.map((stat, idx) => {
+              const IconComp = stat.icon;
+              return (
+                <motion.div
+                  key={idx}
+                  whileHover={{ scale: 1.04, translateY: -2 }}
+                  transition={{ duration: 0.2 }}
+                  className="p-3.5 rounded-2xl bg-slate-900/60 backdrop-blur-xl border border-slate-800/80 hover:border-emerald-500/40 shadow-lg shadow-emerald-950/30 flex items-center gap-3 group cursor-pointer"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 group-hover:bg-emerald-500 group-hover:text-slate-950 transition-colors">
+                    <IconComp className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="font-heading font-extrabold text-lg sm:text-xl text-white block group-hover:text-emerald-400 transition-colors">
+                      {stat.number}
+                    </span>
+                    <span className="text-[11px] font-medium text-slate-400 block">
+                      {stat.label}
+                    </span>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+
         </div>
 
-        {/* Footer info */}
-        <div className="text-xs text-[#94A3B8] z-10">
-          © {new Date().getFullYear()} ShaivikaLMSPlatform Inc. All rights reserved.
+        {/* Footer */}
+        <div className="text-xs text-slate-500 z-10 relative">
+          © {new Date().getFullYear()} SHAIVIKA AI LMS. All rights reserved.
         </div>
       </div>
 
-      {/* Right Form Container */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12">
+      {/* ==================== RIGHT FORM CONTAINER ==================== */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 relative z-10">
         <div className="w-full max-w-md space-y-6">
           <Outlet />
         </div>
@@ -60,3 +170,5 @@ export const AuthLayout: React.FC = () => {
     </div>
   );
 };
+
+export default AuthLayout;
