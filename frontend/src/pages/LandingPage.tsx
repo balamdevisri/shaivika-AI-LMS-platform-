@@ -223,15 +223,9 @@ export const LandingPage: React.FC = () => {
       {/* ----------------- 1. HERO SECTION (2-COLUMN SPLIT SAAS LAYOUT) ----------------- */}
       <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16 overflow-hidden">
         
-<<<<<<< HEAD
-        {/* Background Ambient Glows */}
-        <div className="absolute top-0 right-1/4 w-125 h-125 bg-[#10B981]/15 rounded-full blur-3xl animate-glow-emerald pointer-events-none" />
-        <div className="absolute bottom-10 left-10 w-100 h-100 bg-[#059669]/15 rounded-full blur-3xl animate-glow-emerald pointer-events-none" />
-=======
         {/* Background Ambient Glows & Radial Gradients */}
         <div className="absolute top-0 right-10 w-[550px] h-[550px] bg-emerald-500/15 rounded-full blur-[120px] pointer-events-none animate-pulse" />
         <div className="absolute bottom-10 left-10 w-[450px] h-[450px] bg-cyan-500/10 rounded-full blur-[100px] pointer-events-none animate-pulse" />
->>>>>>> 7ce5ae8 (feat: Add Firebase Authentication, RBAC, custom Video Player, and Express backend integration)
 
         {/* 2-Column Responsive Grid (Desktop 50/50, Tablet 60/40, Mobile Vertical Stack) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
@@ -293,69 +287,6 @@ export const LandingPage: React.FC = () => {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute top-1/2 left-1/2 -translate-x-1/3 -translate-y-1/3 w-72 h-72 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none" />
 
-<<<<<<< HEAD
-                {/* Dashboard Inner Graphic */}
-                <div className="pt-5 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-heading font-semibold text-lg text-white">Fullstack Systems & AI RAG</h4>
-                      <p className="text-xs text-[#94A3B8]">Module 4: Vector Embeddings & LangChain</p>
-                    </div>
-                    <span className="text-sm font-extrabold text-[#34D399]">92% Mastery</span>
-                  </div>
-
-                  {/* Progress Bar */}
-                  <div className="w-full h-3 bg-[#020617] rounded-full overflow-hidden p-0.5 border border-white/10">
-                    <div className="h-full bg-linear-to-r from-[#059669] to-[#10B981] rounded-full w-[92%]" />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3 pt-2">
-                    <div className="bg-[#111827] p-3 rounded-2xl border border-white/10">
-                      <span className="text-[11px] text-[#94A3B8] block">AI Quiz Generator</span>
-                      <span className="text-xs font-semibold text-white block mt-0.5">15 Questions Generated</span>
-                      <span className="text-[10px] text-[#34D399] font-mono mt-1 block">Score: 98/100</span>
-                    </div>
-                    <div className="bg-[#111827] p-3 rounded-2xl border border-white/10">
-                      <span className="text-[11px] text-[#94A3B8] block">AI Code Tutor</span>
-                      <span className="text-xs font-semibold text-white block mt-0.5">0 Bugs Found</span>
-                      <span className="text-[10px] text-[#34D399] font-mono mt-1 block">Latency: 140ms</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Floating Card 1: Students Online */}
-              <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-                className="absolute -top-6 -left-6 z-20 bg-[#111827]/90 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-white/10 hidden items-center gap-3.5 sm:flex"
-              >
-                <div className="w-10 h-10 rounded-xl bg-[#10B981]/20 text-[#10B981] flex items-center justify-center font-bold">
-                  <Users className="w-5 h-5" />
-                </div>
-                <div>
-                  <span className="text-xs font-bold text-white block">Students Online</span>
-                  <span className="text-[11px] text-[#94A3B8]">14,280 active learners</span>
-                </div>
-              </motion.div>
-
-              {/* Floating Card 2: Assignments Completed */}
-              <motion.div
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-                className="absolute -bottom-6 -right-4 z-20 bg-[#111827]/90 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-white/10 hidden items-center gap-3.5 sm:flex"
-              >
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-[#34D399] flex items-center justify-center font-bold">
-                  <FileCheck className="w-5 h-5" />
-                </div>
-                <div>
-                  <span className="text-xs font-bold text-white block">Assignments Graded</span>
-                  <span className="text-[11px] text-[#94A3B8]">99.8% AI accuracy score</span>
-                </div>
-              </motion.div>
-
-            </div>
-=======
             {/* Clean Minimal Floating Glass Video Card */}
             <motion.div
               animate={{ y: [0, -12, 0] }}
@@ -364,7 +295,6 @@ export const LandingPage: React.FC = () => {
             >
               <VideoPlayer src="/videos/Lmsvideo.mp4" />
             </motion.div>
->>>>>>> 7ce5ae8 (feat: Add Firebase Authentication, RBAC, custom Video Player, and Express backend integration)
           </motion.div>
 
         </div>
