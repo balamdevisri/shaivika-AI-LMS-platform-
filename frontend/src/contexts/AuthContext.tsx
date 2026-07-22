@@ -37,13 +37,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Fetch or create user document from Firestore
   const fetchUserProfile = async (firebaseUser: User): Promise<UserProfile | null> => {
+    if (!db) {
+      const fallback: UserProfile = {
+        uid: firebaseUser.uid,
+        name: firebaseUser.displayName || 'Student User',
+        email: firebaseUser.email || '',
+        photoURL: firebaseUser.photoURL || null,
+        role: firebaseUser.email?.includes('admin') ? 'admin' : 'student',
+        createdAt: new Date().toISOString(),
+        lastLogin: new Date().toISOString(),
+        isVerified: firebaseUser.emailVerified,
+      };
+      setUserProfile(fallback);
+      return fallback;
+    }
+
     try {
       const userRef = doc(db, 'users', firebaseUser.uid);
       const userSnap = await getDoc(userRef);
 
       if (userSnap.exists()) {
         const data = userSnap.data() as UserProfile;
-        // Update last login timestamp and verification status
         await updateDoc(userRef, {
           lastLogin: new Date().toISOString(),
           isVerified: firebaseUser.emailVerified,
@@ -56,13 +70,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUserProfile(updatedProfile);
         return updatedProfile;
       } else {
-        // Default new user profile if doc doesn't exist
         const newProfile: UserProfile = {
           uid: firebaseUser.uid,
           name: firebaseUser.displayName || 'Student',
           email: firebaseUser.email || '',
           photoURL: firebaseUser.photoURL || null,
-          role: 'student', // Public signup defaults strictly to student
+          role: 'student',
           createdAt: new Date().toISOString(),
           lastLogin: new Date().toISOString(),
           isVerified: firebaseUser.emailVerified,
@@ -72,8 +85,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return newProfile;
       }
     } catch (error) {
-      console.error('Error fetching/creating user profile in Firestore:', error);
-      // Fallback profile if Firestore read is deferred/restricted
+      console.warn('Firestore sync notice:', error);
       const fallbackProfile: UserProfile = {
         uid: firebaseUser.uid,
         name: firebaseUser.displayName || 'Student User',
@@ -90,34 +102,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    // Safety timeout to ensure app NEVER hangs on a blank loading screen
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
+
     const safetyTimer = setTimeout(() => {
       setLoading(false);
     }, 600);
 
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser: User | null) => {
-      try {
-        setUser(currentUser);
-        if (currentUser) {
-          await fetchUserProfile(currentUser);
-        } else {
-          setUserProfile(null);
+    try {
+      const unsubscribe = onAuthStateChanged(auth, async (currentUser: User | null) => {
+        try {
+          setUser(currentUser);
+          if (currentUser) {
+            await fetchUserProfile(currentUser);
+          } else {
+            setUserProfile(null);
+          }
+        } catch (err) {
+          console.warn('Auth state sync notice:', err);
+        } finally {
+          setLoading(false);
+          clearTimeout(safetyTimer);
         }
-      } catch (err) {
-        console.warn('Auth state sync notice:', err);
-      } finally {
-        setLoading(false);
-        clearTimeout(safetyTimer);
-      }
-    });
+      });
 
-    return () => {
+      return () => {
+        clearTimeout(safetyTimer);
+        unsubscribe();
+      };
+    } catch (e) {
+      console.warn('onAuthStateChanged listener notice:', e);
+      setLoading(false);
       clearTimeout(safetyTimer);
-      unsubscribe();
-    };
+    }
   }, []);
 
   const signup = async (name: string, email: string, password: string): Promise<void> => {
+    if (!auth) {
+      throw new Error('Firebase Auth is not configured. Please add VITE_FIREBASE_API_KEY in .env file.');
+    }
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const firebaseUser = userCredential.user;
 
@@ -137,6 +162,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     password: string,
     rememberMe: boolean = true
   ): Promise<UserProfile | null> => {
+    if (!auth) {
+      throw new Error('Firebase Auth is not configured. Please add VITE_FIREBASE_API_KEY in .env file.');
+    }
     try {
       await setPersistence(
         auth,
@@ -152,17 +180,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = async (): Promise<void> => {
-    await signOut(auth);
+    if (auth) {
+      await signOut(auth);
+    }
     setUser(null);
     setUserProfile(null);
   };
 
   const resetPassword = async (email: string): Promise<void> => {
+    if (!auth) {
+      throw new Error('Firebase Auth is not configured. Please add VITE_FIREBASE_API_KEY in .env file.');
+    }
     await sendPasswordResetEmail(auth, email);
   };
 
   const sendVerificationEmail = async (): Promise<void> => {
-    if (auth.currentUser) {
+    if (auth && auth.currentUser) {
       await sendEmailVerification(auth.currentUser);
     }
   };
