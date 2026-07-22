@@ -15,9 +15,13 @@ import {
   Layers,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useCourses } from '@/contexts/CourseContext';
 
 export const CourseView: React.FC = () => {
   const { courseId } = useParams();
+  const { getCourseById } = useCourses();
+  const dynamicCourse = getCourseById(courseId || '1');
+
   const [activeTab, setActiveTab] = useState<'intro' | 'index' | 'terminal' | 'quiz'>('intro');
   const [activeModule, setActiveModule] = useState<number | null>(1);
   const [completedLessons, setCompletedLessons] = useState<number[]>([101, 102]);
@@ -34,20 +38,20 @@ export const CourseView: React.FC = () => {
   const [quizSubmitted, setQuizSubmitted] = useState(false);
 
   const courseData = {
-    id: courseId || '1',
-    title: 'Introduction to Linux & System Administration',
-    subtitle: '🐧 Linux Essentials',
-    instructor: 'Bhanu Prakash Achari',
-    role: 'Linux Systems Architect & AI Specialist',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    rating: 5.0,
-    reviews: 1450,
-    students: '28,900',
-    duration: '32 hrs',
-    category: 'Linux & Systems',
-    level: 'Beginner to Advanced',
-    thumbnail: '/assets/images/linux_course_thumbnail.png',
-    introText: [
+    id: dynamicCourse?.id || courseId || '1',
+    title: dynamicCourse?.title || 'Introduction to Linux & System Administration',
+    subtitle: dynamicCourse?.subtitle || '🐧 Linux Essentials',
+    instructor: dynamicCourse?.instructor || 'Bhanu Prakash Achari',
+    role: dynamicCourse?.role || 'Linux Systems Architect & AI Specialist',
+    avatar: dynamicCourse?.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+    rating: dynamicCourse?.rating || 5.0,
+    reviews: dynamicCourse?.reviews || 1450,
+    students: dynamicCourse?.students || '28,900',
+    duration: dynamicCourse?.duration || '32 hrs',
+    category: dynamicCourse?.category || 'Linux & Systems',
+    level: dynamicCourse?.level || 'Beginner to Advanced',
+    thumbnail: dynamicCourse?.thumbnail || '/assets/images/linux_course_thumbnail.png',
+    introText: typeof dynamicCourse?.description === 'string' ? dynamicCourse.description.split('\n\n') : [
       `Welcome to Linux Essentials! Linux is one of the world's most powerful and widely used operating systems, powering everything from web servers and cloud platforms to Android devices, supercomputers, and embedded systems.`,
       `This course is designed for beginners who want to build a strong foundation in Linux. You will learn how Linux works, how to navigate the terminal, manage files and directories, understand permissions, and perform essential system operations using real-world commands.`,
       `By the end of this course, you'll have the confidence to work efficiently in any Linux environment and be prepared for advanced topics such as shell scripting, DevOps, cloud computing, and cybersecurity.`,

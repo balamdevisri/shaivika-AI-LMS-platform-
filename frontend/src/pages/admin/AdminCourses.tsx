@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { BookOpen, Plus, Search, CheckCircle2, X, Users, Star, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useCourses } from '@/contexts/CourseContext';
 
 export const AdminCourses: React.FC = () => {
+  const { courses, addCourse, toggleCourseStatus } = useCourses();
   const [searchQuery, setSearchQuery] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -12,26 +14,13 @@ export const AdminCourses: React.FC = () => {
   const [newInstructor, setNewInstructor] = useState('');
   const [newCategory, setNewCategory] = useState('Linux & Systems');
 
-  const [courses, setCourses] = useState([
-    {
-      id: 1,
-      title: 'Introduction to Linux & System Administration',
-      instructor: 'Bhanu Prakash Achari',
-      students: '28,900',
-      status: 'Published',
-      tracks: '4 Modules (32 Hours)',
-      rating: 5.0,
-      category: 'Linux & Systems',
-    },
-  ]);
-
   const filteredCourses = courses.filter((c) =>
     c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     c.instructor.toLowerCase().includes(searchQuery.toLowerCase()) ||
     c.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleCreateCourse = (e: React.FormEvent) => {
+  const handleCreateCourse = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle || !newInstructor) {
       toast.error('Please fill in title and instructor name.');
@@ -39,33 +28,22 @@ export const AdminCourses: React.FC = () => {
     }
 
     setIsSubmitting(true);
-    setTimeout(() => {
-      const created = {
-        id: Date.now(),
+    try {
+      await addCourse({
         title: newTitle,
         instructor: newInstructor,
-        students: '0',
-        status: 'Published',
-        tracks: '4 Modules (20 Hours)',
-        rating: 5.0,
         category: newCategory,
-      };
-      setCourses([created, ...courses]);
+        status: 'Published',
+      });
       setIsSubmitting(false);
       setModalOpen(false);
       setNewTitle('');
       setNewInstructor('');
-      toast.success(`Course "${newTitle}" created successfully!`);
-    }, 500);
-  };
-
-  const toggleCourseStatus = (id: number) => {
-    setCourses((prev) =>
-      prev.map((c) =>
-        c.id === id ? { ...c, status: c.status === 'Published' ? 'Draft' : 'Published' } : c
-      )
-    );
-    toast.info('Course publication status toggled');
+      toast.success(`Course "${newTitle}" published dynamically to main page!`);
+    } catch (err: any) {
+      setIsSubmitting(false);
+      toast.error('Failed to publish course.');
+    }
   };
 
   return (

@@ -11,41 +11,17 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useCourses } from '@/contexts/CourseContext';
 
 export const CoursesList: React.FC = () => {
+  const { publishedCourses } = useCourses();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedCourseModal, setSelectedCourseModal] = useState<any | null>(null);
 
-  const categories = ['All', 'Linux & Systems'];
+  const dynamicCategories = ['All', ...Array.from(new Set(publishedCourses.map((c) => c.category)))];
 
-  const allCourses = [
-    {
-      id: 1,
-      title: 'Introduction to Linux & System Administration',
-      subtitle: '🐧 Linux Essentials',
-      instructor: 'Bhanu Prakash Achari',
-      role: 'Linux Systems Architect & AI Specialist',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-      rating: 5.0,
-      reviews: 1450,
-      students: '28,900',
-      duration: '32 hrs',
-      category: 'Linux & Systems',
-      level: 'Beginner to Advanced',
-      badge: 'Featured Track',
-      thumbnail: '/assets/images/linux_course_thumbnail.png',
-      description: `Welcome to Linux Essentials! Linux is one of the world's most powerful and widely used operating systems, powering everything from web servers and cloud platforms to Android devices, supercomputers, and embedded systems. This course is designed for beginners who want to build a strong foundation in Linux. You will learn how Linux works, how to navigate the terminal, manage files and directories, understand permissions, and perform essential system operations using real-world commands. By the end of this course, you'll have the confidence to work efficiently in any Linux environment and be prepared for advanced topics such as shell scripting, DevOps, cloud computing, and cybersecurity.`,
-      syllabus: [
-        'Module 1: Linux Architecture, Kernel & CLI Fundamentals',
-        'Module 2: File System Hierarchy, Permissions & Ownership',
-        'Module 3: Process Management, Systemd Services & Cron Jobs',
-        'Module 4: Bash Scripting, Networking & Security Hardening',
-      ],
-    },
-  ];
-
-  const filteredCourses = allCourses.filter((course) => {
+  const filteredCourses = publishedCourses.filter((course) => {
     const matchesSearch =
       course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       course.instructor.toLowerCase().includes(searchQuery.toLowerCase());
@@ -90,7 +66,7 @@ export const CoursesList: React.FC = () => {
 
         {/* Category Pills */}
         <div className="flex overflow-x-auto gap-2 w-full md:w-auto">
-          {categories.map((cat) => (
+          {dynamicCategories.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}

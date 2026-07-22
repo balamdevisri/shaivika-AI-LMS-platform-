@@ -1,5 +1,6 @@
 import { AppRouter } from './routes';
 import { AuthProvider } from './contexts/AuthContext';
+import { CourseProvider } from './contexts/CourseContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
@@ -10,7 +11,9 @@ function App() {
       <ThemeProvider>
         <NotificationProvider>
           <AuthProvider>
-            <AppRouter />
+            <CourseProvider>
+              <AppRouter />
+            </CourseProvider>
           </AuthProvider>
         </NotificationProvider>
       </ThemeProvider>
