@@ -1,0 +1,61 @@
+{
+  "brandName": "Kaizen Q",
+  "tagline": "AI-POWERED LMS",
+  "personality": [
+    "Professional",
+    "Premium",
+    "Modern",
+    "Minimal",
+    "AI-Driven",
+    "Innovative",
+    "Elegant",
+    "Future-Ready"
+  ],
+  "colors": {
+    "primary": {
+      "hex": "#0B1220",
+      "name": "Deep Navy",
+      "usage": "Brand Container, Dark Theme Backgrounds, High-Contrast Typography"
+    },
+    "gradient": {
+      "start": "#2563EB",
+      "startName": "Royal Blue",
+      "end": "#22D3EE",
+      "endName": "Electric Cyan",
+      "direction": "135deg (Linear)",
+      "usage": "Logo Symbol Vector Fill, Wordmark Q Accent, Interactive Buttons"
+    },
+    "accentGlow": {
+      "hex": "rgba(34, 211, 238, 0.25)",
+      "name": "Soft Electric Blue",
+      "usage": "Glassmorphic Outer Glow & Rim Highlights"
+    },
+    "background": {
+      "light": "#FFFFFF",
+      "dark": "#0B1220"
+    }
+  },
+  "typography": {
+    "fontFamily": "Sora, sans-serif",
+    "googleFontUrl": "https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap",
+    "weights": {
+      "wordmark": 800,
+      "heading": 700,
+      "body": 400,
+      "tagline": 600
+    },
+    "letterSpacing": {
+      "wordmark": "-0.02em",
+      "tagline": "+0.28em (Uppercase)"
+    }
+  },
+  "deliverables": [
+    "logo-full-light.svg",
+    "logo-full-dark.svg",
+    "logo-vertical-light.svg",
+    "logo-vertical-dark.svg",
+    "icon-only.svg",
+    "app-icon-1024.svg",
+    "favicon.svg"
+  ]
+}

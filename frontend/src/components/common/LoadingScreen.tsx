@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import { CinematicKaizenQLogo } from './CinematicKaizenQLogo';
+
 const loadingSteps = [
   'Initializing AI Engine...',
   'Connecting to Neural Network...',
@@ -49,60 +51,28 @@ export const LoadingScreen: React.FC<{ onComplete?: () => void }> = ({ onComplet
         <motion.div
           animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
           transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute w-[600px] h-[600px] bg-[#10B981]/15 rounded-full blur-3xl pointer-events-none" 
+          className="absolute w-150 h-150 bg-[#10B981]/15 rounded-full blur-3xl pointer-events-none" 
         />
         <motion.div
           animate={{ scale: [1.2, 1, 1.2], opacity: [0.2, 0.4, 0.2] }}
           transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute w-[400px] h-[400px] bg-[#0ea5e9]/10 rounded-full blur-3xl pointer-events-none" 
+          className="absolute w-100 h-100 bg-[#0ea5e9]/10 rounded-full blur-3xl pointer-events-none" 
         />
 
         {/* Center Content */}
         <div className="relative z-10 flex flex-col items-center space-y-10">
           
-          {/* Logo Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="relative flex items-center justify-center"
-          >
-            {/* Outer Spinning Ring */}
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-              className="absolute inset-[-20px] rounded-full border border-dashed border-[#10B981]/30"
-            />
-            <motion.div
-              animate={{ rotate: -360 }}
-              transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
-              className="absolute inset-[-40px] rounded-full border border-dotted border-[#0ea5e9]/20"
-            />
-            
-            <motion.div
-              animate={{ scale: [0.98, 1.02, 0.98] }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              className="relative w-28 h-28 sm:w-32 sm:h-32 rounded-3xl bg-[#0F172A]/80 backdrop-blur-xl border border-white/10 p-5 shadow-2xl shadow-emerald-900/40 flex items-center justify-center"
-            >
-              <img
-                src="/logo.png"
-                alt="Shaivika AI LMS Platform Logo"
-                className="w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]"
-              />
-            </motion.div>
-          </motion.div>
 
-          {/* Text Section */}
+
+          {/* Canvas Animation Section */}
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-            className="text-center space-y-2"
+            transition={{ duration: 0.8 }}
+            className="flex flex-col items-center justify-center -mt-8"
           >
-            <h1 className="font-heading font-extrabold text-3xl sm:text-4xl tracking-tight">
-              Shaivika <span className="text-transparent bg-clip-text bg-linear-to-r from-[#10B981] to-[#34D399]">AI</span>
-            </h1>
-            <p className="text-[10px] sm:text-xs font-semibold text-[#94A3B8] uppercase tracking-[0.2em]">
+            <CinematicKaizenQLogo width={840} height={360} className="w-full max-w-4xl" />
+            <p className="text-[10px] sm:text-xs font-semibold text-[#94A3B8] uppercase tracking-[0.2em] mt-2">
               Next-Gen Education Platform
             </p>
           </motion.div>
