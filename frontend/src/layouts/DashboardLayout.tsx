@@ -222,7 +222,7 @@ export const DashboardLayout: React.FC = () => {
                     {(userProfile?.name || user?.displayName || 'S').charAt(0).toUpperCase()}
                   </div>
                 )}
-                <span className="hidden sm:inline-block font-heading font-semibold text-xs text-slate-900 max-w-[120px] truncate">
+                <span className="hidden sm:inline-block font-heading font-semibold text-xs text-slate-900 max-w-30 truncate">
                   {userProfile?.name || user?.displayName || 'Student User'}
                 </span>
                 <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:inline-block" />

@@ -95,7 +95,7 @@ export const Profile: React.FC = () => {
           <div className="space-y-3 text-xs font-medium">
             <div className="p-3 bg-slate-50 border border-sky-100 rounded-2xl flex items-center justify-between">
               <span className="text-slate-500">Firebase User ID</span>
-              <span className="font-mono text-sky-700 font-semibold truncate max-w-[200px]">{user?.uid || 'N/A'}</span>
+              <span className="font-mono text-sky-700 font-semibold truncate max-w-50">{user?.uid || 'N/A'}</span>
             </div>
             
             <div className="p-3 bg-slate-50 border border-sky-100 rounded-2xl flex items-center justify-between">
