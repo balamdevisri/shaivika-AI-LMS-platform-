@@ -13,7 +13,6 @@ import {
   ArrowLeft,
   ChevronDown,
   Layers,
-  X,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCourses } from '@/contexts/CourseContext';
@@ -26,7 +25,7 @@ export const CourseView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'intro' | 'index' | 'terminal' | 'quiz'>('intro');
   const [activeModule, setActiveModule] = useState<number | null>(1);
   const [completedLessons, setCompletedLessons] = useState<number[]>([101, 102]);
-  const [selectedLessonModal, setSelectedLessonModal] = useState<number | null>(null);
+  const [selectedLessonId, setSelectedLessonId] = useState<number | null>(101);
 
   // Terminal Simulator State
   const [terminalInput, setTerminalInput] = useState('');
@@ -839,40 +838,77 @@ export const CourseView: React.FC = () => {
                   </button>
 
                   {isOpen && (
-                    <div className="p-4 border-t border-sky-100 space-y-2.5 bg-slate-50">
+                    <div className="p-4 border-t border-sky-100 space-y-3 bg-slate-50">
                       {mod.lessons.map((lesson) => {
                         const isDone = completedLessons.includes(lesson.id);
+                        const isSelected = selectedLessonId === lesson.id;
                         return (
-                          <div
-                            key={lesson.id}
-                            className="p-3.5 rounded-xl bg-white border border-sky-100 flex items-center justify-between gap-3 text-xs hover:border-sky-300 hover:shadow-xs transition-all"
-                          >
-                            <div className="flex items-center gap-3 min-w-0">
-                              <button
-                                onClick={() => toggleLessonComplete(lesson.id)}
-                                className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors cursor-pointer shrink-0 ${
-                                  isDone ? 'bg-emerald-500 text-white' : 'border border-slate-300 hover:border-sky-500'
-                                }`}
-                              >
-                                {isDone && <CheckCircle2 className="w-3.5 h-3.5" />}
-                              </button>
-                              <button
-                                onClick={() => setSelectedLessonModal(lesson.id)}
-                                className="text-left font-bold text-slate-900 hover:text-sky-600 transition-colors truncate cursor-pointer"
-                              >
-                                {lesson.title}
-                              </button>
+                          <div key={lesson.id} className="space-y-2">
+                            <div
+                              className={`p-3.5 rounded-2xl border transition-all flex items-center justify-between gap-3 text-xs ${
+                                isSelected
+                                  ? 'bg-sky-50/90 border-sky-400 shadow-md ring-2 ring-sky-400/20'
+                                  : 'bg-white border-sky-100 hover:border-sky-300 hover:shadow-xs'
+                              }`}
+                            >
+                              <div className="flex items-center gap-3 min-w-0">
+                                <button
+                                  onClick={() => toggleLessonComplete(lesson.id)}
+                                  className={`w-5 h-5 rounded-full flex items-center justify-center transition-colors cursor-pointer shrink-0 ${
+                                    isDone ? 'bg-emerald-500 text-white' : 'border border-slate-300 hover:border-sky-500'
+                                  }`}
+                                >
+                                  {isDone && <CheckCircle2 className="w-3.5 h-3.5" />}
+                                </button>
+                                <button
+                                  onClick={() => setSelectedLessonId(isSelected ? null : lesson.id)}
+                                  className="text-left font-bold text-slate-900 hover:text-sky-600 transition-colors truncate cursor-pointer"
+                                >
+                                  {lesson.title}
+                                </button>
+                              </div>
+
+                              <div className="flex items-center gap-2 shrink-0">
+                                <span className="text-[10px] text-slate-500 font-mono">{lesson.duration}</span>
+                                <button
+                                  onClick={() => setSelectedLessonId(isSelected ? null : lesson.id)}
+                                  className={`px-3 py-1 font-bold rounded-lg border text-[11px] transition-all cursor-pointer ${
+                                    isSelected
+                                      ? 'bg-sky-600 text-white border-sky-600 shadow-xs'
+                                      : 'bg-sky-50 hover:bg-sky-600 hover:text-white text-sky-700 border-sky-200'
+                                  }`}
+                                >
+                                  {isSelected ? 'Hide Topic' : 'View Topic'}
+                                </button>
+                              </div>
                             </div>
 
-                            <div className="flex items-center gap-2 shrink-0">
-                              <span className="text-[10px] text-slate-500 font-mono">{lesson.duration}</span>
-                              <button
-                                onClick={() => setSelectedLessonModal(lesson.id)}
-                                className="px-3 py-1 bg-sky-50 hover:bg-sky-600 hover:text-white text-sky-700 font-bold rounded-lg border border-sky-200 transition-all cursor-pointer text-[11px]"
-                              >
-                                View Topic
-                              </button>
-                            </div>
+                            {/* Direct Inline Topic Content Drawer */}
+                            {isSelected && (
+                              <div className="p-5 sm:p-6 bg-white rounded-2xl border border-sky-200 shadow-lg space-y-4 animate-in fade-in slide-in-from-top-2">
+                                <div className="flex items-center justify-between border-b border-sky-100 pb-3">
+                                  <span className="text-xs font-bold text-sky-700 bg-sky-50 px-3 py-1 rounded-full border border-sky-200">
+                                    {module1LessonsContent[lesson.id]?.badge || 'Interactive Lesson'} • {lesson.duration}
+                                  </span>
+                                  <button
+                                    onClick={() => {
+                                      setActiveTab('terminal');
+                                      toast.info('Interactive CLI Terminal Lab launched!');
+                                    }}
+                                    className="btn-blue-primary text-xs py-1.5 px-3 font-bold flex items-center gap-1.5 cursor-pointer shadow-xs"
+                                  >
+                                    <Terminal className="w-3.5 h-3.5" />
+                                    <span>Launch Terminal Lab</span>
+                                  </button>
+                                </div>
+
+                                {module1LessonsContent[lesson.id]?.render || (
+                                  <div className="p-4 bg-sky-50 text-slate-700 rounded-2xl text-xs font-medium">
+                                    Detailed topic guide for this lesson is ready. Practice hands-on Linux CLI commands in the Terminal Lab!
+                                  </div>
+                                )}
+                              </div>
+                            )}
                           </div>
                         );
                       })}
@@ -989,63 +1025,6 @@ export const CourseView: React.FC = () => {
               Submit Quiz & Check Score
             </button>
           )}
-        </div>
-      )}
-
-      {/* Interactive Selected Lesson Detail Modal */}
-      {selectedLessonModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-3xl w-full shadow-2xl space-y-6 border border-sky-200 animate-in zoom-in-95 max-h-[90vh] overflow-y-auto text-slate-900 font-['Sora']">
-            
-            {/* Modal Header */}
-            <div className="flex items-start justify-between border-b border-sky-100 pb-4">
-              <div>
-                <span className="text-xs font-bold text-sky-700 bg-sky-50 px-3 py-1 rounded-full border border-sky-200">
-                  {module1LessonsContent[selectedLessonModal]?.badge || 'Interactive Lesson'} • {module1LessonsContent[selectedLessonModal]?.time || '45 mins'}
-                </span>
-                <h3 className="font-heading font-extrabold text-lg sm:text-xl text-slate-900 mt-2">
-                  {module1LessonsContent[selectedLessonModal]?.title || 'Lesson Overview'}
-                </h3>
-              </div>
-              <button
-                onClick={() => setSelectedLessonModal(null)}
-                className="text-slate-400 hover:text-slate-900 p-1 cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Lesson Body */}
-            <div>
-              {module1LessonsContent[selectedLessonModal]?.render || (
-                <div className="p-4 bg-sky-50 text-slate-700 rounded-2xl text-xs font-medium">
-                  Detailed lesson content for this module is ready. Click "Launch Terminal Lab" below to practice hands-on CLI commands!
-                </div>
-              )}
-            </div>
-
-            {/* Modal Action Footer */}
-            <div className="pt-4 border-t border-sky-100 flex items-center justify-end gap-3">
-              <button
-                onClick={() => setSelectedLessonModal(null)}
-                className="py-2.5 px-4 rounded-xl border border-sky-200 text-xs font-bold text-slate-600 hover:bg-sky-50 transition-all cursor-pointer"
-              >
-                Close
-              </button>
-              <button
-                onClick={() => {
-                  setSelectedLessonModal(null);
-                  setActiveTab('terminal');
-                  toast.info('Interactive CLI Terminal Lab launched!');
-                }}
-                className="btn-blue-primary text-xs py-2.5 px-5 font-bold flex items-center gap-2 cursor-pointer shadow-md shadow-sky-500/20"
-              >
-                <Terminal className="w-4 h-4" />
-                <span>Launch Interactive Terminal Lab</span>
-              </button>
-            </div>
-
-          </div>
         </div>
       )}
 
