@@ -1631,7 +1631,7 @@ export const CourseView: React.FC = () => {
             </span>
           </div>
 
-          <div className="space-y-3 min-h-[300px] max-h-[450px] overflow-y-auto p-2">
+          <div className="space-y-3 min-h-75 max-h-112 overflow-y-auto p-2">
             <p className="text-slate-400">
               Type Linux CLI commands below or click <span className="text-emerald-300">"▶ Run in Terminal"</span> next to any command in the curriculum!
             </p>
