@@ -13,6 +13,7 @@ import {
   ArrowLeft,
   ChevronDown,
   Layers,
+  X,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCourses } from '@/contexts/CourseContext';
@@ -25,6 +26,7 @@ export const CourseView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'intro' | 'index' | 'terminal' | 'quiz'>('intro');
   const [activeModule, setActiveModule] = useState<number | null>(1);
   const [completedLessons, setCompletedLessons] = useState<number[]>([101, 102]);
+  const [selectedLessonModal, setSelectedLessonModal] = useState<number | null>(null);
 
   // Terminal Simulator State
   const [terminalInput, setTerminalInput] = useState('');
@@ -71,7 +73,7 @@ export const CourseView: React.FC = () => {
         duration: '8 Hours • 5 Lessons',
         lessons: [
           { id: 101, title: '1.1 Introduction to Unix & Linux Operating System Architecture', duration: '45 mins', type: 'video' },
-          { id: 102, title: '1.2 Understanding Shell Architecture (Bash/Zsh) & Command Anatomy', duration: '60 mins', type: 'lab' },
+          { id: 102, title: '1.2 Understanding Shell Architecture & Command Anatomy', duration: '60 mins', type: 'lab' },
           { id: 103, title: '1.3 Navigating Files & Directories (pwd, ls -la, cd, tree)', duration: '50 mins', type: 'lab' },
           { id: 104, title: '1.4 Creating, Copying, Moving & Deleting Files (mkdir, cp, mv, rm)', duration: '60 mins', type: 'lab' },
           { id: 105, title: '1.5 Quiz & Hands-on Terminal Practice: Module 1', duration: '30 mins', type: 'quiz' },
@@ -117,23 +119,338 @@ export const CourseView: React.FC = () => {
     quizQuestions: [
       {
         id: 1,
-        question: 'Which command is used to display the absolute path of your current working directory in Linux?',
-        options: ['dir', 'pwd', 'cd', 'path'],
-        correct: 1,
-      },
-      {
-        id: 2,
-        question: 'What numerical permission code grants Read (4), Write (2), and Execute (1) permissions to the owner?',
-        options: ['644', '755', '700', '777'],
+        question: 'Which layer of the Operating System directly manages hardware resources like CPU and RAM?',
+        options: ['Shell', 'GUI', 'Kernel', 'User Space'],
         correct: 2,
       },
       {
-        id: 3,
-        question: 'Which command is used to search for text patterns inside files?',
-        options: ['find', 'grep', 'locate', 'search'],
+        id: 2,
+        question: 'In the command cp -r folder1 folder2, what does the -r option stand for?',
+        options: ['Remove', 'Recursive', 'Read-only', 'Revert'],
         correct: 1,
       },
+      {
+        id: 3,
+        question: 'What command takes you back to your previous working directory?',
+        options: ['cd ..', 'cd ~', 'cd -', 'pwd'],
+        correct: 2,
+      },
     ],
+  };
+
+  // Module 1 Lessons Rich Content Renderer
+  const module1LessonsContent: { [key: number]: any } = {
+    101: {
+      title: '1.1 Introduction to Unix & Linux Operating System Architecture',
+      time: '45 mins',
+      badge: 'Core Foundations',
+      render: (
+        <div className="space-y-6">
+          <div className="bg-sky-50/80 p-4 sm:p-5 rounded-2xl border border-sky-200/80 space-y-2">
+            <span className="text-xs font-bold text-sky-800 uppercase tracking-wider block">📌 OVERVIEW</span>
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+              Unix and Linux operate on a multi-layered architecture designed for multi-user security, high performance, and modularity.
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <h4 className="font-heading font-bold text-sm text-slate-900 flex items-center gap-2">
+              <span>🏗️ Architectural Layers</span>
+            </h4>
+
+            <div className="bg-slate-950 p-4 sm:p-6 rounded-2xl border border-slate-800 font-mono text-xs space-y-3 shadow-xl">
+              <div className="p-3 bg-sky-950/80 border border-sky-500/40 rounded-xl text-sky-300 text-center shadow-xs">
+                <span className="font-bold block text-sky-400">USER APPLICATIONS</span>
+                <span className="text-[11px] opacity-80">(Web Browser, VS Code, Python, MySQL)</span>
+              </div>
+
+              <div className="flex justify-center text-slate-500 font-bold">│  ▼</div>
+
+              <div className="p-3 bg-indigo-950/80 border border-indigo-500/40 rounded-xl text-indigo-300 text-center shadow-xs">
+                <span className="font-bold block text-indigo-400">SHELL / CLI / GUI</span>
+                <span className="text-[11px] opacity-80">(Bash, Zsh, GNOME, Terminal)</span>
+              </div>
+
+              <div className="flex justify-center text-slate-500 font-bold">│  ▼ (System Calls)</div>
+
+              <div className="p-3 bg-emerald-950/80 border border-emerald-500/40 rounded-xl text-emerald-300 text-center shadow-xs">
+                <span className="font-bold block text-emerald-400">KERNEL</span>
+                <span className="text-[11px] opacity-80">• Process Scheduler  • Memory Manager  • File System Driver  • Network Stack</span>
+              </div>
+
+              <div className="flex justify-center text-slate-500 font-bold">│  ▼</div>
+
+              <div className="p-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-300 text-center shadow-xs">
+                <span className="font-bold block text-white">HARDWARE</span>
+                <span className="text-[11px] opacity-80">(CPU, RAM, SSD/HDD, NIC, GPU)</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <h4 className="font-heading font-bold text-sm text-slate-900">Key Components Explained:</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div className="p-3.5 bg-slate-50 rounded-2xl border border-sky-100 space-y-1">
+                <span className="font-bold text-sky-900 block">🖥️ Hardware:</span>
+                <p className="text-slate-600 font-medium">Physical components (CPU, RAM, Disks, NIC, GPU).</p>
+              </div>
+              <div className="p-3.5 bg-slate-50 rounded-2xl border border-sky-100 space-y-1">
+                <span className="font-bold text-emerald-800 block">⚙️ Kernel:</span>
+                <p className="text-slate-600 font-medium">The core engine. Directly manages hardware resources and isolates processes.</p>
+              </div>
+              <div className="p-3.5 bg-slate-50 rounded-2xl border border-sky-100 space-y-1">
+                <span className="font-bold text-indigo-900 block">🐚 Shell:</span>
+                <p className="text-slate-600 font-medium">Interface between user and kernel. Translates human commands into system calls.</p>
+              </div>
+              <div className="p-3.5 bg-slate-50 rounded-2xl border border-sky-100 space-y-1">
+                <span className="font-bold text-purple-900 block">👤 User Space:</span>
+                <p className="text-slate-600 font-medium">Applications run here with restricted permissions for safety.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-4 bg-sky-600 text-white rounded-2xl shadow-md font-bold text-xs flex items-center gap-2">
+            <span>💡 Key Takeaway:</span>
+            <p className="font-medium">User programs never talk directly to hardware; they always go through System Calls to the Kernel.</p>
+          </div>
+        </div>
+      ),
+    },
+
+    102: {
+      title: '1.2 Understanding Shell Architecture & Command Anatomy',
+      time: '60 mins',
+      badge: 'CLI Mastery',
+      render: (
+        <div className="space-y-6">
+          <div className="space-y-3">
+            <h4 className="font-heading font-bold text-sm text-slate-900 flex items-center gap-2">
+              <span>🐚 What is a Shell?</span>
+            </h4>
+            <p className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed">
+              A Shell is a command-line interpreter that executes commands entered by the user or from script files.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div className="p-3.5 bg-sky-50 rounded-2xl border border-sky-200/80 space-y-1">
+                <span className="font-bold text-sky-900 block">Bash (Bourne Again Shell):</span>
+                <p className="text-slate-600 font-medium">Default on most Linux distros (Ubuntu, RHEL, Debian).</p>
+              </div>
+              <div className="p-3.5 bg-indigo-50 rounded-2xl border border-indigo-200/80 space-y-1">
+                <span className="font-bold text-indigo-900 block">Zsh (Z Shell):</span>
+                <p className="text-slate-600 font-medium">Default on macOS; offers advanced auto-completion and customization.</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <h4 className="font-heading font-bold text-sm text-slate-900 flex items-center gap-2">
+              <span>📐 Anatomy of a Linux Command</span>
+            </h4>
+            <p className="text-xs text-slate-600 font-medium">Every Linux command follows a standard syntax:</p>
+
+            <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 font-mono text-xs text-emerald-400 shadow-md">
+              <span className="text-slate-400"># Standard Syntax Pattern:</span>
+              <div className="text-sm font-bold text-white mt-1">$ command  -[options]  [arguments]</div>
+            </div>
+
+            <h5 className="font-bold text-xs text-slate-800 pt-2">🔍 Practical Breakdown: <code className="bg-slate-100 px-2 py-0.5 rounded border border-slate-300 text-sky-700">ls -la /var/log</code></h5>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+              <div className="p-3.5 bg-sky-50 rounded-2xl border border-sky-200 text-center space-y-1">
+                <span className="font-bold text-sky-900 block">Command: ls</span>
+                <span className="text-[10px] text-slate-500 font-semibold block">What to run</span>
+                <p className="text-[11px] text-slate-700 font-medium">List directory contents</p>
+              </div>
+
+              <div className="p-3.5 bg-amber-50 rounded-2xl border border-amber-200 text-center space-y-1">
+                <span className="font-bold text-amber-900 block">Options/Flags: -la</span>
+                <span className="text-[10px] text-slate-500 font-semibold block">How to do it</span>
+                <p className="text-[11px] text-slate-700 font-medium">-l: Long format | -a: Show hidden files (.)</p>
+              </div>
+
+              <div className="p-3.5 bg-emerald-50 rounded-2xl border border-emerald-200 text-center space-y-1">
+                <span className="font-bold text-emerald-900 block">Argument: /var/log</span>
+                <span className="text-[10px] text-slate-500 font-semibold block">Target of action</span>
+                <p className="text-[11px] text-slate-700 font-medium">Target directory path</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+
+    103: {
+      title: '1.3 Navigating Files & Directories',
+      time: '50 mins',
+      badge: 'Navigation Skills',
+      render: (
+        <div className="space-y-6">
+          <div className="space-y-3">
+            <h4 className="font-heading font-bold text-sm text-slate-900 flex items-center gap-2">
+              <span>🌳 The Linux Directory Hierarchy Standard (FHS)</span>
+            </h4>
+            <p className="text-xs text-slate-700 font-medium">
+              In Linux, everything is a file, and the system starts at the Root directory <code className="bg-slate-100 px-1.5 py-0.5 rounded font-bold text-sky-700">/</code>.
+            </p>
+
+            <div className="bg-slate-950 p-4 sm:p-5 rounded-2xl border border-slate-800 font-mono text-xs text-slate-300 space-y-1.5 shadow-lg">
+              <div className="text-sky-400 font-bold">/ (Root Directory)</div>
+              <div className="pl-4">├── <span className="text-emerald-400 font-bold">bin</span>    --&gt; Essential user binaries (ls, cp, rm)</div>
+              <div className="pl-4">├── <span className="text-amber-400 font-bold">etc</span>    --&gt; System configuration files</div>
+              <div className="pl-4">├── <span className="text-sky-300 font-bold">home</span>   --&gt; User home directories (/home/user)</div>
+              <div className="pl-4">├── <span className="text-rose-400 font-bold">root</span>   --&gt; Home directory for superuser</div>
+              <div className="pl-4">├── <span className="text-indigo-300 font-bold">tmp</span>    --&gt; Temporary files (cleared on reboot)</div>
+              <div className="pl-4">└── <span className="text-purple-300 font-bold">var</span>    --&gt; Variable data (logs, databases)</div>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <h4 className="font-heading font-bold text-sm text-slate-900">🛠️ Core Navigation Commands Table</h4>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="bg-sky-50 border-b border-sky-200 text-sky-900 font-bold">
+                    <th className="p-3">Command</th>
+                    <th className="p-3">Full Form</th>
+                    <th className="p-3">Purpose</th>
+                    <th className="p-3">Example</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-sky-100 font-medium text-slate-800">
+                  <tr className="hover:bg-slate-50">
+                    <td className="p-3 font-mono font-bold text-sky-700">pwd</td>
+                    <td className="p-3">Print Working Directory</td>
+                    <td className="p-3">Displays current absolute path</td>
+                    <td className="p-3 font-mono">pwd</td>
+                  </tr>
+                  <tr className="hover:bg-slate-50">
+                    <td className="p-3 font-mono font-bold text-sky-700">ls</td>
+                    <td className="p-3">List</td>
+                    <td className="p-3">Lists files in current directory</td>
+                    <td className="p-3 font-mono">ls -la /home</td>
+                  </tr>
+                  <tr className="hover:bg-slate-50">
+                    <td className="p-3 font-mono font-bold text-sky-700">cd</td>
+                    <td className="p-3">Change Directory</td>
+                    <td className="p-3">Navigates to a different folder</td>
+                    <td className="p-3 font-mono">cd /var/log</td>
+                  </tr>
+                  <tr className="hover:bg-slate-50">
+                    <td className="p-3 font-mono font-bold text-sky-700">tree</td>
+                    <td className="p-3">Directory Tree</td>
+                    <td className="p-3">Visualizes directory structure</td>
+                    <td className="p-3 font-mono">tree -L 2</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="p-4 bg-sky-50 rounded-2xl border border-sky-200 space-y-2 text-xs">
+            <span className="font-bold text-sky-900 block">💡 Essential cd Shortcuts:</span>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 font-mono text-[11px]">
+              <div className="p-2 bg-white rounded-xl border border-sky-100 font-bold"><span className="text-sky-700">cd ~</span> or <span className="text-sky-700">cd</span> ➜ Home dir</div>
+              <div className="p-2 bg-white rounded-xl border border-sky-100 font-bold"><span className="text-sky-700">cd ..</span> ➜ Up 1 level</div>
+              <div className="p-2 bg-white rounded-xl border border-sky-100 font-bold"><span className="text-sky-700">cd -</span> ➜ Previous dir</div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+
+    104: {
+      title: '1.4 Creating, Copying, Moving & Deleting Files',
+      time: '60 mins',
+      badge: 'File Operations',
+      render: (
+        <div className="space-y-6">
+          <div className="space-y-3">
+            <h4 className="font-heading font-bold text-sm text-slate-900">🛠️ Essential File Operations</h4>
+
+            <div className="p-4 bg-slate-50 rounded-2xl border border-sky-100 space-y-2">
+              <span className="font-bold text-xs text-sky-900 block">1. Creating Folders & Files (mkdir, touch)</span>
+              <div className="bg-slate-950 p-3 rounded-xl font-mono text-xs text-emerald-400 space-y-1">
+                <div><span className="text-slate-500"># Create folder & nested tree:</span></div>
+                <div>$ mkdir project</div>
+                <div>$ mkdir -p project/src/components</div>
+                <div><span className="text-slate-500"># Create empty files:</span></div>
+                <div>$ touch project/index.js project/README.md</div>
+              </div>
+            </div>
+
+            <div className="p-4 bg-slate-50 rounded-2xl border border-sky-100 space-y-2">
+              <span className="font-bold text-xs text-sky-900 block">2. Copying Files & Directories (cp)</span>
+              <div className="bg-slate-950 p-3 rounded-xl font-mono text-xs text-emerald-400 space-y-1">
+                <div><span className="text-slate-500"># Copy single file:</span></div>
+                <div>$ cp file.txt copy_file.txt</div>
+                <div><span className="text-slate-500"># Copy folder recursively (-r):</span></div>
+                <div>$ cp -r project/ project_backup/</div>
+              </div>
+            </div>
+
+            <div className="p-4 bg-slate-50 rounded-2xl border border-sky-100 space-y-2">
+              <span className="font-bold text-xs text-sky-900 block">3. Moving & Renaming (mv)</span>
+              <div className="bg-slate-950 p-3 rounded-xl font-mono text-xs text-emerald-400 space-y-1">
+                <div><span className="text-slate-500"># Rename file:</span></div>
+                <div>$ mv old_name.txt new_name.txt</div>
+                <div><span className="text-slate-500"># Move file:</span></div>
+                <div>$ mv report.pdf ~/Documents/</div>
+              </div>
+            </div>
+
+            <div className="p-4 bg-rose-50/70 rounded-2xl border border-rose-200 space-y-2">
+              <span className="font-bold text-xs text-rose-900 flex items-center gap-1">
+                ⚠️ 4. Deleting Files & Directories (rm, rmdir) — Permanent!
+              </span>
+              <div className="bg-slate-950 p-3 rounded-xl font-mono text-xs text-rose-400 space-y-1">
+                <div><span className="text-slate-500"># Remove file & empty folder:</span></div>
+                <div>$ rm file.txt</div>
+                <div>$ rmdir empty_folder/</div>
+                <div><span className="text-slate-500"># Force delete folder & contents (-rf):</span></div>
+                <div>$ rm -rf unwanted_folder/</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+
+    105: {
+      title: '1.5 Quiz & Hands-on Terminal Practice',
+      time: '30 mins',
+      badge: 'Lab Challenge',
+      render: (
+        <div className="space-y-6">
+          <div className="space-y-3">
+            <h4 className="font-heading font-bold text-sm text-slate-900">🧪 Hands-on Lab Challenge</h4>
+            <p className="text-xs text-slate-700 font-medium">Run the following scenario in your terminal:</p>
+
+            <div className="p-4 bg-sky-50 rounded-2xl border border-sky-200 text-xs space-y-2 font-medium">
+              <div className="font-bold text-sky-900">Challenge Scenario Steps:</div>
+              <ol className="list-decimal pl-4 space-y-1 text-slate-700">
+                <li>Create directory structure: <code className="bg-white px-1.5 py-0.5 rounded border font-mono">devops_lab/scripts</code></li>
+                <li>Change directory into <code className="bg-white px-1.5 py-0.5 rounded border font-mono">devops_lab/scripts</code></li>
+                <li>Create three empty files: <code className="bg-white px-1.5 py-0.5 rounded border font-mono">deploy.sh, build.sh, test.sh</code></li>
+                <li>Move <code className="bg-white px-1.5 py-0.5 rounded border font-mono">test.sh</code> one level up into <code className="bg-white px-1.5 py-0.5 rounded border font-mono">devops_lab</code></li>
+                <li>Verify final structure using <code className="bg-white px-1.5 py-0.5 rounded border font-mono">tree</code> or <code className="bg-white px-1.5 py-0.5 rounded border font-mono">ls -la</code></li>
+              </ol>
+            </div>
+
+            <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 font-mono text-xs text-emerald-400 space-y-1 shadow-lg">
+              <div className="text-slate-400"># Verification Commands Solution:</div>
+              <div>$ mkdir -p devops_lab/scripts</div>
+              <div>$ cd devops_lab/scripts</div>
+              <div>$ touch deploy.sh build.sh test.sh</div>
+              <div>$ mv test.sh ..</div>
+              <div>$ cd ..</div>
+              <div>$ ls -R</div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
   };
 
   const handleTerminalExecute = (e: React.FormEvent) => {
@@ -421,6 +738,23 @@ export const CourseView: React.FC = () => {
               </div>
             </div>
 
+            {/* Learning Outcomes Card */}
+            <div className="bg-white/95 border border-sky-200/80 p-6 sm:p-8 rounded-3xl shadow-xl shadow-sky-500/10 space-y-4">
+              <h3 className="font-heading font-bold text-lg text-slate-900 flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                <span>What You Will Learn</span>
+              </h3>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-medium">
+                {courseData.outcomes.map((outcome, idx) => (
+                  <div key={idx} className="p-3 rounded-2xl bg-sky-50/70 border border-sky-100 flex items-start gap-2.5 text-slate-800">
+                    <CheckCircle2 className="w-4 h-4 text-sky-600 shrink-0 mt-0.5" />
+                    <span>{outcome}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
           </div>
 
           {/* Sidebar Quick Info */}
@@ -473,7 +807,7 @@ export const CourseView: React.FC = () => {
               <h2 className="font-heading font-extrabold text-xl text-slate-900">
                 Course Curriculum & Modules Index
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">Click any module to expand lessons and launch interactive labs.</p>
+              <p className="text-xs text-slate-500 mt-0.5">Click any lesson to open its detailed interactive guide, CLI code syntax & labs.</p>
             </div>
             <span className="text-xs font-bold text-sky-700 bg-sky-50 px-3 py-1 rounded-full border border-sky-200">
               {completedLessons.length} / 20 Lessons Completed
@@ -511,7 +845,7 @@ export const CourseView: React.FC = () => {
                         return (
                           <div
                             key={lesson.id}
-                            className="p-3.5 rounded-xl bg-white border border-sky-100 flex items-center justify-between gap-3 text-xs hover:border-sky-300 transition-all"
+                            className="p-3.5 rounded-xl bg-white border border-sky-100 flex items-center justify-between gap-3 text-xs hover:border-sky-300 hover:shadow-xs transition-all"
                           >
                             <div className="flex items-center gap-3 min-w-0">
                               <button
@@ -522,27 +856,21 @@ export const CourseView: React.FC = () => {
                               >
                                 {isDone && <CheckCircle2 className="w-3.5 h-3.5" />}
                               </button>
-                              <span className={`font-semibold truncate ${isDone ? 'text-slate-400 line-through' : 'text-slate-900'}`}>
+                              <button
+                                onClick={() => setSelectedLessonModal(lesson.id)}
+                                className="text-left font-bold text-slate-900 hover:text-sky-600 transition-colors truncate cursor-pointer"
+                              >
                                 {lesson.title}
-                              </span>
+                              </button>
                             </div>
 
                             <div className="flex items-center gap-2 shrink-0">
                               <span className="text-[10px] text-slate-500 font-mono">{lesson.duration}</span>
                               <button
-                                onClick={() => {
-                                  if (lesson.type === 'lab') {
-                                    setActiveTab('terminal');
-                                    toast.info(`Launching Live Terminal Lab for ${lesson.title}`);
-                                  } else if (lesson.type === 'quiz') {
-                                    setActiveTab('quiz');
-                                  } else {
-                                    toast.success(`Playing lesson: ${lesson.title}`);
-                                  }
-                                }}
+                                onClick={() => setSelectedLessonModal(lesson.id)}
                                 className="px-3 py-1 bg-sky-50 hover:bg-sky-600 hover:text-white text-sky-700 font-bold rounded-lg border border-sky-200 transition-all cursor-pointer text-[11px]"
                               >
-                                {lesson.type === 'lab' ? 'Launch Lab' : lesson.type === 'quiz' ? 'Take Quiz' : 'Start'}
+                                View Topic
                               </button>
                             </div>
                           </div>
@@ -661,6 +989,63 @@ export const CourseView: React.FC = () => {
               Submit Quiz & Check Score
             </button>
           )}
+        </div>
+      )}
+
+      {/* Interactive Selected Lesson Detail Modal */}
+      {selectedLessonModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-3xl w-full shadow-2xl space-y-6 border border-sky-200 animate-in zoom-in-95 max-h-[90vh] overflow-y-auto text-slate-900 font-['Sora']">
+            
+            {/* Modal Header */}
+            <div className="flex items-start justify-between border-b border-sky-100 pb-4">
+              <div>
+                <span className="text-xs font-bold text-sky-700 bg-sky-50 px-3 py-1 rounded-full border border-sky-200">
+                  {module1LessonsContent[selectedLessonModal]?.badge || 'Interactive Lesson'} • {module1LessonsContent[selectedLessonModal]?.time || '45 mins'}
+                </span>
+                <h3 className="font-heading font-extrabold text-lg sm:text-xl text-slate-900 mt-2">
+                  {module1LessonsContent[selectedLessonModal]?.title || 'Lesson Overview'}
+                </h3>
+              </div>
+              <button
+                onClick={() => setSelectedLessonModal(null)}
+                className="text-slate-400 hover:text-slate-900 p-1 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Lesson Body */}
+            <div>
+              {module1LessonsContent[selectedLessonModal]?.render || (
+                <div className="p-4 bg-sky-50 text-slate-700 rounded-2xl text-xs font-medium">
+                  Detailed lesson content for this module is ready. Click "Launch Terminal Lab" below to practice hands-on CLI commands!
+                </div>
+              )}
+            </div>
+
+            {/* Modal Action Footer */}
+            <div className="pt-4 border-t border-sky-100 flex items-center justify-end gap-3">
+              <button
+                onClick={() => setSelectedLessonModal(null)}
+                className="py-2.5 px-4 rounded-xl border border-sky-200 text-xs font-bold text-slate-600 hover:bg-sky-50 transition-all cursor-pointer"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedLessonModal(null);
+                  setActiveTab('terminal');
+                  toast.info('Interactive CLI Terminal Lab launched!');
+                }}
+                className="btn-blue-primary text-xs py-2.5 px-5 font-bold flex items-center gap-2 cursor-pointer shadow-md shadow-sky-500/20"
+              >
+                <Terminal className="w-4 h-4" />
+                <span>Launch Interactive Terminal Lab</span>
+              </button>
+            </div>
+
+          </div>
         </div>
       )}
 
