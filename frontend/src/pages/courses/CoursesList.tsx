@@ -14,11 +14,32 @@ export const CoursesList: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedCourseModal, setSelectedCourseModal] = useState<any | null>(null);
 
-  const categories = ['All', 'Development', 'AI & Data', 'Design', 'Business', 'DevOps'];
+  const categories = ['All', 'Linux & Systems', 'Development', 'AI & Data', 'DevOps', 'Design', 'Business'];
 
   const allCourses = [
     {
       id: 1,
+      title: 'Introduction to Linux & System Administration',
+      instructor: 'Bhanu Prakash Achari',
+      role: 'Linux Systems Architect & AI Specialist',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+      rating: 5.0,
+      reviews: 1450,
+      students: '28,900',
+      duration: '32 hrs',
+      category: 'Linux & Systems',
+      level: 'Beginner to Advanced',
+      badge: 'Featured',
+      thumbnail: '/assets/images/linux_course_thumbnail.png',
+      syllabus: [
+        'Module 1: Linux Architecture, Kernel & CLI Fundamentals',
+        'Module 2: File System Hierarchy, Permissions & Ownership',
+        'Module 3: Process Management, Systemd Services & Cron Jobs',
+        'Module 4: Bash Scripting, Networking & Security Hardening',
+      ],
+    },
+    {
+      id: 2,
       title: 'Fullstack Next.js & React Enterprise Architecture',
       instructor: 'Dr. Sarah Jenkins',
       role: 'Senior Staff Engineer',
@@ -39,7 +60,7 @@ export const CoursesList: React.FC = () => {
       ],
     },
     {
-      id: 2,
+      id: 3,
       title: 'AI & Large Language Model Application Design',
       instructor: 'Marcus Vance',
       role: 'AI Research Lead',
@@ -60,7 +81,7 @@ export const CoursesList: React.FC = () => {
       ],
     },
     {
-      id: 3,
+      id: 4,
       title: 'UI/UX Design Systems & Micro-Interactions',
       instructor: 'Elena Rostova',
       role: 'Lead Designer at Framer',
@@ -81,7 +102,7 @@ export const CoursesList: React.FC = () => {
       ],
     },
     {
-      id: 4,
+      id: 5,
       title: 'Cloud DevOps & Kubernetes Cluster Architecture',
       instructor: 'Alex Thorne',
       role: 'Infrastructure Architect',
