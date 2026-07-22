@@ -1,78 +1,266 @@
-import React from 'react';
-import { BookOpen, Plus, Search, Filter, CheckCircle2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { BookOpen, Plus, Search, CheckCircle2, X, Users, Star, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 export const AdminCourses: React.FC = () => {
-  const courses = [
-    { title: 'Linux System Administration & Kernel Architecture', students: '12,450', status: 'Published', tracks: '14 Modules' },
-    { title: 'Git & GitHub Enterprise Version Control', students: '9,820', status: 'Published', tracks: '10 Modules' },
-    { title: 'Docker, Kubernetes & Cloud Native Architecture', students: '8,100', status: 'Published', tracks: '18 Modules' },
-    { title: 'Python for AI & Automated Machine Learning', students: '15,300', status: 'Published', tracks: '22 Modules' },
-  ];
+  const [searchQuery, setSearchQuery] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // New Course Form State
+  const [newTitle, setNewTitle] = useState('');
+  const [newInstructor, setNewInstructor] = useState('');
+  const [newCategory, setNewCategory] = useState('Linux & Systems');
+
+  const [courses, setCourses] = useState([
+    {
+      id: 1,
+      title: 'Introduction to Linux & System Administration',
+      instructor: 'Bhanu Prakash Achari',
+      students: '28,900',
+      status: 'Published',
+      tracks: '4 Modules (32 Hours)',
+      rating: 5.0,
+      category: 'Linux & Systems',
+    },
+    {
+      id: 2,
+      title: 'Fullstack Next.js & React Enterprise Architecture',
+      instructor: 'Dr. Sarah Jenkins',
+      students: '14,200',
+      status: 'Published',
+      tracks: '4 Modules (42 Hours)',
+      rating: 4.9,
+      category: 'Development',
+    },
+    {
+      id: 3,
+      title: 'AI & Large Language Model Application Design',
+      instructor: 'Marcus Vance',
+      students: '21,000',
+      status: 'Draft',
+      tracks: '4 Modules (36 Hours)',
+      rating: 5.0,
+      category: 'AI & Data',
+    },
+  ]);
+
+  const filteredCourses = courses.filter((c) =>
+    c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    c.instructor.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    c.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleCreateCourse = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTitle || !newInstructor) {
+      toast.error('Please fill in title and instructor name.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setTimeout(() => {
+      const created = {
+        id: Date.now(),
+        title: newTitle,
+        instructor: newInstructor,
+        students: '0',
+        status: 'Published',
+        tracks: '4 Modules (20 Hours)',
+        rating: 5.0,
+        category: newCategory,
+      };
+      setCourses([created, ...courses]);
+      setIsSubmitting(false);
+      setModalOpen(false);
+      setNewTitle('');
+      setNewInstructor('');
+      toast.success(`Course "${newTitle}" created successfully!`);
+    }, 500);
+  };
+
+  const toggleCourseStatus = (id: number) => {
+    setCourses((prev) =>
+      prev.map((c) =>
+        c.id === id ? { ...c, status: c.status === 'Published' ? 'Draft' : 'Published' } : c
+      )
+    );
+    toast.info('Course publication status toggled');
+  };
 
   return (
-    <div className="pt-24 min-h-screen bg-slate-950 text-white px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8 pb-16 font-sans">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/90 border border-slate-800 p-6 rounded-3xl backdrop-blur-xl shadow-2xl">
+    <div className="space-y-8 text-slate-900 font-['Sora'] max-w-7xl mx-auto pb-12">
+      
+      {/* Header Banner */}
+      <div className="bg-white/95 backdrop-blur-2xl border border-sky-200/80 p-6 sm:p-8 rounded-3xl shadow-xl shadow-sky-500/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-white">
-            Admin Course Management
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-sky-700 text-xs font-bold uppercase tracking-wider mb-2">
+            <BookOpen className="w-3.5 h-3.5 text-sky-500" />
+            <span>Curriculum Management</span>
+          </div>
+          <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900">
+            Admin Course Track Management
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Create, update, and manage enterprise technical curriculum and AI assessment rubrics.
+          <p className="text-xs sm:text-sm text-slate-500 mt-1 font-medium">
+            Create, edit, and publish enterprise technical courses and AI assessment rubrics.
           </p>
         </div>
 
-        <button className="px-5 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl shadow-lg shadow-emerald-900/30 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 text-xs cursor-pointer">
+        <button
+          onClick={() => setModalOpen(true)}
+          className="btn-blue-primary text-xs py-3 px-5 shadow-lg shadow-sky-500/20 flex items-center justify-center gap-2 font-bold cursor-pointer"
+        >
           <Plus className="w-4 h-4" />
-          <span>Add New Course</span>
+          <span>Add New Course Track</span>
         </button>
       </div>
 
-      <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-lg">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pb-2">
-          <div className="relative w-full sm:w-80">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+      {/* Main Table Container */}
+      <div className="bg-white/90 border border-sky-200/80 rounded-3xl p-6 space-y-4 shadow-sm">
+        
+        {/* Search & Filter */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="relative w-full sm:w-96">
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
-              placeholder="Search course tracks..."
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2 pl-9 pr-3 text-xs text-white focus:outline-none focus:border-emerald-500"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search courses by title, instructor, or topic..."
+              className="w-full bg-slate-50 border border-sky-200 rounded-xl py-2.5 pl-10 pr-4 text-xs text-slate-900 focus:outline-hidden transition-all font-medium"
             />
           </div>
-
-          <button className="px-4 py-2 bg-slate-950 border border-slate-800 text-slate-300 rounded-xl text-xs flex items-center gap-2">
-            <Filter className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Filter Catalog</span>
-          </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {courses.map((course, idx) => (
-            <div key={idx} className="p-5 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-3 hover:border-emerald-500/40 transition-all">
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
-                    <BookOpen className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-sm text-white">{course.title}</h3>
-                    <span className="text-[11px] text-slate-400">{course.tracks}</span>
-                  </div>
+        {/* Courses Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
+          {filteredCourses.map((course) => (
+            <div
+              key={course.id}
+              className="p-5 rounded-2xl bg-slate-50/80 border border-sky-200/80 hover:border-sky-300 transition-all space-y-3 shadow-xs flex flex-col justify-between"
+            >
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold text-sky-700 bg-sky-100/80 px-2.5 py-0.5 rounded-md border border-sky-200">
+                    {course.category}
+                  </span>
+                  <button
+                    onClick={() => toggleCourseStatus(course.id)}
+                    className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider cursor-pointer ${
+                      course.status === 'Published'
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        : 'bg-amber-50 text-amber-700 border border-amber-200'
+                    }`}
+                  >
+                    {course.status}
+                  </button>
                 </div>
-                <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-mono font-semibold flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3" />
-                  {course.status}
-                </span>
+
+                <h3 className="font-heading font-bold text-sm text-slate-900 leading-snug">
+                  {course.title}
+                </h3>
+                <p className="text-xs text-slate-500 font-medium">Instructor: {course.instructor}</p>
               </div>
 
-              <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-800/80">
-                <span className="text-slate-400 font-mono">Enrolled: {course.students} Students</span>
-                <button className="text-emerald-400 hover:underline font-semibold cursor-pointer">
-                  Edit Curriculum →
-                </button>
+              <div className="pt-3 border-t border-sky-100 flex items-center justify-between text-xs text-slate-600 font-medium">
+                <span className="flex items-center gap-1">
+                  <Users className="w-3.5 h-3.5 text-sky-600" />
+                  {course.students}
+                </span>
+                <span className="flex items-center gap-1 font-bold text-amber-600">
+                  <Star className="w-3.5 h-3.5 fill-current text-amber-400" />
+                  {course.rating}
+                </span>
+                <span className="font-mono text-[11px] text-slate-500">{course.tracks}</span>
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Add Course Modal */}
+      {modalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-6 border border-sky-200 animate-in zoom-in-95 text-slate-900 font-['Sora']">
+            <div className="flex items-center justify-between border-b border-sky-100 pb-3">
+              <h3 className="font-heading font-bold text-lg text-slate-900 flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-sky-600" /> Create New Course Track
+              </h3>
+              <button onClick={() => setModalOpen(false)} className="text-slate-400 hover:text-slate-900 cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateCourse} className="space-y-4">
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Course Title</label>
+                <input
+                  type="text"
+                  required
+                  value={newTitle}
+                  onChange={(e) => setNewTitle(e.target.value)}
+                  placeholder="Advanced Bash & Linux Kernel Security"
+                  className="w-full bg-slate-50 border border-sky-200 rounded-xl py-2.5 px-3 text-xs text-slate-900 focus:outline-hidden transition-all font-medium"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Instructor Name</label>
+                <input
+                  type="text"
+                  required
+                  value={newInstructor}
+                  onChange={(e) => setNewInstructor(e.target.value)}
+                  placeholder="Bhanu Prakash Achari"
+                  className="w-full bg-slate-50 border border-sky-200 rounded-xl py-2.5 px-3 text-xs text-slate-900 focus:outline-hidden transition-all font-medium"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">Category</label>
+                <select
+                  value={newCategory}
+                  onChange={(e) => setNewCategory(e.target.value)}
+                  className="w-full bg-slate-50 border border-sky-200 rounded-xl py-2.5 px-3 text-xs text-slate-900 focus:outline-hidden transition-all font-medium cursor-pointer"
+                >
+                  <option value="Linux & Systems">Linux & Systems</option>
+                  <option value="Development">Development</option>
+                  <option value="AI & Data">AI & Data</option>
+                  <option value="DevOps">DevOps</option>
+                </select>
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setModalOpen(false)}
+                  className="py-2.5 px-4 rounded-xl border border-sky-200 text-xs font-bold text-slate-600 hover:bg-sky-50 transition-all cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="btn-blue-primary text-xs py-2.5 px-5 font-bold flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Creating...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-4 h-4" />
+                      <span>Publish Course</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

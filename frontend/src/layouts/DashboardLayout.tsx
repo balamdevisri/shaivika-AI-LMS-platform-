@@ -14,6 +14,8 @@ import {
   ChevronDown,
   Menu,
   X,
+  UserCheck,
+  GraduationCap,
 } from 'lucide-react';
 import { BrandLogo } from '@/components/common/BrandLogo';
 import { useAuth } from '@/contexts/AuthContext';
@@ -37,14 +39,23 @@ export const DashboardLayout: React.FC = () => {
     }
   };
 
-  const navItems = [
-    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Courses Catalog', href: '/dashboard/courses', icon: BookOpen },
-    { name: 'Assignments & Quizzes', href: '/dashboard?tab=assignments', icon: FileText },
-    { name: 'Schedule & Calendar', href: '/dashboard?tab=calendar', icon: Calendar },
-    { name: 'Certificates', href: '/dashboard?tab=certificates', icon: Award },
-    { name: 'Analytics & Reports', href: '/dashboard?tab=analytics', icon: BarChart3 },
-  ];
+  const isAdminRoute = location.pathname.startsWith('/admin') || userProfile?.role === 'admin';
+
+  const navItems = isAdminRoute
+    ? [
+        { name: 'Admin Overview', href: '/admin/dashboard', icon: LayoutDashboard },
+        { name: 'Course Management', href: '/admin/courses', icon: BookOpen },
+        { name: 'Student Management', href: '/admin/students', icon: UserCheck },
+        { name: 'Instructor Management', href: '/admin/instructors', icon: GraduationCap },
+      ]
+    : [
+        { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+        { name: 'Courses Catalog', href: '/dashboard/courses', icon: BookOpen },
+        { name: 'Assignments & Quizzes', href: '/dashboard?tab=assignments', icon: FileText },
+        { name: 'Schedule & Calendar', href: '/dashboard?tab=calendar', icon: Calendar },
+        { name: 'Certificates', href: '/dashboard?tab=certificates', icon: Award },
+        { name: 'Analytics & Reports', href: '/dashboard?tab=analytics', icon: BarChart3 },
+      ];
 
   const sampleNotifications = [
     { id: 1, title: 'AI Quiz Released', desc: 'Module 4: Vector Embeddings score is 98/100', time: '10m ago' },

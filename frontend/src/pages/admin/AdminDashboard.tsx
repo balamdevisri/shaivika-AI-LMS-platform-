@@ -1,39 +1,52 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { Users, BookOpen, ShieldCheck, BarChart3, Bot, PlusCircle } from 'lucide-react';
+import { Users, BookOpen, ShieldCheck, BarChart3, PlusCircle, GraduationCap, ChevronRight } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
   const { userProfile } = useAuth();
 
   const metrics = [
-    { label: 'Total Students', value: '14,280', icon: Users, change: '+12% this month' },
-    { label: 'Active Courses', value: '254', icon: BookOpen, change: '8 pending review' },
-    { label: 'AI Tutor Queries', value: '1.2M', icon: Bot, change: '99.9% accuracy' },
-    { label: 'System Health', value: '99.98%', icon: ShieldCheck, change: 'All services online' },
+    { label: 'Total Registered Students', value: '50,240', icon: Users, change: '+12% this month', link: '/admin/students' },
+    { label: 'Active Course Tracks', value: '1 Course Active', icon: BookOpen, change: 'Linux & System Admin', link: '/admin/courses' },
+    { label: 'Verified Instructors', value: '4 Faculty', icon: GraduationCap, change: '1 Pending Approval', link: '/admin/instructors' },
+    { label: 'System Health', value: '99.98%', icon: ShieldCheck, change: 'All AI services online', link: '/admin/dashboard' },
   ];
 
   return (
-    <div className="pt-24 min-h-screen bg-slate-950 text-white px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8 pb-16 font-sans">
+    <div className="space-y-8 text-slate-900 font-['Sora'] max-w-7xl mx-auto pb-12">
       
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/90 border border-slate-800 p-6 rounded-3xl backdrop-blur-xl shadow-2xl shadow-emerald-950/30">
+      <div className="bg-white/95 backdrop-blur-2xl border border-sky-200/80 p-6 sm:p-8 rounded-3xl shadow-xl shadow-sky-500/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono font-semibold mb-2">
-            <ShieldCheck className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-sky-700 text-xs font-bold uppercase tracking-wider mb-2">
+            <ShieldCheck className="w-3.5 h-3.5 text-sky-500" />
             <span>ADMINISTRATOR CONTROL PANEL</span>
           </div>
-          <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-white">
+          <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900">
             Welcome back, {userProfile?.name || 'Administrator'}
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Manage course catalogs, monitor student engagement metrics, and configure AI tutor parameters.
+          <p className="text-xs sm:text-sm text-slate-500 mt-1 font-medium">
+            Manage course catalogs, student accounts, instructor approvals, and AI tutor parameters.
           </p>
         </div>
 
-        <button className="px-5 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl shadow-lg shadow-emerald-900/30 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2 text-xs cursor-pointer">
-          <PlusCircle className="w-4 h-4" />
-          <span>Create New Course Track</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            to="/admin/courses"
+            className="btn-blue-primary text-xs py-2.5 px-4 shadow-lg shadow-sky-500/20 flex items-center justify-center gap-2 font-bold"
+          >
+            <PlusCircle className="w-4 h-4" />
+            <span>Manage Courses</span>
+          </Link>
+          <Link
+            to="/admin/instructors"
+            className="bg-white hover:bg-sky-50 text-slate-800 font-bold text-xs border border-sky-200 py-2.5 px-4 rounded-xl transition-all shadow-xs flex items-center gap-1.5"
+          >
+            <GraduationCap className="w-4 h-4 text-sky-600" />
+            <span>Instructors</span>
+          </Link>
+        </div>
       </div>
 
       {/* Metric Cards Grid */}
@@ -41,19 +54,23 @@ export const AdminDashboard: React.FC = () => {
         {metrics.map((metric, idx) => {
           const Icon = metric.icon;
           return (
-            <div
+            <Link
               key={idx}
-              className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 backdrop-blur-xl space-y-2 hover:border-emerald-500/30 transition-all shadow-lg"
+              to={metric.link}
+              className="p-5 rounded-2xl bg-white/90 border border-sky-200/80 backdrop-blur-xl space-y-2 hover:border-sky-400 hover:shadow-md transition-all shadow-xs group"
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs text-slate-400 font-semibold">{metric.label}</span>
-                <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+                <span className="text-xs text-slate-500 font-semibold">{metric.label}</span>
+                <div className="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center border border-sky-100 group-hover:bg-sky-600 group-hover:text-white transition-colors">
                   <Icon className="w-4 h-4" />
                 </div>
               </div>
-              <div className="font-heading font-extrabold text-2xl text-white">{metric.value}</div>
-              <span className="text-[11px] text-emerald-400 font-mono block">{metric.change}</span>
-            </div>
+              <div className="font-heading font-extrabold text-2xl text-slate-900">{metric.value}</div>
+              <div className="flex items-center justify-between text-[11px] text-sky-700 font-medium">
+                <span>{metric.change}</span>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-sky-600 group-hover:translate-x-1 transition-all" />
+              </div>
+            </Link>
           );
         })}
       </div>
@@ -61,63 +78,69 @@ export const AdminDashboard: React.FC = () => {
       {/* Admin Action Sections */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        {/* Recent Student Enrollments */}
-        <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-lg">
+        {/* Recent Student Registrations */}
+        <div className="bg-white/90 border border-sky-200/80 rounded-3xl p-6 space-y-4 shadow-sm">
           <div className="flex items-center justify-between">
-            <h3 className="font-heading font-bold text-lg text-white flex items-center gap-2">
-              <Users className="w-5 h-5 text-emerald-400" />
+            <h3 className="font-heading font-bold text-lg text-slate-900 flex items-center gap-2">
+              <Users className="w-5 h-5 text-sky-600" />
               <span>Recent Registrations</span>
             </h3>
-            <span className="text-xs text-emerald-400 font-mono font-semibold">Real-time Sync</span>
+            <Link to="/admin/students" className="text-xs text-sky-600 font-bold hover:underline">
+              View All Students →
+            </Link>
           </div>
 
           <div className="space-y-3">
             {[
               { name: 'Alex Johnson', email: 'alex.j@stanford.edu', time: '5 mins ago', role: 'Student' },
-              { name: 'Samantha Wu', email: 'sam.wu@mit.edu', time: '12 mins ago', role: 'Student' },
+              { name: 'Prof. Alan Turing', email: 'alan@university.edu', time: '12 mins ago', role: 'Instructor' },
               { name: 'David Miller', email: 'd.miller@tech.org', time: '34 mins ago', role: 'Student' },
             ].map((st, i) => (
-              <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-xs">
+              <div key={i} className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-sky-100 text-xs">
                 <div>
-                  <span className="font-semibold text-white block">{st.name}</span>
-                  <span className="text-[11px] text-slate-400">{st.email}</span>
+                  <span className="font-bold text-slate-900 block">{st.name}</span>
+                  <span className="text-[11px] text-slate-500 font-medium">{st.email}</span>
                 </div>
-                <span className="text-[10px] font-mono text-slate-500">{st.time}</span>
+                <div className="text-right">
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${st.role === 'Instructor' ? 'bg-sky-100 text-sky-800' : 'bg-slate-200 text-slate-700'}`}>
+                    {st.role}
+                  </span>
+                  <span className="text-[10px] text-slate-400 block mt-0.5 font-medium">{st.time}</span>
+                </div>
               </div>
             ))}
           </div>
         </div>
 
         {/* AI System Health & Parameters */}
-        <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-lg">
+        <div className="bg-white/90 border border-sky-200/80 rounded-3xl p-6 space-y-4 shadow-sm">
           <div className="flex items-center justify-between">
-            <h3 className="font-heading font-bold text-lg text-white flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-emerald-400" />
-              <span>AI Engine Metrics</span>
+            <h3 className="font-heading font-bold text-lg text-slate-900 flex items-center gap-2">
+              <BarChart3 className="w-5 h-5 text-sky-600" />
+              <span>AI Tutor Engine Metrics</span>
             </h3>
-            <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2.5 py-0.5 rounded-full font-mono font-semibold">
+            <span className="text-xs bg-sky-100 text-sky-700 px-2.5 py-0.5 rounded-full font-bold border border-sky-200">
               Operational
             </span>
           </div>
 
-          <div className="space-y-3 text-xs">
-            <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
-              <span className="text-slate-300">Model Response Latency</span>
-              <span className="font-mono text-emerald-400 font-semibold">142ms</span>
+          <div className="space-y-3 text-xs font-medium">
+            <div className="p-3 bg-slate-50 border border-sky-100 rounded-2xl flex items-center justify-between">
+              <span className="text-slate-600">Model Version</span>
+              <span className="font-mono text-sky-700 font-bold">Kaizen Q v3.0 (Shaivika Engine)</span>
             </div>
-            <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
-              <span className="text-slate-300">Automated Homework Grading Engine</span>
-              <span className="font-mono text-emerald-400 font-semibold">Active (v4.2.0)</span>
+            <div className="p-3 bg-slate-50 border border-sky-100 rounded-2xl flex items-center justify-between">
+              <span className="text-slate-600">Average Response Latency</span>
+              <span className="font-mono text-emerald-600 font-bold">142ms</span>
             </div>
-            <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
-              <span className="text-slate-300">Vector Database Storage (Pinecone)</span>
-              <span className="font-mono text-emerald-400 font-semibold">2.4 GB / 10 GB</span>
+            <div className="p-3 bg-slate-50 border border-sky-100 rounded-2xl flex items-center justify-between">
+              <span className="text-slate-600">Automated Evaluation Precision</span>
+              <span className="font-mono text-sky-700 font-bold">99.8%</span>
             </div>
           </div>
         </div>
 
       </div>
-
     </div>
   );
 };

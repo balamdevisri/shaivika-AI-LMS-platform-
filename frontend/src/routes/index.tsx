@@ -14,6 +14,7 @@ import { CoursesList } from '@/pages/courses/CoursesList';
 import { AdminDashboard } from '@/pages/admin/AdminDashboard';
 import { AdminCourses } from '@/pages/admin/AdminCourses';
 import { AdminStudents } from '@/pages/admin/AdminStudents';
+import { AdminInstructors } from '@/pages/admin/AdminInstructors';
 import { StudentRoute } from '@/components/auth/StudentRoute';
 import { AdminRoute } from '@/components/auth/AdminRoute';
 
@@ -50,7 +51,7 @@ const router = createBrowserRouter([
       { path: 'profile', element: <Profile /> },
     ],
   },
-  // Admin Protected Routes (/admin/dashboard, /admin/courses, /admin/students)
+  // Admin Protected Routes (/admin/dashboard, /admin/courses, /admin/students, /admin/instructors)
   {
     path: '/admin',
     element: (
@@ -62,6 +63,7 @@ const router = createBrowserRouter([
       { path: 'dashboard', element: <AdminDashboard /> },
       { path: 'courses', element: <AdminCourses /> },
       { path: 'students', element: <AdminStudents /> },
+      { path: 'instructors', element: <AdminInstructors /> },
     ],
   },
   // Fallback 404 / Unauthorized redirect
