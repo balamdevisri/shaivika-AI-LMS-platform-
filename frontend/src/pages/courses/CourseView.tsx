@@ -310,20 +310,114 @@ export const CourseView: React.FC = () => {
               </div>
             </div>
 
-            {/* Learning Outcomes Card */}
-            <div className="bg-white/95 border border-sky-200/80 p-6 sm:p-8 rounded-3xl shadow-xl shadow-sky-500/10 space-y-4">
-              <h3 className="font-heading font-bold text-lg text-slate-900 flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                <span>What You Will Learn</span>
-              </h3>
+            {/* Module 1 Deep Dive: Architecture Diagrams & Linux Distros */}
+            <div className="bg-white/95 border border-sky-200/80 p-6 sm:p-8 rounded-3xl shadow-xl shadow-sky-500/10 space-y-6">
+              <div className="flex items-center justify-between border-b border-sky-100 pb-3">
+                <div className="flex items-center gap-2">
+                  <Terminal className="w-5 h-5 text-sky-600" />
+                  <h3 className="font-heading font-extrabold text-lg sm:text-xl text-slate-900">
+                    Module 1: Linux Architecture & Components
+                  </h3>
+                </div>
+                <span className="text-xs font-bold text-sky-700 bg-sky-50 px-3 py-1 rounded-full border border-sky-200">
+                  Core Fundamentals
+                </span>
+              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-medium">
-                {courseData.outcomes.map((outcome, idx) => (
-                  <div key={idx} className="p-3 rounded-2xl bg-sky-50/70 border border-sky-100 flex items-start gap-2.5 text-slate-800">
-                    <CheckCircle2 className="w-4 h-4 text-sky-600 shrink-0 mt-0.5" />
-                    <span>{outcome}</span>
-                  </div>
-                ))}
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                Linux combines a wide range of open-source tools and components to form a complete computing environment. These components include file systems, user interfaces, system utilities and application programs, all working together to manage hardware and enable users to interact with their computer systems.
+              </p>
+
+              {/* Diagram 1: Unix and Linux OS Architecture */}
+              <div className="space-y-3 bg-slate-50 p-4 sm:p-5 rounded-2xl border border-sky-100">
+                <h4 className="font-heading font-bold text-xs sm:text-sm text-slate-900 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-sky-500" />
+                  1. Layered Architecture: Hardware → Kernel → Shell → User Applications
+                </h4>
+                <div className="rounded-2xl overflow-hidden border border-sky-200 bg-white shadow-xs">
+                  <img
+                    src="/assets/images/linux_os_architecture.png"
+                    alt="Unix and Linux Operating Systems Architecture"
+                    className="w-full object-cover max-h-96"
+                  />
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                  User applications (Web Browsers, Text Editors, Compilers) interact with the <strong>Shell</strong> (Command Line & GUI). The Shell makes system calls to the <strong>Kernel</strong> (Core control program), which directly manages CPU, Memory, and Hardware Devices.
+                </p>
+              </div>
+
+              {/* Diagram 2: Monolithic Kernel vs Microkernel */}
+              <div className="space-y-3 bg-slate-50 p-4 sm:p-5 rounded-2xl border border-sky-100">
+                <h4 className="font-heading font-bold text-xs sm:text-sm text-slate-900 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-sky-500" />
+                  2. Monolithic Kernel Architecture (e.g. Linux) vs. Microkernel (e.g. Minix)
+                </h4>
+                <div className="rounded-2xl overflow-hidden border border-sky-200 bg-white shadow-xs">
+                  <img
+                    src="/assets/images/linux_monolithic_vs_microkernel.png"
+                    alt="Monolithic Kernel vs Microkernel Architecture"
+                    className="w-full object-cover max-h-96"
+                  />
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                  Linux uses a <strong>Monolithic Kernel</strong> where File System, Device Drivers, IPC (Inter-Process Communication), and Process Scheduler operate together inside a single Kernel Space for maximum performance and low-latency hardware execution.
+                </p>
+              </div>
+
+              {/* Diagram 3: Kernel Subsystem Managers */}
+              <div className="space-y-3 bg-slate-50 p-4 sm:p-5 rounded-2xl border border-sky-100">
+                <h4 className="font-heading font-bold text-xs sm:text-sm text-slate-900 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-sky-500" />
+                  3. Kernel Subsystem Managers & Hardware Interface
+                </h4>
+                <div className="rounded-2xl overflow-hidden border border-sky-200 bg-white shadow-xs">
+                  <img
+                    src="/assets/images/linux_kernel_managers.png"
+                    alt="Kernel Subsystem Managers"
+                    className="w-full object-cover max-h-96"
+                  />
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                  The Linux Kernel coordinates four core managers: <strong>Process Scheduler</strong> (CPU queue allocation), <strong>Memory Manager</strong> (Virtual vs Physical RAM), <strong>Device Drivers</strong> (Storage, Display, USB), and <strong>File System Manager</strong>.
+                </p>
+              </div>
+
+              {/* Distributions in Linux */}
+              <div className="space-y-4 pt-4 border-t border-sky-100">
+                <div className="space-y-1">
+                  <h3 className="font-heading font-extrabold text-lg text-slate-900">
+                    Distributions in Linux (Distros)
+                  </h3>
+                  <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                    A Linux distribution (distro) is a complete operating system built around the Linux kernel along with system tools, libraries, and applications. Different distributions are designed for various purposes such as desktops, servers, cybersecurity, and development.
+                  </p>
+                </div>
+
+                {/* Distros Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  {[
+                    { name: 'Ubuntu', badge: 'Beginner-Friendly', color: 'border-orange-200 bg-orange-50/50 text-orange-900', desc: 'A beginner-friendly Linux distribution used for desktops, servers, and cloud computing.' },
+                    { name: 'Debian', badge: 'Server & Stability', color: 'border-rose-200 bg-rose-50/50 text-rose-900', desc: 'A stable and reliable Linux distribution widely used for enterprise servers.' },
+                    { name: 'Kali Linux', badge: 'Cybersecurity', color: 'border-sky-200 bg-sky-50/50 text-sky-900', desc: 'A security-focused Linux distribution used for ethical hacking and penetration testing.' },
+                    { name: 'MX Linux', badge: 'Lightweight', color: 'border-slate-200 bg-slate-100/60 text-slate-900', desc: 'A lightweight Linux distribution suitable for older hardware.' },
+                    { name: 'Manjaro', badge: 'Arch-Based', color: 'border-emerald-200 bg-emerald-50/50 text-emerald-900', desc: 'A user-friendly Arch-based Linux distribution with rolling updates.' },
+                    { name: 'Linux Mint', badge: 'Windows Migrators', color: 'border-green-200 bg-green-50/50 text-green-900', desc: 'A simple and beginner-friendly Linux distribution ideal for Windows users.' },
+                    { name: 'Solus', badge: 'Desktop Performance', color: 'border-blue-200 bg-blue-50/50 text-blue-900', desc: 'A modern Linux distribution focused on desktop performance and simplicity.' },
+                    { name: 'Fedora', badge: 'Developer-Focused', color: 'border-indigo-200 bg-indigo-50/50 text-indigo-900', desc: 'A developer-focused Linux distribution featuring the latest technologies.' },
+                    { name: 'openSUSE', badge: 'Enterprise & Dev', color: 'border-lime-200 bg-lime-50/50 text-lime-900', desc: 'A powerful Linux distribution used for development and enterprise environments.' },
+                    { name: 'Deepin', badge: 'Visually Attractive', color: 'border-purple-200 bg-purple-50/50 text-purple-900', desc: 'A visually attractive Linux distribution with an easy-to-use aesthetic interface.' },
+                  ].map((distro, i) => (
+                    <div key={i} className={`p-3.5 rounded-2xl border ${distro.color} space-y-1 shadow-xs`}>
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-xs">{distro.name}</span>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white border border-slate-200">
+                          {distro.badge}
+                        </span>
+                      </div>
+                      <p className="text-[11px] opacity-90 font-medium leading-relaxed">{distro.desc}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
