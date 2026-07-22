@@ -478,6 +478,247 @@ export const CourseView: React.FC = () => {
         </div>
       ),
     },
+
+    // Module 2 Gamified Lessons
+    201: {
+      title: '2.1 Linux File System Hierarchy Standard',
+      time: '55 mins',
+      badge: 'The Citadel Sectors',
+      render: (
+        <div className="space-y-6">
+          <div className="bg-sky-50/80 p-4 sm:p-5 rounded-2xl border border-sky-200/80 space-y-2">
+            <span className="text-xs font-bold text-sky-800 uppercase tracking-wider block">🎮 GAMIFIED LORE: "THE CITADEL SECTORS"</span>
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+              "Welcome to the Linux Core Citadel. The File System Hierarchy Standard (FHS) is the map of our digital megacity. Every directory is a dedicated sector with a specific security clearance and purpose."
+            </p>
+          </div>
+
+          <div className="bg-slate-950 p-4 sm:p-5 rounded-2xl border border-slate-800 font-mono text-xs text-slate-300 space-y-1.5 shadow-lg">
+            <div className="text-sky-400 font-bold">/ (Root Level 0)</div>
+            <div className="pl-4">├── <span className="text-rose-400 font-bold">/root</span> (Admin Sanctuary)</div>
+            <div className="pl-4">├── <span className="text-amber-400 font-bold">/etc</span>  (Control Center)</div>
+            <div className="pl-4">├── <span className="text-emerald-400 font-bold">/var</span>  (Live Telemetry & Logs)</div>
+            <div className="pl-4">└── <span className="text-sky-300 font-bold">/usr</span>  (User Arsenal)</div>
+          </div>
+
+          <div className="space-y-3">
+            <h4 className="font-heading font-bold text-sm text-slate-900">🏢 Key Sectors Breakdown Table</h4>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="bg-sky-50 border-b border-sky-200 text-sky-900 font-bold">
+                    <th className="p-3">Sector</th>
+                    <th className="p-3">Description</th>
+                    <th className="p-3">Access Level</th>
+                    <th className="p-3">Gamified Analogy</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-sky-100 font-medium text-slate-800">
+                  <tr className="hover:bg-slate-50">
+                    <td className="p-3 font-mono font-bold text-rose-600">/root</td>
+                    <td className="p-3">Superuser / System Admin home folder</td>
+                    <td className="p-3 font-bold text-rose-600">🔴 Restricted (Root Only)</td>
+                    <td className="p-3">The High Command Sanctum</td>
+                  </tr>
+                  <tr className="hover:bg-slate-50">
+                    <td className="p-3 font-mono font-bold text-amber-600">/etc</td>
+                    <td className="p-3">System-wide configuration files</td>
+                    <td className="p-3 font-bold text-amber-600">🟡 Admin Write / All Read</td>
+                    <td className="p-3">The Power Grid & Control Switches</td>
+                  </tr>
+                  <tr className="hover:bg-slate-50">
+                    <td className="p-3 font-mono font-bold text-emerald-600">/var</td>
+                    <td className="p-3">Variable data (logs, databases, mail queues)</td>
+                    <td className="p-3 font-bold text-emerald-600">🟢 Dynamic System Writes</td>
+                    <td className="p-3">Live Radar & Flight Recorders</td>
+                  </tr>
+                  <tr className="hover:bg-slate-50">
+                    <td className="p-3 font-mono font-bold text-sky-600">/usr</td>
+                    <td className="p-3">User binaries, libraries, and documentation</td>
+                    <td className="p-3 font-bold text-sky-600">🔵 Read-Only for Users</td>
+                    <td className="p-3">The Equipment Arsenal</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+
+    202: {
+      title: '2.2 File Permissions Demystified',
+      time: '65 mins',
+      badge: 'Access Badges & Octal Math',
+      render: (
+        <div className="space-y-6">
+          <div className="bg-sky-50/80 p-4 sm:p-5 rounded-2xl border border-sky-200/80 space-y-2">
+            <span className="text-xs font-bold text-sky-800 uppercase tracking-wider block">🎮 GAMIFIED LORE: "ACCESS BADGES & SECURITY KEYPADS"</span>
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+              "Every data file is locked inside a digital vault. To access it, you need the right Access Badge. Permissions dictate who can Read (r), Write (w), or Execute (x) operations."
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <h4 className="font-heading font-bold text-sm text-slate-900">🔐 Permission Matrix & Octal Math</h4>
+            <div className="bg-slate-950 p-4 sm:p-6 rounded-2xl border border-slate-800 font-mono text-xs space-y-3 shadow-xl">
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div className="p-3 bg-sky-950/80 border border-sky-500/40 rounded-xl">
+                  <span className="text-sky-400 font-bold block text-[11px]">Owner (User)</span>
+                  <span className="text-white text-sm font-bold block mt-1">r  w  x</span>
+                  <span className="text-sky-300 text-[10px] block mt-1">4 + 2 + 1 = 7</span>
+                </div>
+                <div className="p-3 bg-amber-950/80 border border-amber-500/40 rounded-xl">
+                  <span className="text-amber-400 font-bold block text-[11px]">Group</span>
+                  <span className="text-white text-sm font-bold block mt-1">r  -  x</span>
+                  <span className="text-amber-300 text-[10px] block mt-1">4 + 0 + 1 = 5</span>
+                </div>
+                <div className="p-3 bg-emerald-950/80 border border-emerald-500/40 rounded-xl">
+                  <span className="text-emerald-400 font-bold block text-[11px]">Others</span>
+                  <span className="text-white text-sm font-bold block mt-1">r  -  x</span>
+                  <span className="text-emerald-300 text-[10px] block mt-1">4 + 0 + 1 = 5</span>
+                </div>
+              </div>
+
+              <div className="pt-2 text-center text-emerald-400 font-bold text-sm border-t border-slate-800">
+                Combined Octal Permission: 755
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs pt-1">
+              <div className="p-3 bg-slate-50 rounded-xl border border-sky-100 font-medium">
+                <span className="font-bold text-sky-900 block">r (Read) = 4:</span> Scan / view file contents.
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-sky-100 font-medium">
+                <span className="font-bold text-amber-900 block">w (Write) = 2:</span> Modify / rewrite data.
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-sky-100 font-medium">
+                <span className="font-bold text-emerald-900 block">x (Execute) = 1:</span> Run executable program.
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <h4 className="font-heading font-bold text-sm text-slate-900">🛠️ Key Permission Commands:</h4>
+            <InteractiveCmd cmd="chmod 755 deployment_script.sh" desc="Grant Owner full control (7), Group & Others read+execute (5)" />
+            <InteractiveCmd cmd="chmod 600 private_key.pem" desc="Restrict file access strictly to the Owner only (600)" />
+          </div>
+        </div>
+      ),
+    },
+
+    203: {
+      title: '2.3 User & Group Management',
+      time: '60 mins',
+      badge: 'Guilds & Superuser Overdrive',
+      render: (
+        <div className="space-y-6">
+          <div className="bg-sky-50/80 p-4 sm:p-5 rounded-2xl border border-sky-200/80 space-y-2">
+            <span className="text-xs font-bold text-sky-800 uppercase tracking-wider block">🎮 GAMIFIED LORE: "GUILDS, ROLES & SUPERUSER OVERDRIVE"</span>
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+              "In a multi-user OS, users belong to Guilds (Groups). When standard privileges aren't enough, sudo allows you to trigger Superuser Overdrive to override system boundaries."
+            </p>
+          </div>
+
+          <div className="bg-slate-950 p-4 sm:p-5 rounded-2xl border border-slate-800 font-mono text-xs shadow-xl flex items-center justify-between gap-3 text-slate-300">
+            <div className="p-2.5 bg-slate-900 rounded-xl border border-slate-700 text-center flex-1">
+              <span className="font-bold text-sky-400 block text-[11px]">Regular User</span>
+              <span className="text-white text-[10px]">Dev-01</span>
+            </div>
+            <div className="text-amber-400 font-bold text-[10px] text-center">
+              {'───( types: sudo )───►'}
+            </div>
+            <div className="p-2.5 bg-rose-950/80 rounded-xl border border-rose-500/40 text-center flex-1">
+              <span className="font-bold text-rose-400 block text-[11px]">Superuser Overdrive</span>
+              <span className="text-white text-[10px]">Root Privilege</span>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <h4 className="font-heading font-bold text-sm text-slate-900">🛠️ Management Commands:</h4>
+            <InteractiveCmd cmd="sudo useradd -m -s /bin/bash operative_01" desc="Create a new agent user account" />
+            <InteractiveCmd cmd="sudo usermod -aG devops operative_01" desc="Assign operative to the 'devops' guild group" />
+            <InteractiveCmd cmd="sudo chown -R operative_01:devops /opt/secure_vault" desc="Transfer directory ownership to user & group" />
+          </div>
+        </div>
+      ),
+    },
+
+    204: {
+      title: '2.4 Text Search & Inspection Tools',
+      time: '70 mins',
+      badge: 'Scanner Drones & Thermal Scopes',
+      render: (
+        <div className="space-y-6">
+          <div className="bg-sky-50/80 p-4 sm:p-5 rounded-2xl border border-sky-200/80 space-y-2">
+            <span className="text-xs font-bold text-sky-800 uppercase tracking-wider block">🎮 GAMIFIED LORE: "SCANNER DRONES & THERMAL SCOPES"</span>
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+              "Searching through megabytes of raw server telemetry manually is impossible. Equipping scanner tools like grep and tail turns your terminal into a deep-range tactical radar."
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <h4 className="font-heading font-bold text-sm text-slate-900">🛠️ Tactical Toolkit & Commands:</h4>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div className="p-3 bg-slate-50 rounded-xl border border-sky-100 font-medium">
+                <span className="font-bold text-sky-900 block">cat / less:</span> Display full files / Paginated view.
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-sky-100 font-medium">
+                <span className="font-bold text-amber-900 block">head -n 20:</span> Inspect first 20 lines of a file.
+              </div>
+            </div>
+
+            <InteractiveCmd cmd="tail -f /var/log/syslog" desc="Live-stream real-time incoming system log entries" />
+            <InteractiveCmd cmd='grep -rn "ERROR" /var/log/' desc="Search for ERROR recursively with line numbers across all logs" />
+            <InteractiveCmd cmd='tail -f /var/log/syslog | grep --color "CRITICAL"' desc="Real-time system log monitoring pipeline filtered for CRITICAL" />
+          </div>
+        </div>
+      ),
+    },
+
+    205: {
+      title: '2.5 Module 2 Practice Quiz',
+      time: '30 mins',
+      badge: 'Module 2 Assessment',
+      render: (
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <h4 className="font-heading font-bold text-sm text-slate-900">🎯 Module 2 Assessment Questions</h4>
+
+            <div className="p-4 rounded-2xl bg-slate-50 border border-sky-100 space-y-2 text-xs">
+              <span className="font-bold text-slate-900 block">Q1. Where are global system configuration files stored in the Linux FHS?</span>
+              <div className="grid grid-cols-2 gap-2 font-medium">
+                <div className="p-2 rounded-xl bg-white border border-sky-100">A) /var</div>
+                <div className="p-2 rounded-xl bg-white border border-sky-100">B) /usr</div>
+                <div className="p-2 rounded-xl bg-emerald-50 border border-emerald-300 font-bold text-emerald-800">C) /etc (Correct)</div>
+                <div className="p-2 rounded-xl bg-white border border-sky-100">D) /root</div>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-slate-50 border border-sky-100 space-y-2 text-xs">
+              <span className="font-bold text-slate-900 block">Q2. What numeric permission code gives Owner Full Access (rwx), Group Read & Execute (r-x), and Others No Access (---)?</span>
+              <div className="grid grid-cols-2 gap-2 font-medium">
+                <div className="p-2 rounded-xl bg-emerald-50 border border-emerald-300 font-bold text-emerald-800">A) 750 (Correct)</div>
+                <div className="p-2 rounded-xl bg-white border border-sky-100">B) 755</div>
+                <div className="p-2 rounded-xl bg-white border border-sky-100">C) 644</div>
+                <div className="p-2 rounded-xl bg-white border border-sky-100">D) 777</div>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-slate-50 border border-sky-100 space-y-2 text-xs">
+              <span className="font-bold text-slate-900 block">Q3. Which command continuously monitors incoming changes at the end of a log file in real-time?</span>
+              <div className="grid grid-cols-2 gap-2 font-medium">
+                <div className="p-2 rounded-xl bg-white border border-sky-100">A) head -f</div>
+                <div className="p-2 rounded-xl bg-white border border-sky-100">B) cat -r</div>
+                <div className="p-2 rounded-xl bg-white border border-sky-100">C) grep -live</div>
+                <div className="p-2 rounded-xl bg-emerald-50 border border-emerald-300 font-bold text-emerald-800">D) tail -f (Correct)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
   };
 
   const handleTerminalExecute = (e: React.FormEvent) => {
