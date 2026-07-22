@@ -1,7 +1,7 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Sparkles, CheckCircle2, GraduationCap, BookOpen, Bot, Star } from 'lucide-react';
+import { Sparkles, CheckCircle2, GraduationCap, BookOpen, Bot, Star, ArrowLeft } from 'lucide-react';
 import { BrandLogo } from '@/components/common/BrandLogo';
 import { BlueSmokeTheme } from '@/components/common/BlueSmokeTheme';
 
@@ -16,10 +16,19 @@ export const AuthLayout: React.FC = () => {
 
   return (
     <BlueSmokeTheme>
-      <div className="min-h-screen text-slate-900 flex font-['Sora'] selection:bg-sky-500 selection:text-white select-none">
+      <div className="min-h-screen w-full bg-white text-slate-900 flex flex-col lg:flex-row font-['Sora'] selection:bg-sky-500 selection:text-white select-none relative overflow-hidden">
         
+        {/* Mobile Header Bar */}
+        <div className="lg:hidden flex items-center justify-between p-4 bg-white/80 backdrop-blur-md border-b border-sky-100 z-20">
+          <BrandLogo size="sm" showSubtitle={false} />
+          <Link to="/" className="text-xs font-bold text-sky-600 hover:text-sky-700 flex items-center gap-1">
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Home</span>
+          </Link>
+        </div>
+
         {/* ==================== LEFT HERO COLUMN ==================== */}
-        <div className="hidden lg:flex lg:w-1/2 bg-white/70 backdrop-blur-xl text-slate-900 p-12 flex-col justify-between relative overflow-hidden border-r border-sky-100">
+        <div className="hidden lg:flex lg:w-1/2 bg-white/70 backdrop-blur-xl text-slate-900 p-12 flex-col justify-between relative overflow-hidden border-r border-sky-100 z-10">
           
           {/* Background Sky Blue Glows */}
           <motion.div
@@ -160,7 +169,7 @@ export const AuthLayout: React.FC = () => {
         </div>
 
         {/* ==================== RIGHT FORM CONTAINER ==================== */}
-        <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 relative z-10">
+        <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 relative z-10 my-auto min-h-[calc(100vh-64px)] lg:min-h-screen">
           <div className="w-full max-w-md space-y-6">
             <Outlet />
           </div>
