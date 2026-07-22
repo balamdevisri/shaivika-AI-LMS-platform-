@@ -243,7 +243,7 @@ export const DashboardLayout: React.FC = () => {
                   </div>
                 )}
                 <span className="hidden sm:inline-block font-heading font-semibold text-xs text-slate-900 max-w-30 truncate">
-                  {userProfile?.name || user?.displayName || 'Student User'}
+                  {userProfile?.name || user?.displayName || (isAdminRoute ? 'Administrator' : 'Student User')}
                 </span>
                 <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:inline-block" />
               </button>
@@ -263,20 +263,32 @@ export const DashboardLayout: React.FC = () => {
                       </span>
                     )}
                   </div>
-                  <Link
-                    to="/profile"
-                    onClick={() => setProfileOpen(false)}
-                    className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:text-sky-600 hover:bg-sky-50 rounded-xl transition-colors"
-                  >
-                    <User className="w-4 h-4 text-slate-400" /> Student Profile
-                  </Link>
-                  <Link
-                    to="/dashboard?tab=certificates"
-                    onClick={() => setProfileOpen(false)}
-                    className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:text-sky-600 hover:bg-sky-50 rounded-xl transition-colors"
-                  >
-                    <Award className="w-4 h-4 text-slate-400" /> My Certificates
-                  </Link>
+                  {!isAdminRoute ? (
+                    <>
+                      <Link
+                        to="/profile"
+                        onClick={() => setProfileOpen(false)}
+                        className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:text-sky-600 hover:bg-sky-50 rounded-xl transition-colors"
+                      >
+                        <User className="w-4 h-4 text-slate-400" /> Student Profile
+                      </Link>
+                      <Link
+                        to="/dashboard?tab=certificates"
+                        onClick={() => setProfileOpen(false)}
+                        className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:text-sky-600 hover:bg-sky-50 rounded-xl transition-colors"
+                      >
+                        <Award className="w-4 h-4 text-slate-400" /> My Certificates
+                      </Link>
+                    </>
+                  ) : (
+                    <Link
+                      to="/admin/dashboard"
+                      onClick={() => setProfileOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2 text-xs text-sky-700 font-bold hover:bg-sky-50 rounded-xl transition-colors"
+                    >
+                      <User className="w-4 h-4 text-sky-600" /> Admin Control Panel
+                    </Link>
+                  )}
                   <button
                     onClick={() => {
                       setProfileOpen(false);
