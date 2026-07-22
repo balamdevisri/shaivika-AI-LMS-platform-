@@ -152,7 +152,7 @@ export const DashboardLayout: React.FC = () => {
               <input
                 type="text"
                 placeholder="Search AI modules, quizzes, assignments..."
-                className="w-full bg-slate-100 border border-slate-200 rounded-xl py-1.5 pl-9 pr-4 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500"
+                className="w-full bg-slate-100 border border-slate-200 rounded-xl py-1.5 pl-9 pr-4 text-xs text-slate-900 focus:outline-hidden"
               />
             </div>
           </div>

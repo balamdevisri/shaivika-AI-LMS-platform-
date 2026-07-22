@@ -203,7 +203,7 @@ export const Dashboard: React.FC = () => {
               
               <div className="space-y-3">
                 <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex gap-3 items-start">
-                  <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                  <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs shrink-0">
                     OCT 24
                   </div>
                   <div>
@@ -213,7 +213,7 @@ export const Dashboard: React.FC = () => {
                 </div>
 
                 <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex gap-3 items-start">
-                  <div className="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs flex-shrink-0">
+                  <div className="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs shrink-0">
                     OCT 26
                   </div>
                   <div>
