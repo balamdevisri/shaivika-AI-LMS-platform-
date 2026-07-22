@@ -78,7 +78,7 @@ export const CoursesList: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by title, instructor, or AI topic..."
-            className="w-full bg-[#020617] border border-white/10 rounded-xl py-2 pl-9 pr-4 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-[#10B981]"
+            className="w-full bg-[#020617] border border-white/10 rounded-xl py-2 pl-9 pr-4 text-xs text-white focus:outline-hidden"
           />
         </div>
 
@@ -199,7 +199,7 @@ export const CoursesList: React.FC = () => {
               <div className="space-y-2">
                 {selectedCourseModal.syllabus.map((item: string, idx: number) => (
                   <div key={idx} className="p-3 rounded-xl bg-[#020617] border border-white/10 flex items-center gap-3 text-xs text-slate-200">
-                    <PlayCircle className="w-4 h-4 text-[#10B981] flex-shrink-0" />
+                    <PlayCircle className="w-4 h-4 text-[#10B981] shrink-0" />
                     <span>{item}</span>
                   </div>
                 ))}
