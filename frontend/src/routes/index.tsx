@@ -11,6 +11,7 @@ import { Unauthorized } from '@/pages/auth/Unauthorized';
 import { Dashboard } from '@/pages/dashboard/Dashboard';
 import { Profile } from '@/pages/dashboard/Profile';
 import { CoursesList } from '@/pages/courses/CoursesList';
+import { CourseView } from '@/pages/courses/CourseView';
 import { AdminDashboard } from '@/pages/admin/AdminDashboard';
 import { AdminCourses } from '@/pages/admin/AdminCourses';
 import { AdminStudents } from '@/pages/admin/AdminStudents';
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <LandingPage /> },
       { path: 'courses', element: <CoursesList /> },
+      { path: 'courses/:courseId', element: <CourseView /> },
       { path: 'unauthorized', element: <Unauthorized /> },
     ],
   },
@@ -48,6 +50,8 @@ const router = createBrowserRouter([
     ),
     children: [
       { path: 'dashboard', element: <Dashboard /> },
+      { path: 'dashboard/courses', element: <CoursesList /> },
+      { path: 'dashboard/courses/:courseId', element: <CourseView /> },
       { path: 'profile', element: <Profile /> },
     ],
   },

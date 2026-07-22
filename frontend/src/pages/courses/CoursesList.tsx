@@ -145,9 +145,11 @@ export const CoursesList: React.FC = () => {
 
                 <div className="space-y-1">
                   <span className="text-xs font-bold text-sky-600 block">{course.subtitle}</span>
-                  <h3 className="font-heading font-extrabold text-lg text-slate-900 group-hover:text-sky-600 transition-colors leading-snug">
-                    {course.title}
-                  </h3>
+                  <Link to={`/courses/${course.id}`} className="block">
+                    <h3 className="font-heading font-extrabold text-lg text-slate-900 group-hover:text-sky-600 transition-colors leading-snug">
+                      {course.title}
+                    </h3>
+                  </Link>
                 </div>
 
                 {/* Course Intro Teaser */}
@@ -173,20 +175,21 @@ export const CoursesList: React.FC = () => {
 
               {/* Action Buttons */}
               <div className="pt-2 flex gap-2">
-                <button
-                  onClick={() => setSelectedCourseModal(course)}
+                <Link
+                  to={`/courses/${course.id}`}
                   className="flex-1 py-2.5 px-3 rounded-xl border border-sky-200 text-xs font-bold text-slate-700 hover:bg-sky-50 transition-all cursor-pointer flex items-center justify-center gap-1.5"
                 >
                   <BookOpen className="w-3.5 h-3.5 text-sky-600" />
-                  <span>Overview & Details</span>
-                </button>
+                  <span>Explore Course & Modules</span>
+                </Link>
 
-                <button
-                  onClick={() => toast.success(`Enrolled in ${course.title}!`)}
-                  className="flex-1 btn-blue-primary text-xs py-2.5 justify-center font-bold shadow-md shadow-sky-500/20 cursor-pointer"
+                <Link
+                  to={`/courses/${course.id}`}
+                  className="flex-1 btn-blue-primary text-xs py-2.5 justify-center font-bold shadow-md shadow-sky-500/20 cursor-pointer flex items-center gap-1"
                 >
-                  Enroll Now
-                </button>
+                  <span>Start Learning</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
               </div>
             </div>
           </div>
