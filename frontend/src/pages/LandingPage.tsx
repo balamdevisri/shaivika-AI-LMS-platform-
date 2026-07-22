@@ -22,7 +22,6 @@ import {
   Play,
 } from 'lucide-react';
 import { KaizenQVideoPlayer } from '@/components/common/KaizenQVideoPlayer';
-import { AnimatedKaizenQ } from '@/components/common/AnimatedKaizenQ';
 import { BlueSmokeTheme } from '@/components/common/BlueSmokeTheme';
 
 export const LandingPage: React.FC = () => {
@@ -228,95 +227,63 @@ export const LandingPage: React.FC = () => {
     <BlueSmokeTheme>
       <div className="pt-24 space-y-28 sm:space-y-36 font-['Sora'] select-none">
         
-        {/* ----------------- 1. HERO SECTION (WHITE & SKY BLUE SPLIT SAAS LAYOUT) ----------------- */}
-        <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-16 overflow-hidden">
+        {/* ----------------- 1. HERO SECTION (CENTERED WHITE & SKY BLUE SAAS LAYOUT) ----------------- */}
+        <section className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16 overflow-hidden">
           
           {/* Background Ambient Sky Blue Glows */}
-          <div className="absolute top-0 right-10 w-[550px] h-[550px] bg-sky-400/20 rounded-full blur-[120px] pointer-events-none animate-pulse" />
-          <div className="absolute bottom-10 left-10 w-[450px] h-[450px] bg-sky-300/15 rounded-full blur-[100px] pointer-events-none animate-pulse" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[650px] h-[450px] bg-sky-400/20 rounded-full blur-[130px] pointer-events-none animate-pulse" />
 
-          {/* 2-Column Responsive Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-            
-            {/* LEFT COLUMN: Main Hero Copy */}
-            <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, ease: 'easeOut' }}
-              className="lg:col-span-6 space-y-8 text-left"
-            >
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-sky-50 border border-sky-200 text-sky-700 text-xs sm:text-sm font-bold tracking-wide backdrop-blur-xl shadow-xs">
-                <Sparkles className="w-4 h-4 text-sky-500 animate-pulse" />
-                <span>Introducing Kaizen Q 3.0 • Powered by Shaivika Groups</span>
-              </div>
+          {/* Centered Hero Content Container */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+            className="flex flex-col items-center justify-center text-center space-y-8 max-w-4xl mx-auto relative z-10"
+          >
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-sky-50 border border-sky-200 text-sky-700 text-xs sm:text-sm font-bold tracking-wide backdrop-blur-xl shadow-xs mx-auto">
+              <Sparkles className="w-4 h-4 text-sky-500 animate-pulse" />
+              <span>Introducing Kaizen Q 3.0 • Powered by Shaivika Groups</span>
+            </div>
 
-              {/* Headline */}
-              <h1 className="font-heading font-extrabold text-3xl sm:text-4xl lg:text-5xl text-slate-900 tracking-tight leading-[1.12]">
-                Continuous Learning,{' '}
-                <span className="block mt-1 bg-gradient-to-r from-sky-600 via-sky-500 to-sky-400 bg-clip-text text-transparent">
-                  Powered by Kaizen Q AI
-                </span>
-              </h1>
+            {/* Headline */}
+            <h1 className="font-heading font-extrabold text-3xl sm:text-5xl lg:text-6xl text-slate-900 tracking-tight leading-[1.12] text-center">
+              Continuous Learning,{' '}
+              <span className="block mt-2 bg-gradient-to-r from-sky-600 via-sky-500 to-sky-400 bg-clip-text text-transparent">
+                Powered by Kaizen Q AI
+              </span>
+            </h1>
 
-              {/* Subtitle */}
-              <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-xl font-medium">
-                Empower engineering teams and students with 24/7 AI mentoring, real-time code evaluation, adaptive knowledge graphs, and verifiable digital credentials.
-              </p>
+            {/* Subtitle */}
+            <p className="text-base sm:text-lg text-slate-600 leading-relaxed max-w-2xl mx-auto font-medium text-center">
+              Empower engineering teams and students with 24/7 AI mentoring, real-time code evaluation, adaptive knowledge graphs, and verifiable digital credentials.
+            </p>
 
-              {/* CTA Buttons */}
-              <div className="pt-2 flex flex-col sm:flex-row items-center gap-4">
-                <Link
-                  to="/dashboard"
-                  className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-sky-600 to-sky-500 hover:from-sky-700 hover:to-sky-600 text-white font-bold rounded-xl shadow-lg shadow-sky-500/25 hover:scale-103 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer text-sm"
-                >
-                  <span>Get Started Free</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-
-                <a
-                  href="#ai-overview"
-                  className="w-full sm:w-auto px-8 py-3.5 bg-white hover:bg-sky-50 text-slate-800 border border-sky-200 font-bold rounded-xl backdrop-blur-md hover:scale-103 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer text-sm shadow-xs"
-                >
-                  <Play className="w-4 h-4 text-sky-600 fill-current" />
-                  <span>Explore Brand & AI Engine</span>
-                </a>
-              </div>
-
-              {/* Sub-text */}
-              <p className="text-xs text-slate-500 font-medium">
-                Free 14-Day Pro Trial • No credit card required • ISO 27001 & SOC2 Certified
-              </p>
-            </motion.div>
-
-            {/* RIGHT COLUMN: 60 FPS Animated Kaizen Q Symbol Showcase */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
-              className="lg:col-span-6 relative flex justify-center items-center"
-            >
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-sky-400/20 rounded-full blur-3xl pointer-events-none" />
-
-              <motion.div
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-                className="relative w-full max-w-lg p-6 sm:p-8 rounded-3xl bg-white/95 backdrop-blur-2xl border border-sky-200 shadow-2xl shadow-sky-500/15 flex flex-col items-center justify-center text-center space-y-4"
+            {/* CTA Buttons */}
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
+              <Link
+                to="/dashboard"
+                className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-sky-600 to-sky-500 hover:from-sky-700 hover:to-sky-600 text-white font-bold rounded-xl shadow-lg shadow-sky-500/25 hover:scale-103 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer text-sm"
               >
-                <AnimatedKaizenQ width={360} height={240} theme="light" />
-                <div className="pt-3 border-t border-sky-100 w-full flex items-center justify-between text-xs font-bold text-slate-700">
-                  <span className="flex items-center gap-1.5 text-sky-600">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>Kaizen Q AI Engine</span>
-                  </span>
-                  <span className="font-mono text-[11px] text-sky-600 bg-sky-50 px-3 py-1 rounded-full border border-sky-200">
-                    60 FPS Autonomous
-                  </span>
-                </div>
-              </motion.div>
-            </motion.div>
+                <span>Get Started Free</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
 
-          </div>
+              <a
+                href="#ai-overview"
+                className="w-full sm:w-auto px-8 py-3.5 bg-white hover:bg-sky-50 text-slate-800 border border-sky-200 font-bold rounded-xl backdrop-blur-md hover:scale-103 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer text-sm shadow-xs"
+              >
+                <Play className="w-4 h-4 text-sky-600 fill-current" />
+                <span>Explore Brand & AI Engine</span>
+              </a>
+            </div>
+
+            {/* Sub-text */}
+            <p className="text-xs text-slate-500 font-medium text-center pt-2">
+              Free 14-Day Pro Trial • No credit card required • ISO 27001 & SOC2 Certified
+            </p>
+          </motion.div>
+
         </section>
 
 
