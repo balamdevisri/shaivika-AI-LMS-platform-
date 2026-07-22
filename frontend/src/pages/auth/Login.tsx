@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2 } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import { BrandLogo } from '@/components/common/BrandLogo';
@@ -66,7 +66,7 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 bg-slate-900/90 backdrop-blur-2xl p-8 rounded-3xl border border-slate-800 shadow-2xl shadow-emerald-950/40 text-white font-sans">
+    <div className="space-y-6 bg-white/95 backdrop-blur-2xl p-8 rounded-3xl border border-sky-200 shadow-2xl shadow-sky-500/15 text-slate-900 font-['Sora']">
       
       {/* Mobile Brand Logo */}
       <div className="lg:hidden flex justify-center pb-2">
@@ -74,27 +74,28 @@ export const Login: React.FC = () => {
       </div>
 
       <div className="space-y-2 text-center lg:text-left">
-        <h2 className="font-heading font-extrabold text-2xl text-white">Sign In to Shaivika AI</h2>
-        <p className="text-xs text-slate-400">Enter your email and password to access your learning portal.</p>
+        <h2 className="font-heading font-extrabold text-2xl text-slate-900">Sign In to Shaivika AI</h2>
+        <p className="text-xs text-slate-600 font-medium">Enter your email and password to access your learning portal.</p>
       </div>
 
       {/* Quick Demo Credentials Assistant */}
-      <div className="bg-slate-950/80 p-3 rounded-2xl border border-slate-800/80 space-y-2">
-        <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider block">
-          ⚡ Demo Access Shortcuts
+      <div className="bg-sky-50/80 p-3 rounded-2xl border border-sky-200/80 space-y-2">
+        <span className="text-[10px] font-bold text-sky-700 uppercase tracking-wider flex items-center gap-1">
+          <Sparkles className="w-3 h-3 text-sky-500" />
+          <span>Demo Access Shortcuts</span>
         </span>
         <div className="grid grid-cols-2 gap-2">
           <button
             type="button"
             onClick={() => handleQuickDemo('Student')}
-            className="py-1.5 px-3 bg-slate-900 hover:bg-emerald-500/10 text-xs font-semibold text-slate-200 border border-slate-700/60 hover:border-emerald-500/40 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5"
+            className="py-1.5 px-3 bg-white hover:bg-sky-100 text-xs font-semibold text-slate-800 border border-sky-200 hover:border-sky-300 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
           >
             <span>🎓 Student Demo</span>
           </button>
           <button
             type="button"
             onClick={() => handleQuickDemo('Admin')}
-            className="py-1.5 px-3 bg-slate-900 hover:bg-emerald-500/10 text-xs font-semibold text-slate-200 border border-slate-700/60 hover:border-emerald-500/40 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5"
+            className="py-1.5 px-3 bg-white hover:bg-sky-100 text-xs font-semibold text-slate-800 border border-sky-200 hover:border-sky-300 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-xs"
           >
             <span>🔑 Admin Demo</span>
           </button>
@@ -104,7 +105,7 @@ export const Login: React.FC = () => {
       {/* Form */}
       <form onSubmit={handleLogin} className="space-y-4">
         <div>
-          <label className="text-xs font-semibold text-slate-300 block mb-1">Email Address</label>
+          <label className="text-xs font-bold text-slate-700 block mb-1">Email Address</label>
           <div className="relative">
             <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
@@ -113,15 +114,15 @@ export const Login: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@company.com"
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 pl-9 pr-3 text-xs text-white focus:outline-none focus:border-emerald-500 transition-colors"
+              className="w-full bg-slate-50/80 border border-sky-200 rounded-xl py-2.5 pl-9 pr-3 text-xs text-slate-900 focus:outline-hidden focus:border-sky-500 focus:bg-white transition-all font-medium"
             />
           </div>
         </div>
 
         <div>
           <div className="flex items-center justify-between mb-1">
-            <label className="text-xs font-semibold text-slate-300">Password</label>
-            <Link to="/auth/forgot-password" className="text-[11px] text-emerald-400 hover:underline font-semibold">
+            <label className="text-xs font-bold text-slate-700">Password</label>
+            <Link to="/auth/forgot-password" className="text-[11px] text-sky-600 hover:underline font-bold">
               Forgot password?
             </Link>
           </div>
@@ -133,12 +134,12 @@ export const Login: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 pl-9 pr-10 text-xs text-white focus:outline-none focus:border-emerald-500 transition-colors"
+              className="w-full bg-slate-50/80 border border-sky-200 rounded-xl py-2.5 pl-9 pr-10 text-xs text-slate-900 focus:outline-hidden focus:border-sky-500 focus:bg-white transition-all font-medium"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white cursor-pointer"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 cursor-pointer"
             >
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
@@ -147,12 +148,12 @@ export const Login: React.FC = () => {
 
         {/* Remember Me Option */}
         <div className="flex items-center justify-between pt-1">
-          <label className="flex items-center gap-2 cursor-pointer text-xs text-slate-300">
+          <label className="flex items-center gap-2 cursor-pointer text-xs text-slate-600 font-medium">
             <input
               type="checkbox"
               checked={rememberMe}
               onChange={(e) => setRememberMe(e.target.checked)}
-              className="w-4 h-4 rounded bg-slate-950 border-slate-800 accent-emerald-500 cursor-pointer"
+              className="w-4 h-4 rounded bg-slate-50 border-sky-200 accent-sky-600 cursor-pointer"
             />
             <span>Remember me on this device</span>
           </label>
@@ -161,11 +162,11 @@ export const Login: React.FC = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="btn-emerald-primary w-full py-3 justify-center text-xs font-bold shadow-lg shadow-emerald-950/50 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer flex items-center gap-2"
+          className="btn-blue-primary w-full py-3 justify-center text-xs font-bold shadow-lg shadow-sky-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 cursor-pointer flex items-center gap-2"
         >
           {isSubmitting ? (
             <>
-              <Loader2 className="w-4 h-4 animate-spin text-slate-950" />
+              <Loader2 className="w-4 h-4 animate-spin text-white" />
               <span>Authenticating...</span>
             </>
           ) : (
@@ -177,9 +178,9 @@ export const Login: React.FC = () => {
         </button>
       </form>
 
-      <div className="pt-2 text-center text-xs text-slate-400">
+      <div className="pt-2 text-center text-xs text-slate-600 font-medium">
         Don't have an account?{' '}
-        <Link to="/auth/register" className="font-semibold text-emerald-400 hover:underline">
+        <Link to="/auth/register" className="font-bold text-sky-600 hover:underline">
           Create Student Account
         </Link>
       </div>
