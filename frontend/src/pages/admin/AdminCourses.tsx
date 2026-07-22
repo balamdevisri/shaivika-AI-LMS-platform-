@@ -23,26 +23,6 @@ export const AdminCourses: React.FC = () => {
       rating: 5.0,
       category: 'Linux & Systems',
     },
-    {
-      id: 2,
-      title: 'Fullstack Next.js & React Enterprise Architecture',
-      instructor: 'Dr. Sarah Jenkins',
-      students: '14,200',
-      status: 'Published',
-      tracks: '4 Modules (42 Hours)',
-      rating: 4.9,
-      category: 'Development',
-    },
-    {
-      id: 3,
-      title: 'AI & Large Language Model Application Design',
-      instructor: 'Marcus Vance',
-      students: '21,000',
-      status: 'Draft',
-      tracks: '4 Modules (36 Hours)',
-      rating: 5.0,
-      category: 'AI & Data',
-    },
   ]);
 
   const filteredCourses = courses.filter((c) =>
