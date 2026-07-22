@@ -38,7 +38,7 @@ export const AuthLayout: React.FC = () => {
               rotate: [0, 45, 0],
             }}
             transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute top-1/4 -right-10 w-[500px] h-[500px] bg-sky-400/25 rounded-full blur-[120px] pointer-events-none"
+            className="absolute top-1/4 -right-10 w-125 h-125 bg-sky-400/25 rounded-full blur-[120px] pointer-events-none"
           />
           <motion.div
             animate={{
@@ -47,7 +47,7 @@ export const AuthLayout: React.FC = () => {
               rotate: [45, 0, 45],
             }}
             transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute bottom-10 -left-10 w-[450px] h-[450px] bg-sky-300/20 rounded-full blur-[100px] pointer-events-none"
+            className="absolute bottom-10 -left-10 w-112.5 h-112.5 bg-sky-300/20 rounded-full blur-[100px] pointer-events-none"
           />
 
           {/* Floating Sky Blue Particles */}

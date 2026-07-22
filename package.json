@@ -25,5 +25,8 @@
     "node": ">=18.0.0"
   },
   "author": "SHAIVIKA",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "firebase": "^12.16.0"
+  }
 }

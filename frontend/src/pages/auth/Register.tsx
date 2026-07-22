@@ -85,7 +85,7 @@ export const Register: React.FC = () => {
               placeholder="Jane Devson"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="w-full bg-slate-50/80 border border-sky-200 rounded-xl py-2.5 pl-9 pr-3 text-xs text-slate-900 focus:outline-hidden focus:border-sky-500 focus:bg-white transition-all font-medium"
+              className="w-full bg-slate-50/80 border border-sky-200 rounded-xl py-2.5 pl-9 pr-3 text-xs text-slate-900 focus:outline-hidden transition-all font-medium"
             />
           </div>
         </div>
@@ -100,7 +100,7 @@ export const Register: React.FC = () => {
               placeholder="jane@university.edu"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-slate-50/80 border border-sky-200 rounded-xl py-2.5 pl-9 pr-3 text-xs text-slate-900 focus:outline-hidden focus:border-sky-500 focus:bg-white transition-all font-medium"
+              className="w-full bg-slate-50/80 border border-sky-200 rounded-xl py-2.5 pl-9 pr-3 text-xs text-slate-900 focus:outline-hidden transition-all font-medium"
             />
           </div>
         </div>
@@ -115,7 +115,7 @@ export const Register: React.FC = () => {
               placeholder="Minimum 6 characters"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-slate-50/80 border border-sky-200 rounded-xl py-2.5 pl-9 pr-10 text-xs text-slate-900 focus:outline-hidden focus:border-sky-500 focus:bg-white transition-all font-medium"
+              className="w-full bg-slate-50/80 border border-sky-200 rounded-xl py-2.5 pl-9 pr-10 text-xs text-slate-900 focus:outline-hidden transition-all font-medium"
             />
             <button
               type="button"
@@ -157,7 +157,7 @@ export const Register: React.FC = () => {
               placeholder="Re-enter password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full bg-slate-50/80 border border-sky-200 rounded-xl py-2.5 pl-9 pr-3 text-xs text-slate-900 focus:outline-hidden focus:border-sky-500 focus:bg-white transition-all font-medium"
+              className="w-full bg-slate-50/80 border border-sky-200 rounded-xl py-2.5 pl-9 pr-3 text-xs text-slate-900 focus:outline-hidden transition-all font-medium"
             />
           </div>
         </div>
