@@ -3,29 +3,27 @@ import { getAuth, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '',
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '',
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || '',
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyCKPJ4klGTGxdgTxC3Q93YiaTZixlI0vE0',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'shaivika-lms-ai.firebaseapp.com',
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'shaivika-lms-ai',
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'shaivika-lms-ai.firebasestorage.app',
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '977716272905',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:977716272905:web:de0781e0988aecfc823dd8',
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || 'G-621GCQ0W26',
 };
 
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
 let db: Firestore | null = null;
 
-// Only initialize Firebase if a valid API key is present
-if (firebaseConfig.apiKey && firebaseConfig.apiKey.startsWith('AIza')) {
-  try {
+try {
+  if (firebaseConfig.apiKey && firebaseConfig.apiKey.startsWith('AIza')) {
     app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
     auth = getAuth(app);
     db = getFirestore(app);
-  } catch (e) {
-    console.warn('Firebase initialization notice:', e);
   }
-} else {
-  console.info('Kaizen Q: Running in offline demo mode. Configure VITE_FIREBASE_API_KEY in .env for live Firebase Auth.');
+} catch (e) {
+  console.warn('Firebase initialization notice:', e);
 }
 
 export { app, auth, db };
