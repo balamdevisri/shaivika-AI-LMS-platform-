@@ -21,7 +21,8 @@ import {
   Check,
   Play,
 } from 'lucide-react';
-import { VideoPlayer } from '@/components/common/VideoPlayer';
+import { KaizenQVideoPlayer } from '@/components/common/KaizenQVideoPlayer';
+
 
 export const LandingPage: React.FC = () => {
   // FAQ state
@@ -293,7 +294,7 @@ export const LandingPage: React.FC = () => {
               transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
               className="relative w-full max-w-xl p-1 sm:p-1.5 rounded-[28px] bg-slate-900/40 backdrop-blur-2xl border border-emerald-500/20 shadow-2xl shadow-emerald-950/60 hover:shadow-emerald-500/20 hover:border-emerald-500/40 transition-all duration-500"
             >
-              <VideoPlayer src="/videos/Lmsvideo.mp4" />
+              <KaizenQVideoPlayer src="/KaizenQ.mp4" />
             </motion.div>
           </motion.div>
 

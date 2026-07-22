@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import { CinematicKaizenQLogo } from './CinematicKaizenQLogo';
+import { AnimatedKaizenQ } from './AnimatedKaizenQ';
 
 const loadingSteps = [
   'Initializing AI Engine...',
@@ -71,7 +71,7 @@ export const LoadingScreen: React.FC<{ onComplete?: () => void }> = ({ onComplet
             transition={{ duration: 0.8 }}
             className="flex flex-col items-center justify-center -mt-8"
           >
-            <CinematicKaizenQLogo width={840} height={360} className="w-full max-w-4xl" />
+            <AnimatedKaizenQ width={400} height={200} />
             <p className="text-[10px] sm:text-xs font-semibold text-[#94A3B8] uppercase tracking-[0.2em] mt-2">
               Next-Gen Education Platform
             </p>
