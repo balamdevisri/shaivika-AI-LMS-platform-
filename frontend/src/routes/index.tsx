@@ -17,6 +17,8 @@ import { AdminStudents } from '@/pages/admin/AdminStudents';
 import { StudentRoute } from '@/components/auth/StudentRoute';
 import { AdminRoute } from '@/components/auth/AdminRoute';
 
+import { BrandIdentityShowcase } from '@/pages/brand/BrandIdentityShowcase';
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -24,6 +26,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <LandingPage /> },
       { path: 'courses', element: <CoursesList /> },
+      { path: 'brand', element: <BrandIdentityShowcase /> },
       { path: 'unauthorized', element: <Unauthorized /> },
     ],
   },

@@ -90,53 +90,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser: User | null) => {
-      setUser(currentUser);
-      if (currentUser) {
-        await fetchUserProfile(currentUser);
-      } else {
-        setUserProfile(null);
-      }
+    // Safety timeout to ensure app NEVER hangs on a blank loading screen
+    const safetyTimer = setTimeout(() => {
       setLoading(false);
+    }, 600);
+
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser: User | null) => {
+      try {
+        setUser(currentUser);
+        if (currentUser) {
+          await fetchUserProfile(currentUser);
+        } else {
+          setUserProfile(null);
+        }
+      } catch (err) {
+        console.warn('Auth state sync notice:', err);
+      } finally {
+        setLoading(false);
+        clearTimeout(safetyTimer);
+      }
     });
 
-    return () => unsubscribe();
+    return () => {
+      clearTimeout(safetyTimer);
+      unsubscribe();
+    };
   }, []);
 
   const signup = async (name: string, email: string, password: string): Promise<void> => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const firebaseUser = userCredential.user;
 
-    // Update display name
     await updateProfile(firebaseUser, { displayName: name });
 
-    // Send email verification
     try {
       await sendEmailVerification(firebaseUser);
-    } catch (err) {
-      console.warn('Verification email notice:', err);
+    } catch (e) {
+      console.warn('Email verification failed:', e);
     }
 
-    // Create Firestore User Document
-    const userRef = doc(db, 'users', firebaseUser.uid);
-    const newProfile: UserProfile = {
-      uid: firebaseUser.uid,
-      name,
-      email,
-      photoURL: null,
-      role: 'student', // Always student for public signup
-      createdAt: new Date().toISOString(),
-      lastLogin: new Date().toISOString(),
-      isVerified: firebaseUser.emailVerified,
-    };
-
-    try {
-      await setDoc(userRef, newProfile);
-    } catch (err) {
-      console.warn('Firestore user document set warning:', err);
-    }
-
-    setUserProfile(newProfile);
+    await fetchUserProfile(firebaseUser);
   };
 
   const login = async (
@@ -144,8 +137,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     password: string,
     rememberMe: boolean = true
   ): Promise<UserProfile | null> => {
-    const persistenceMode = rememberMe ? browserLocalPersistence : browserSessionPersistence;
-    await setPersistence(auth, persistenceMode);
+    try {
+      await setPersistence(
+        auth,
+        rememberMe ? browserLocalPersistence : browserSessionPersistence
+      );
+    } catch (e) {
+      console.warn('Persistence config warning:', e);
+    }
+
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const profile = await fetchUserProfile(userCredential.user);
     return profile;
@@ -168,8 +168,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const refreshUserProfile = async (): Promise<UserProfile | null> => {
-    if (auth.currentUser) {
-      return await fetchUserProfile(auth.currentUser);
+    if (user) {
+      return await fetchUserProfile(user);
     }
     return null;
   };
@@ -188,16 +188,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         refreshUserProfile,
       }}
     >
-      {loading ? (
-        <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center space-y-4">
-          <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
-          <p className="text-sm font-semibold text-slate-400 font-mono tracking-wider animate-pulse">
-            AUTHENTICATING SHAIVIKA LMS...
-          </p>
-        </div>
-      ) : (
-        children
-      )}
+      {children}
     </AuthContext.Provider>
   );
 };
