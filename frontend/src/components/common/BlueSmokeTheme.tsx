@@ -44,13 +44,13 @@ export const BlueSmokeTheme: React.FC<BlueSmokeThemeProps> = ({ className = '', 
     const w = () => canvas.getBoundingClientRect().width;
     const h = () => canvas.getBoundingClientRect().height;
 
-    // Create 35 volumetric blue smoke plumes
+    // Create 35 volumetric electric sky blue smoke plumes
     const particles: SmokeParticle[] = [];
     const colorPairs = [
-      { c1: 'rgba(37, 99, 235, 0.22)', c2: 'rgba(34, 211, 238, 0.08)' },
-      { c1: 'rgba(59, 130, 246, 0.18)', c2: 'rgba(96, 165, 250, 0.05)' },
-      { c1: 'rgba(14, 165, 233, 0.20)', c2: 'rgba(37, 99, 235, 0.07)' },
-      { c1: 'rgba(29, 78, 216, 0.16)', c2: 'rgba(56, 189, 248, 0.06)' },
+      { c1: 'rgba(2, 132, 199, 0.24)', c2: 'rgba(56, 189, 248, 0.08)' },  // Sky 600 -> Sky 400
+      { c1: 'rgba(14, 165, 233, 0.22)', c2: 'rgba(186, 230, 253, 0.10)' }, // Sky 500 -> Sky 200
+      { c1: 'rgba(56, 189, 248, 0.20)', c2: 'rgba(2, 132, 199, 0.06)' },  // Sky 400 -> Sky 600
+      { c1: 'rgba(3, 105, 161, 0.18)', c2: 'rgba(14, 165, 233, 0.08)' },  // Sky 700 -> Sky 500
     ];
 
     for (let i = 0; i < 35; i++) {
@@ -74,12 +74,12 @@ export const BlueSmokeTheme: React.FC<BlueSmokeThemeProps> = ({ className = '', 
       const width = w();
       const height = h();
 
-      // White Canvas Background
+      // Pure White Canvas Background
       ctx.clearRect(0, 0, width, height);
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, width, height);
 
-      // Render drifting blue smoke plumes
+      // Render drifting sky blue smoke plumes
       particles.forEach((p) => {
         p.x += p.vx + Math.sin(p.y * 0.005) * 0.2;
         p.y += p.vy;
@@ -102,8 +102,7 @@ export const BlueSmokeTheme: React.FC<BlueSmokeThemeProps> = ({ className = '', 
 
         ctx.fillStyle = grad;
         ctx.beginPath();
-        // Slightly squished oval for organic smoke look
-        ctx.ellipse(0, 0, p.r, p.r * 0.75, 0, 0, Math.PI * 2);
+        ctx.arc(0, 0, p.r, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
       });
@@ -114,14 +113,19 @@ export const BlueSmokeTheme: React.FC<BlueSmokeThemeProps> = ({ className = '', 
     animate();
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', resize);
+      cancelAnimationFrame(animationFrameId);
     };
   }, []);
 
   return (
-    <div className={`relative overflow-hidden ${className}`}>
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
+    <div className={`relative w-full min-h-screen bg-white ${className}`}>
+      {/* Background 60 FPS Sky Blue Volumetric Smoke Canvas */}
+      <canvas
+        ref={canvasRef}
+        className="fixed inset-0 w-full h-full pointer-events-none z-0"
+      />
+      {/* Foreground Content */}
       <div className="relative z-10">{children}</div>
     </div>
   );
