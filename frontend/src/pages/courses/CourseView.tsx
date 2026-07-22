@@ -719,6 +719,211 @@ export const CourseView: React.FC = () => {
         </div>
       ),
     },
+
+    // Module 3 Gamified Lessons
+    301: {
+      title: '3.1 Inspecting Active System Processes',
+      time: '60 mins',
+      badge: 'Threat Radar & Process Extermination',
+      render: (
+        <div className="space-y-6">
+          <div className="bg-sky-50/80 p-4 sm:p-5 rounded-2xl border border-sky-200/80 space-y-2">
+            <span className="text-xs font-bold text-sky-800 uppercase tracking-wider block">🎮 GAMIFIED LORE: "THE THREAT RADAR & PROCESS EXTERMINATION"</span>
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+              "Every application running on your system spawns a Process with a unique PID (Process ID). Some consume minimal energy, while rogue 'zombie' processes drain system memory like rogue AI entities. Your terminal acts as the threat radar to detect and terminate them."
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <h4 className="font-heading font-bold text-sm text-slate-900">📡 SYSTEM THREAT RADAR</h4>
+            <div className="bg-slate-950 p-4 sm:p-5 rounded-2xl border border-slate-800 font-mono text-xs space-y-2 shadow-xl text-slate-300">
+              <div className="text-sky-400 font-bold border-b border-slate-800 pb-1">LIVE SYSTEM THREAT MONITOR:</div>
+              <div className="flex justify-between text-slate-400">
+                <span>PID 1024 [ nginx ]</span>
+                <span className="text-emerald-400 font-bold">0.2% CPU (Normal)</span>
+              </div>
+              <div className="flex justify-between text-rose-400 font-bold bg-rose-950/40 p-1.5 rounded-lg border border-rose-500/30">
+                <span>PID 4096 [ python ]</span>
+                <span>98.5% CPU ⚠️ (Rogue Process)</span>
+              </div>
+              <div className="pt-2 text-center text-emerald-400 font-bold border-t border-slate-800">
+                Execute: kill -9 4096 💥 Terminated!
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-1">
+              <div className="p-3 bg-slate-50 rounded-xl border border-sky-100 font-medium">
+                <span className="font-bold text-sky-900 block">ps aux:</span> Snapshots all running processes.
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-sky-100 font-medium">
+                <span className="font-bold text-amber-900 block">top / htop:</span> Real-time live CPU & RAM usage monitor.
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <InteractiveCmd cmd="ps aux | grep python" desc="Find rogue Python processes consuming memory" />
+              <InteractiveCmd cmd="kill -9 4096" desc="Forcefully terminate a rogue process immediately (PID 4096)" />
+            </div>
+          </div>
+        </div>
+      ),
+    },
+
+    302: {
+      title: '3.2 Controlling Daemon Services with Systemd',
+      time: '75 mins',
+      badge: 'Power Grid & Automated Drones',
+      render: (
+        <div className="space-y-6">
+          <div className="bg-sky-50/80 p-4 sm:p-5 rounded-2xl border border-sky-200/80 space-y-2">
+            <span className="text-xs font-bold text-sky-800 uppercase tracking-wider block">🎮 GAMIFIED LORE: "POWER GRID & AUTOMATED DRONES"</span>
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+              "Daemons are background services—like web servers or database engines—that operate silently without direct user interaction. Systemd is the master power controller managing these background systems."
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <h4 className="font-heading font-bold text-sm text-slate-900">🛠️ Essential Systemctl Commands Table:</h4>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="bg-sky-50 border-b border-sky-200 text-sky-900 font-bold">
+                    <th className="p-3">Action</th>
+                    <th className="p-3">Command</th>
+                    <th className="p-3">Purpose</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-sky-100 font-medium text-slate-800">
+                  <tr className="hover:bg-slate-50">
+                    <td className="p-3 font-bold text-sky-700">Check Status</td>
+                    <td className="p-3 font-mono font-bold">systemctl status nginx</td>
+                    <td className="p-3">View live operational status & recent log alerts</td>
+                  </tr>
+                  <tr className="hover:bg-slate-50">
+                    <td className="p-3 font-bold text-emerald-700">Power On</td>
+                    <td className="p-3 font-mono font-bold">sudo systemctl start nginx</td>
+                    <td className="p-3">Launch the background service immediately</td>
+                  </tr>
+                  <tr className="hover:bg-slate-50">
+                    <td className="p-3 font-bold text-rose-700">Power Off</td>
+                    <td className="p-3 font-mono font-bold">sudo systemctl stop nginx</td>
+                    <td className="p-3">Shutdown / suspend the service</td>
+                  </tr>
+                  <tr className="hover:bg-slate-50">
+                    <td className="p-3 font-bold text-indigo-700">Auto-Boot</td>
+                    <td className="p-3 font-mono font-bold">sudo systemctl enable nginx</td>
+                    <td className="p-3">Ensure service boots automatically on system startup</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div className="space-y-2 pt-2">
+              <InteractiveCmd cmd="systemctl status nginx" desc="Check live status of Nginx web service" />
+              <InteractiveCmd cmd="sudo systemctl start nginx" desc="Power on Nginx background daemon" />
+              <InteractiveCmd cmd="sudo systemctl stop nginx" desc="Power off Nginx background daemon" />
+              <InteractiveCmd cmd="sudo systemctl enable nginx" desc="Enable auto-boot on system startup" />
+            </div>
+          </div>
+        </div>
+      ),
+    },
+
+    303: {
+      title: '3.3 Job Automation with Cron & Crontab Schedules',
+      time: '50 mins',
+      badge: 'Automated Time-Warp Directives',
+      render: (
+        <div className="space-y-6">
+          <div className="bg-sky-50/80 p-4 sm:p-5 rounded-2xl border border-sky-200/80 space-y-2">
+            <span className="text-xs font-bold text-sky-800 uppercase tracking-wider block">🎮 GAMIFIED LORE: "AUTOMATED TIME-WARP DIRECTIVES"</span>
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+              "Why execute daily backups or health checks manually when you can program automated background scripts? Cron is your system's automated scheduler that executes commands at precise timestamps."
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <h4 className="font-heading font-bold text-sm text-slate-900">⏱️ Crontab Syntax Blueprint</h4>
+            <div className="bg-slate-950 p-4 sm:p-5 rounded-2xl border border-slate-800 font-mono text-xs space-y-2 shadow-xl text-slate-300">
+              <div className="text-emerald-400 font-bold">* * * * *  /path/to/script.sh</div>
+              <div className="text-[11px] text-slate-400 grid grid-cols-5 gap-1 text-center pt-1 border-t border-slate-800">
+                <div>Minute (0-59)</div>
+                <div>Hour (0-23)</div>
+                <div>Day of Mo (1-31)</div>
+                <div>Month (1-12)</div>
+                <div>Day of Wk (0-6)</div>
+              </div>
+            </div>
+
+            <div className="space-y-2 pt-2">
+              <InteractiveCmd cmd="crontab -e" desc="Edit current user's automation crontab matrix" />
+              <InteractiveCmd cmd="30 2 * * * /usr/local/bin/backup_db.sh" desc="Run database backup script every night at 2:30 AM" />
+              <InteractiveCmd cmd="*/15 * * * * /scripts/health_check.sh" desc="Run health check ping every 15 minutes" />
+            </div>
+          </div>
+        </div>
+      ),
+    },
+
+    304: {
+      title: '3.4 Monitoring System Logs with Journalctl',
+      time: '45 mins',
+      badge: 'The Black Box Flight Recorder',
+      render: (
+        <div className="space-y-6">
+          <div className="bg-sky-50/80 p-4 sm:p-5 rounded-2xl border border-sky-200/80 space-y-2">
+            <span className="text-xs font-bold text-sky-800 uppercase tracking-wider block">🎮 GAMIFIED LORE: "THE BLACK BOX FLIGHT RECORDER"</span>
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+              "When a system crash occurs, systemd-journald records every system event, kernel alert, and service output into a central, binary black box recorder. journalctl is your extraction scope."
+            </p>
+          </div>
+
+          <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 font-mono text-xs shadow-xl text-center space-y-1 text-slate-300">
+            <div className="text-rose-400 font-bold">[ System Crash / Error Alert ]</div>
+            <div className="text-slate-500">│  ▼ Logged into systemd-journald</div>
+            <div className="text-emerald-400 font-bold">journalctl -u nginx</div>
+            <div className="text-sky-300 text-[11px] italic">"Critical Error: Out of Memory at 22:15"</div>
+          </div>
+
+          <div className="space-y-2">
+            <h4 className="font-heading font-bold text-sm text-slate-900">🛠️ Diagnostic Extraction Commands:</h4>
+            <InteractiveCmd cmd="journalctl -f" desc="View real-time live system logs" />
+            <InteractiveCmd cmd="journalctl -u nginx" desc="Extract logs specifically for Nginx web server" />
+            <InteractiveCmd cmd="journalctl -b -p err" desc="Inspect high-severity system error logs from current boot" />
+          </div>
+        </div>
+      ),
+    },
+
+    305: {
+      title: '3.5 Module 3 Hands-on Assessment',
+      time: '40 mins',
+      badge: 'Incident Response Briefing',
+      render: (
+        <div className="space-y-6">
+          <div className="bg-rose-50/80 p-4 sm:p-5 rounded-2xl border border-rose-200 space-y-2">
+            <span className="text-xs font-bold text-rose-800 uppercase tracking-wider block">🚨 INCIDENT RESPONSE: "RESCUING THE OVERLOADED SERVER"</span>
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+              "Mission Objective: A rogue background process is overloading CPU resources, causing the primary web service to crash. Your objective as a DevOps System Administrator is to diagnose, terminate, automate, and restore normal operational parameters."
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <h4 className="font-heading font-bold text-sm text-slate-900">📝 Step-by-Step Task Objectives & Commands</h4>
+
+            <div className="space-y-2">
+              <InteractiveCmd cmd="ps aux | grep python" desc="Task 1: Identify rogue Python high-CPU process" />
+              <InteractiveCmd cmd="kill -9 4096" desc="Task 1: Terminate rogue process PID 4096" />
+              <InteractiveCmd cmd="systemctl status nginx" desc="Task 2: Check status of crashed web service" />
+              <InteractiveCmd cmd="sudo systemctl restart nginx" desc="Task 2: Restart web service" />
+              <InteractiveCmd cmd="*/10 * * * * /opt/monitor.sh" desc="Task 3: Schedule cron healthcheck every 10 mins" />
+              <InteractiveCmd cmd="journalctl -u nginx" desc="Task 4: Forensic audit system logs for incident timestamp" />
+            </div>
+          </div>
+        </div>
+      ),
+    },
   };
 
   const handleTerminalExecute = (e: React.FormEvent) => {
