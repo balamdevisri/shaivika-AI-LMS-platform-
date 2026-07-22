@@ -231,7 +231,7 @@ export const LandingPage: React.FC = () => {
         <section className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-16 overflow-hidden">
           
           {/* Background Ambient Sky Blue Glows */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[650px] h-[450px] bg-sky-400/20 rounded-full blur-[130px] pointer-events-none animate-pulse" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-162.5 h-112.5 bg-sky-400/20 rounded-full blur-[130px] pointer-events-none animate-pulse" />
 
           {/* Centered Hero Content Container */}
           <motion.div
@@ -249,7 +249,7 @@ export const LandingPage: React.FC = () => {
             {/* Headline */}
             <h1 className="font-heading font-extrabold text-3xl sm:text-5xl lg:text-6xl text-slate-900 tracking-tight leading-[1.12] text-center">
               Continuous Learning,{' '}
-              <span className="block mt-2 bg-gradient-to-r from-sky-600 via-sky-500 to-sky-400 bg-clip-text text-transparent">
+              <span className="block mt-2 bg-linear-to-r from-sky-600 via-sky-500 to-sky-400 bg-clip-text text-transparent">
                 Powered by Kaizen Q AI
               </span>
             </h1>
@@ -263,7 +263,7 @@ export const LandingPage: React.FC = () => {
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
               <Link
                 to="/dashboard"
-                className="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-sky-600 to-sky-500 hover:from-sky-700 hover:to-sky-600 text-white font-bold rounded-xl shadow-lg shadow-sky-500/25 hover:scale-103 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer text-sm"
+                className="w-full sm:w-auto px-8 py-3.5 bg-linear-to-r from-sky-600 to-sky-500 hover:from-sky-700 hover:to-sky-600 text-white font-bold rounded-xl shadow-lg shadow-sky-500/25 hover:scale-103 active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer text-sm"
               >
                 <span>Get Started Free</span>
                 <ArrowRight className="w-4 h-4" />
@@ -390,7 +390,7 @@ export const LandingPage: React.FC = () => {
                 const Icon = tool.icon;
                 return (
                   <div key={idx} className="bg-white/90 p-7 rounded-3xl space-y-4 border border-sky-100 hover:border-sky-300 shadow-xs hover:shadow-md transition-all group">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-500 to-sky-400 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                    <div className="w-12 h-12 rounded-2xl bg-linear-to-tr from-sky-500 to-sky-400 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
                       <Icon className="w-6 h-6" />
                     </div>
                     <h3 className="font-heading font-bold text-lg text-slate-900 group-hover:text-sky-600 transition-colors">
@@ -466,7 +466,7 @@ export const LandingPage: React.FC = () => {
                         <span className="text-sky-600">{course.progress}%</span>
                       </div>
                       <div className="w-full h-2 bg-sky-50 rounded-full overflow-hidden border border-sky-100">
-                        <div className="h-full bg-gradient-to-r from-sky-600 to-sky-400 rounded-full" style={{ width: `${course.progress}%` }} />
+                        <div className="h-full bg-linear-to-r from-sky-600 to-sky-400 rounded-full" style={{ width: `${course.progress}%` }} />
                       </div>
                     </div>
                   </div>
@@ -531,7 +531,7 @@ export const LandingPage: React.FC = () => {
               <div className="pt-4">
                 <Link
                   to="/dashboard"
-                  className="px-7 py-3 bg-gradient-to-r from-sky-600 to-sky-500 hover:from-sky-700 hover:to-sky-600 text-white font-bold text-xs rounded-xl shadow-md shadow-sky-500/20 transition-all inline-flex items-center gap-2"
+                  className="px-7 py-3 bg-linear-to-r from-sky-600 to-sky-500 hover:from-sky-700 hover:to-sky-600 text-white font-bold text-xs rounded-xl shadow-md shadow-sky-500/20 transition-all inline-flex items-center gap-2"
                 >
                   <span>Start Free Trial</span>
                   <ArrowRight className="w-4 h-4" />
@@ -683,7 +683,7 @@ export const LandingPage: React.FC = () => {
 
         {/* ----------------- 10. CONTACT SECTION ----------------- */}
         <section id="contact" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-          <div className="bg-gradient-to-br from-slate-900 to-sky-950 rounded-3xl p-8 sm:p-12 text-white grid grid-cols-1 lg:grid-cols-12 gap-10 border border-sky-900/60 shadow-2xl">
+          <div className="bg-linear-to-br from-slate-900 to-sky-950 rounded-3xl p-8 sm:p-12 text-white grid grid-cols-1 lg:grid-cols-12 gap-10 border border-sky-900/60 shadow-2xl">
             <div className="lg:col-span-5 space-y-6">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-500/20 border border-sky-400/30 text-sky-300 text-xs font-bold">
                 <span>Enterprise Inquiry</span>
@@ -703,18 +703,18 @@ export const LandingPage: React.FC = () => {
                   <input
                     type="text"
                     placeholder="Full Name"
-                    className="bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-sky-500"
+                    className="bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-hidden"
                   />
                   <input
                     type="email"
                     placeholder="Work Email"
-                    className="bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-sky-500"
+                    className="bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-hidden"
                   />
                 </div>
                 <textarea
                   rows={3}
                   placeholder="Institution & student headcount..."
-                  className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-sky-500"
+                  className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-hidden"
                 />
                 <button type="submit" className="btn-blue-primary w-full justify-center text-xs py-3 font-bold">
                   <span>Submit Inquiry</span>

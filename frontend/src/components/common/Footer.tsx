@@ -29,7 +29,7 @@ export const Footer: React.FC = () => {
                   <input
                     type="email"
                     placeholder="Enter work email"
-                    className="w-full bg-white border border-sky-200 rounded-xl py-2.5 pl-9 pr-3 text-xs text-slate-900 focus:outline-hidden focus:border-sky-500"
+                    className="w-full bg-white border border-sky-200 rounded-xl py-2.5 pl-9 pr-3 text-xs text-slate-900 focus:outline-hidden"
                   />
                 </div>
                 <button

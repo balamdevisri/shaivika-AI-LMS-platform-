@@ -116,7 +116,7 @@ export const Navbar: React.FC = () => {
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
                   className="flex items-center gap-2.5 p-1.5 pr-3 bg-white hover:bg-sky-50 border border-sky-200 rounded-full transition-all cursor-pointer shadow-xs"
                 >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-sky-500 to-sky-400 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                  <div className="w-8 h-8 rounded-full bg-linear-to-r from-sky-500 to-sky-400 text-white flex items-center justify-center font-bold text-xs shadow-xs">
                     {userProfile?.name?.charAt(0).toUpperCase() || 'U'}
                   </div>
                   <div className="text-left hidden xl:block">
@@ -183,7 +183,7 @@ export const Navbar: React.FC = () => {
                 </Link>
                 <Link
                   to="/dashboard"
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-sky-500 hover:from-sky-700 hover:to-sky-600 text-white font-bold text-xs shadow-md shadow-sky-500/25 transition-all hover:scale-103 flex items-center gap-1.5"
+                  className="px-5 py-2.5 rounded-xl bg-linear-to-r from-sky-600 to-sky-500 hover:from-sky-700 hover:to-sky-600 text-white font-bold text-xs shadow-md shadow-sky-500/25 transition-all hover:scale-103 flex items-center gap-1.5"
                 >
                   <span>Get Started Free</span>
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -235,7 +235,7 @@ export const Navbar: React.FC = () => {
                 <Link
                   to="/dashboard"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center py-2.5 text-xs font-bold text-white bg-gradient-to-r from-sky-600 to-sky-500 rounded-xl shadow-md flex items-center justify-center gap-2"
+                  className="w-full text-center py-2.5 text-xs font-bold text-white bg-linear-to-r from-sky-600 to-sky-500 rounded-xl shadow-md flex items-center justify-center gap-2"
                 >
                   <span>Get Started Free</span>
                   <ArrowRight className="w-3.5 h-3.5" />
