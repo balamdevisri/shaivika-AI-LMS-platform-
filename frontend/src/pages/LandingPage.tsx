@@ -22,6 +22,7 @@ import {
   Play,
 } from 'lucide-react';
 import { KaizenQVideoPlayer } from '@/components/common/KaizenQVideoPlayer';
+import { AnimatedKaizenQ } from '@/components/common/AnimatedKaizenQ';
 import { BlueSmokeTheme } from '@/components/common/BlueSmokeTheme';
 
 export const LandingPage: React.FC = () => {
@@ -288,21 +289,30 @@ export const LandingPage: React.FC = () => {
               </p>
             </motion.div>
 
-            {/* RIGHT COLUMN: Video Showcase */}
+            {/* RIGHT COLUMN: 60 FPS Animated Kaizen Q Symbol Showcase */}
             <motion.div
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
-              className="lg:col-span-6 relative flex justify-center"
+              className="lg:col-span-6 relative flex justify-center items-center"
             >
               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-sky-400/20 rounded-full blur-3xl pointer-events-none" />
 
               <motion.div
-                animate={{ y: [0, -10, 0] }}
+                animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-                className="relative w-full max-w-xl p-1 sm:p-1.5 rounded-[28px] bg-white/90 backdrop-blur-2xl border border-sky-200 shadow-2xl shadow-sky-500/15"
+                className="relative w-full max-w-lg p-6 sm:p-8 rounded-3xl bg-white/95 backdrop-blur-2xl border border-sky-200 shadow-2xl shadow-sky-500/15 flex flex-col items-center justify-center text-center space-y-4"
               >
-                <KaizenQVideoPlayer src="/KaizenQ.mp4" />
+                <AnimatedKaizenQ width={360} height={240} theme="light" />
+                <div className="pt-3 border-t border-sky-100 w-full flex items-center justify-between text-xs font-bold text-slate-700">
+                  <span className="flex items-center gap-1.5 text-sky-600">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Kaizen Q AI Engine</span>
+                  </span>
+                  <span className="font-mono text-[11px] text-sky-600 bg-sky-50 px-3 py-1 rounded-full border border-sky-200">
+                    60 FPS Autonomous
+                  </span>
+                </div>
               </motion.div>
             </motion.div>
 
