@@ -924,6 +924,252 @@ export const CourseView: React.FC = () => {
         </div>
       ),
     },
+
+    // Module 4 Gamified Lessons
+    401: {
+      title: '4.1 Writing Your First Bash Script',
+      time: '80 mins',
+      badge: 'Forging Automation Macros',
+      render: (
+        <div className="space-y-6">
+          <div className="bg-sky-50/80 p-4 sm:p-5 rounded-2xl border border-sky-200/80 space-y-2">
+            <span className="text-xs font-bold text-sky-800 uppercase tracking-wider block">🎮 GAMIFIED LORE: "FORGING AUTOMATION MACROS"</span>
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+              "Manually executing individual commands is like firing single shots. Writing a Bash Script turns your commands into an automated rapid-fire macro. The Shebang (#!/bin/bash) tells the OS kernel which interpreter to use to execute your script."
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <h4 className="font-heading font-bold text-sm text-slate-900">📜 AUTOMATION SCRIPT ANATOMY</h4>
+            <div className="bg-slate-950 p-4 sm:p-5 rounded-2xl border border-slate-800 font-mono text-xs space-y-2 shadow-xl text-slate-300">
+              <div className="text-amber-400 font-bold">#!/bin/bash</div>
+              <div className="text-slate-400"># Define Variables (No spaces around '=')</div>
+              <div><span className="text-sky-400">SERVER_NAME</span>="Alpha-Node"</div>
+              <div><span className="text-sky-400">BACKUP_DIR</span>="/var/backups"</div>
+              <div className="pt-2 text-emerald-400">echo "Deploying update on $SERVER_NAME..."</div>
+              <div className="text-emerald-400">echo "Target backup location: ${'{'}BACKUP_DIR{'}'}"</div>
+            </div>
+
+            <div className="p-3 bg-sky-50 rounded-xl border border-sky-200 text-xs font-medium">
+              <span className="font-bold text-sky-900 block">💡 Pro-Tip:</span>
+              Execute <code className="bg-white px-1.5 py-0.5 rounded border border-sky-200 font-mono">chmod +x script.sh</code> to grant execute permissions before running <code className="bg-white px-1.5 py-0.5 rounded border border-sky-200 font-mono">./script.sh</code>.
+            </div>
+
+            <div className="space-y-2">
+              <InteractiveCmd cmd="chmod +x deploy.sh" desc="Grant execute permission to script" />
+              <InteractiveCmd cmd="./deploy.sh" desc="Execute automation script macro" />
+            </div>
+          </div>
+        </div>
+      ),
+    },
+
+    402: {
+      title: '4.2 Control Flow in Shell Scripts',
+      time: '90 mins',
+      badge: 'Cybernetic Logic Gates & Loops',
+      render: (
+        <div className="space-y-6">
+          <div className="bg-sky-50/80 p-4 sm:p-5 rounded-2xl border border-sky-200/80 space-y-2">
+            <span className="text-xs font-bold text-sky-800 uppercase tracking-wider block">🎮 GAMIFIED LORE: "CYBERNETIC LOGIC GATES & LOOPS"</span>
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+              "Static scripts execute linearly, but dynamic scripts make tactical decisions based on system states using If/Else Statements and repeat operations across multiple nodes using Loops."
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <h4 className="font-heading font-bold text-sm text-slate-900">🛠️ Logic & Iteration Examples:</h4>
+
+            <div className="p-4 bg-slate-50 rounded-2xl border border-sky-100 space-y-2 text-xs font-mono">
+              <span className="font-bold text-slate-900 font-sans block">1. Conditional Logic (if/else disk alert):</span>
+              <div className="bg-slate-950 p-3.5 rounded-xl text-slate-300 space-y-1">
+                <div className="text-amber-400 font-bold">THRESHOLD=80</div>
+                <div className="text-emerald-400">if [ "$CURRENT_USAGE" -gt "$THRESHOLD" ]; then</div>
+                <div className="pl-4 text-rose-400">echo "⚠️ ALERT: Disk Usage is critically high!"</div>
+                <div className="text-emerald-400">else</div>
+                <div className="pl-4 text-sky-300">echo "🟢 OK: Disk usage is normal."</div>
+                <div className="text-emerald-400">fi</div>
+              </div>
+            </div>
+
+            <div className="p-4 bg-slate-50 rounded-2xl border border-sky-100 space-y-2 text-xs font-mono">
+              <span className="font-bold text-slate-900 font-sans block">2. Iterating through Nodes (for loop across IPs):</span>
+              <div className="bg-slate-950 p-3.5 rounded-xl text-slate-300 space-y-1">
+                <div className="text-sky-400">SERVERS=("192.168.1.10" "192.168.1.11" "192.168.1.12")</div>
+                <div className="text-emerald-400">for IP in "${'{'}SERVERS[@]{'}'}"; do</div>
+                <div className="pl-4 text-amber-300">echo "📡 Scanning target node: $IP..."</div>
+                <div className="text-emerald-400">done</div>
+              </div>
+            </div>
+
+            <div className="space-y-2 pt-2">
+              <InteractiveCmd cmd="./check_disk.sh" desc="Execute conditional disk usage alert script" />
+              <InteractiveCmd cmd="./scan_nodes.sh" desc="Execute node scanner loop script" />
+            </div>
+          </div>
+        </div>
+      ),
+    },
+
+    403: {
+      title: '4.3 Network Diagnostics',
+      time: '60 mins',
+      badge: 'Cyber Scanners & Telemetry Radar',
+      render: (
+        <div className="space-y-6">
+          <div className="bg-sky-50/80 p-4 sm:p-5 rounded-2xl border border-sky-200/80 space-y-2">
+            <span className="text-xs font-bold text-sky-800 uppercase tracking-wider block">🎮 GAMIFIED LORE: "CYBER SCANNERS & TELEMETRY RADAR"</span>
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+              "When data packets stall, network diagnostic tools turn your terminal into a deep-space scanner to ping targets, inspect active socket ports, and test API endpoints."
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <h4 className="font-heading font-bold text-sm text-slate-900">📡 Diagnostic Tool Arsenal:</h4>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="bg-sky-50 border-b border-sky-200 text-sky-900 font-bold">
+                    <th className="p-3">Tool</th>
+                    <th className="p-3">Full Form / Description</th>
+                    <th className="p-3">Gamified Analogy</th>
+                    <th className="p-3">Primary Use</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-sky-100 font-medium text-slate-800">
+                  <tr className="hover:bg-slate-50">
+                    <td className="p-3 font-mono font-bold text-sky-700">ip addr</td>
+                    <td className="p-3">IP Address Show</td>
+                    <td className="p-3">Local Identification Badge</td>
+                    <td className="p-3">Find machine's local/public IP</td>
+                  </tr>
+                  <tr className="hover:bg-slate-50">
+                    <td className="p-3 font-mono font-bold text-emerald-700">ping</td>
+                    <td className="p-3">Packet InterNet Groper</td>
+                    <td className="p-3">Pulse Echo Locator</td>
+                    <td className="p-3">Check if remote host is reachable</td>
+                  </tr>
+                  <tr className="hover:bg-slate-50">
+                    <td className="p-3 font-mono font-bold text-amber-700">ss / netstat</td>
+                    <td className="p-3">Socket Statistics</td>
+                    <td className="p-3">Open Port Radar</td>
+                    <td className="p-3">List listening open ports (80/443)</td>
+                  </tr>
+                  <tr className="hover:bg-slate-50">
+                    <td className="p-3 font-mono font-bold text-purple-700">curl</td>
+                    <td className="p-3">Client URL</td>
+                    <td className="p-3">Tactical Data Retrieval Drone</td>
+                    <td className="p-3">Query web servers & API endpoints</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div className="space-y-2 pt-2">
+              <InteractiveCmd cmd="curl -I https://api.github.com" desc="Test API endpoint response and print HTTP headers" />
+              <InteractiveCmd cmd="sudo ss -tulpn" desc="Inspect all listening TCP ports and running process names" />
+              <InteractiveCmd cmd="ping -c 4 google.com" desc="Send 4 pulse echo ICMP packets to target domain" />
+            </div>
+          </div>
+        </div>
+      ),
+    },
+
+    404: {
+      title: '4.4 SSH Key Pair Authentication & UFW Firewall',
+      time: '70 mins',
+      badge: 'Encrypted Portal Keys & Citadel Shields',
+      render: (
+        <div className="space-y-6">
+          <div className="bg-sky-50/80 p-4 sm:p-5 rounded-2xl border border-sky-200/80 space-y-2">
+            <span className="text-xs font-bold text-sky-800 uppercase tracking-wider block">🎮 GAMIFIED LORE: "ENCRYPTED PORTAL KEYS & CITADEL DEFENSE SHIELDS"</span>
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+              "Passwords can be brute-forced. SSH Key Pair Authentication uses asymmetric encryption (Public & Private Keys) to open secure encrypted portals. UFW (Uncomplicated Firewall) acts as the defensive shield blocking unauthorized network traffic."
+            </p>
+          </div>
+
+          <div className="bg-slate-950 p-4 sm:p-5 rounded-2xl border border-slate-800 font-mono text-xs shadow-xl flex items-center justify-between gap-3 text-slate-300">
+            <div className="p-2.5 bg-slate-900 rounded-xl border border-slate-700 text-center flex-1">
+              <span className="font-bold text-sky-400 block text-[11px]">Private Key</span>
+              <span className="text-white text-[10px]">(id_ed25519)</span>
+            </div>
+            <div className="text-emerald-400 font-bold text-[10px] text-center">
+              {'🔐 Encrypted Portal ═════════►'}
+            </div>
+            <div className="p-2.5 bg-sky-950/80 rounded-xl border border-sky-500/40 text-center flex-1">
+              <span className="font-bold text-sky-400 block text-[11px]">Public Key</span>
+              <span className="text-white text-[10px]">(authorized_keys)</span>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <h4 className="font-heading font-bold text-sm text-slate-900">🛠️ Key Citadel Defense Commands:</h4>
+            <InteractiveCmd cmd='ssh-keygen -t ed25519 -C "admin@citadel.com"' desc="Generate secure ED25519 SSH Key Pair" />
+            <InteractiveCmd cmd="ssh-copy-id user@remote_server_ip" desc="Deploy public key to remote server" />
+            <InteractiveCmd cmd="sudo ufw default deny incoming" desc="Set UFW firewall default incoming shield block" />
+            <InteractiveCmd cmd="sudo ufw allow 22/tcp" desc="Allow SSH access on port 22" />
+            <InteractiveCmd cmd="sudo ufw allow 80/tcp" desc="Allow HTTP web traffic on port 80" />
+            <InteractiveCmd cmd="sudo ufw enable" desc="Enable UFW firewall defensive shield" />
+          </div>
+        </div>
+      ),
+    },
+
+    405: {
+      title: '4.5 Final Course Capstone Project & Certificate Exam',
+      time: '90 mins',
+      badge: 'Operation Citadel Shield & Certification',
+      render: (
+        <div className="space-y-6">
+          <div className="bg-sky-900 text-white p-6 sm:p-8 rounded-3xl shadow-2xl border border-sky-700 space-y-4">
+            <div className="flex items-center gap-2 border-b border-sky-700 pb-3">
+              <Award className="w-6 h-6 text-amber-400" />
+              <h3 className="font-heading font-extrabold text-xl text-white">
+                🚀 CAPSTONE MISSION BRIEFING: "OPERATION CITADEL SHIELD"
+              </h3>
+            </div>
+
+            <p className="text-xs sm:text-sm text-sky-100 font-medium leading-relaxed">
+              Scenario: You are tasked with setting up and securing a multi-tier Linux web server environment from scratch, automating system health checks, and locking down unauthorized network access.
+            </p>
+
+            <div className="p-4 bg-sky-950/80 rounded-2xl border border-sky-600/50 text-xs font-mono text-sky-300 space-y-2">
+              <div className="font-bold text-amber-300">CAPSTONE PIPELINE WORKFLOW:</div>
+              <div>1. User Setup {'──►'} 2. Firewall Shield {'──►'} 3. Automation Script {'──►'} 4. Final Audit</div>
+              <div className="text-[11px] text-slate-400">(chown/sudo) ➜ (UFW Ports 22,80) ➜ (Disk & Log Check) ➜ (Crontab Deployment)</div>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <h4 className="font-heading font-bold text-sm text-slate-900">📋 Capstone Implementation Verification Commands</h4>
+
+            <div className="space-y-2">
+              <InteractiveCmd cmd="sudo useradd -m -s /bin/bash deploy_admin" desc="Step 1: Create deploy_admin user" />
+              <InteractiveCmd cmd="sudo ufw allow 22/tcp && sudo ufw allow 80/tcp" desc="Step 2: Lock down firewall ports" />
+              <InteractiveCmd cmd="./health_audit.sh" desc="Step 3: Execute health audit script" />
+              <InteractiveCmd cmd="crontab -l" desc="Step 4: Verify 15-minute cron automation deployment" />
+            </div>
+          </div>
+
+          <div className="p-6 rounded-3xl bg-emerald-50 border border-emerald-200 text-center space-y-3 shadow-md">
+            <Award className="w-10 h-10 text-emerald-600 mx-auto animate-bounce" />
+            <h3 className="font-heading font-extrabold text-xl text-emerald-900">
+              🏆 ISO Verified Linux System Administrator Certification
+            </h3>
+            <p className="text-xs text-emerald-800 font-medium max-w-lg mx-auto">
+              Complete all 4 module practical labs to unlock your verifiable ISO digital certificate badge!
+            </p>
+            <button
+              onClick={() => toast.success('Congratulations! Linux Essentials Certificate Unlocked!')}
+              className="btn-blue-primary text-xs py-3 px-6 font-extrabold shadow-lg shadow-sky-500/20 cursor-pointer"
+            >
+              Claim Verifiable ISO Certificate
+            </button>
+          </div>
+        </div>
+      ),
+    },
   };
 
   const handleTerminalExecute = (e: React.FormEvent) => {
