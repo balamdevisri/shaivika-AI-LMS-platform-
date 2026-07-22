@@ -13,6 +13,7 @@ import {
   ArrowLeft,
   ChevronDown,
   Layers,
+  Play,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCourses } from '@/contexts/CourseContext';
@@ -37,6 +38,41 @@ export const CourseView: React.FC = () => {
   // Quiz State
   const [quizAnswers, setQuizAnswers] = useState<{ [key: number]: number }>({});
   const [quizSubmitted, setQuizSubmitted] = useState(false);
+
+  // Instant Terminal Command Execution Helper
+  const executeCommandInTerminal = (rawCmd: string) => {
+    const cleanCmd = rawCmd.replace(/^\$\s*/, '').trim();
+    let output = '';
+    const cmdLower = cleanCmd.toLowerCase();
+
+    if (cmdLower === 'help') {
+      output = 'Available commands: ls, pwd, whoami, uname -a, cat intro.txt, systemctl status, clear';
+    } else if (cmdLower === 'pwd') {
+      output = '/home/student/linux-essentials';
+    } else if (cmdLower.includes('ls')) {
+      output = 'drwxr-xr-x 4 student student 4096 Jul 22 20:30 .\ndrwxr-xr-x 3 student student 4096 Jul 22 20:30 ..\n-rw-r--r-- 1 student student  842 Jul 22 20:30 intro.txt\n-rwxr-xr-x 1 student student 1024 Jul 22 20:30 backup.sh';
+    } else if (cmdLower.includes('mkdir')) {
+      output = `[OK] Directory structure created: ${cleanCmd}`;
+    } else if (cmdLower.includes('touch')) {
+      output = `[OK] Created file(s) successfully: ${cleanCmd}`;
+    } else if (cmdLower.includes('cp')) {
+      output = `[OK] Copied target file/directory recursively.`;
+    } else if (cmdLower.includes('mv')) {
+      output = `[OK] Moved / renamed item successfully.`;
+    } else if (cmdLower.includes('rm')) {
+      output = `[OK] Removed file/directory permanently.`;
+    } else if (cmdLower === 'whoami') {
+      output = 'student@shaivika-lms';
+    } else if (cmdLower.includes('tree')) {
+      output = '.\n├── bin\n├── devops_lab\n│   └── scripts\n│       ├── build.sh\n│       └── deploy.sh\n└── test.sh';
+    } else {
+      output = `bash: ${cleanCmd}: command simulated successfully.`;
+    }
+
+    setTerminalHistory((prev) => [...prev, { cmd: cleanCmd, output }]);
+    setActiveTab('terminal');
+    toast.success(`Executed "${cleanCmd}" in CLI Terminal Lab!`);
+  };
 
   const courseData = {
     id: dynamicCourse?.id || courseId || '1',
@@ -136,6 +172,25 @@ export const CourseView: React.FC = () => {
       },
     ],
   };
+
+  // Reusable Interactive Command Box with Auto Terminal Execution
+  const InteractiveCmd: React.FC<{ cmd: string; desc?: string }> = ({ cmd, desc }) => (
+    <div className="bg-slate-950 p-3.5 rounded-xl font-mono text-xs border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md my-2">
+      <div className="space-y-1 min-w-0">
+        {desc && <span className="text-[11px] text-slate-400 font-sans block">{desc}</span>}
+        <span className="text-emerald-400 font-bold block truncate">{cmd.startsWith('$') ? cmd : `$ ${cmd}`}</span>
+      </div>
+      <button
+        type="button"
+        onClick={() => executeCommandInTerminal(cmd)}
+        className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-extrabold rounded-lg text-[11px] flex items-center gap-1.5 transition-all cursor-pointer shrink-0 shadow-xs"
+        title="Execute command in Terminal Lab"
+      >
+        <Play className="w-3.5 h-3.5 fill-current" />
+        <span>Run in Terminal</span>
+      </button>
+    </div>
+  );
 
   // Module 1 Lessons Rich Content Renderer
   const module1LessonsContent: { [key: number]: any } = {
@@ -248,13 +303,11 @@ export const CourseView: React.FC = () => {
             </h4>
             <p className="text-xs text-slate-600 font-medium">Every Linux command follows a standard syntax:</p>
 
-            <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 font-mono text-xs text-emerald-400 shadow-md">
-              <span className="text-slate-400"># Standard Syntax Pattern:</span>
-              <div className="text-sm font-bold text-white mt-1">$ command  -[options]  [arguments]</div>
-            </div>
+            <InteractiveCmd cmd="command -[options] [arguments]" desc="Standard Command Syntax Pattern" />
 
-            <h5 className="font-bold text-xs text-slate-800 pt-2">🔍 Practical Breakdown: <code className="bg-slate-100 px-2 py-0.5 rounded border border-slate-300 text-sky-700">ls -la /var/log</code></h5>
-            
+            <h5 className="font-bold text-xs text-slate-800 pt-2">🔍 Practical Breakdown:</h5>
+            <InteractiveCmd cmd="ls -la /var/log" desc="List detailed files including hidden ones in /var/log" />
+
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
               <div className="p-3.5 bg-sky-50 rounded-2xl border border-sky-200 text-center space-y-1">
                 <span className="font-bold text-sky-900 block">Command: ls</span>
@@ -305,54 +358,45 @@ export const CourseView: React.FC = () => {
           </div>
 
           <div className="space-y-3">
-            <h4 className="font-heading font-bold text-sm text-slate-900">🛠️ Core Navigation Commands Table</h4>
+            <h4 className="font-heading font-bold text-sm text-slate-900">🛠️ Core Navigation Commands Table & Quick Execution</h4>
             
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr className="bg-sky-50 border-b border-sky-200 text-sky-900 font-bold">
-                    <th className="p-3">Command</th>
-                    <th className="p-3">Full Form</th>
-                    <th className="p-3">Purpose</th>
-                    <th className="p-3">Example</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-sky-100 font-medium text-slate-800">
-                  <tr className="hover:bg-slate-50">
-                    <td className="p-3 font-mono font-bold text-sky-700">pwd</td>
-                    <td className="p-3">Print Working Directory</td>
-                    <td className="p-3">Displays current absolute path</td>
-                    <td className="p-3 font-mono">pwd</td>
-                  </tr>
-                  <tr className="hover:bg-slate-50">
-                    <td className="p-3 font-mono font-bold text-sky-700">ls</td>
-                    <td className="p-3">List</td>
-                    <td className="p-3">Lists files in current directory</td>
-                    <td className="p-3 font-mono">ls -la /home</td>
-                  </tr>
-                  <tr className="hover:bg-slate-50">
-                    <td className="p-3 font-mono font-bold text-sky-700">cd</td>
-                    <td className="p-3">Change Directory</td>
-                    <td className="p-3">Navigates to a different folder</td>
-                    <td className="p-3 font-mono">cd /var/log</td>
-                  </tr>
-                  <tr className="hover:bg-slate-50">
-                    <td className="p-3 font-mono font-bold text-sky-700">tree</td>
-                    <td className="p-3">Directory Tree</td>
-                    <td className="p-3">Visualizes directory structure</td>
-                    <td className="p-3 font-mono">tree -L 2</td>
-                  </tr>
-                </tbody>
-              </table>
+            <div className="space-y-2">
+              <InteractiveCmd cmd="pwd" desc="Print Working Directory (Displays absolute path)" />
+              <InteractiveCmd cmd="ls -la /home" desc="List all files & details in /home directory" />
+              <InteractiveCmd cmd="cd /var/log" desc="Navigate to system log directory" />
+              <InteractiveCmd cmd="tree -L 2" desc="Visualize directory tree up to depth 2" />
             </div>
           </div>
 
-          <div className="p-4 bg-sky-50 rounded-2xl border border-sky-200 space-y-2 text-xs">
+          <div className="p-4 bg-sky-50 rounded-2xl border border-sky-200 space-y-3 text-xs">
             <span className="font-bold text-sky-900 block">💡 Essential cd Shortcuts:</span>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 font-mono text-[11px]">
-              <div className="p-2 bg-white rounded-xl border border-sky-100 font-bold"><span className="text-sky-700">cd ~</span> or <span className="text-sky-700">cd</span> ➜ Home dir</div>
-              <div className="p-2 bg-white rounded-xl border border-sky-100 font-bold"><span className="text-sky-700">cd ..</span> ➜ Up 1 level</div>
-              <div className="p-2 bg-white rounded-xl border border-sky-100 font-bold"><span className="text-sky-700">cd -</span> ➜ Previous dir</div>
+              <button
+                type="button"
+                onClick={() => executeCommandInTerminal('cd ~')}
+                className="p-2.5 bg-white hover:bg-sky-100 rounded-xl border border-sky-200 text-left cursor-pointer transition-all"
+              >
+                <span className="text-sky-700 font-bold block">cd ~</span>
+                <span className="text-slate-500 text-[10px]">➜ Go to Home dir</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => executeCommandInTerminal('cd ..')}
+                className="p-2.5 bg-white hover:bg-sky-100 rounded-xl border border-sky-200 text-left cursor-pointer transition-all"
+              >
+                <span className="text-sky-700 font-bold block">cd ..</span>
+                <span className="text-slate-500 text-[10px]">➜ Move up 1 level</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => executeCommandInTerminal('cd -')}
+                className="p-2.5 bg-white hover:bg-sky-100 rounded-xl border border-sky-200 text-left cursor-pointer transition-all"
+              >
+                <span className="text-sky-700 font-bold block">cd -</span>
+                <span className="text-slate-500 text-[10px]">➜ Jump to previous dir</span>
+              </button>
             </div>
           </div>
         </div>
@@ -370,46 +414,30 @@ export const CourseView: React.FC = () => {
 
             <div className="p-4 bg-slate-50 rounded-2xl border border-sky-100 space-y-2">
               <span className="font-bold text-xs text-sky-900 block">1. Creating Folders & Files (mkdir, touch)</span>
-              <div className="bg-slate-950 p-3 rounded-xl font-mono text-xs text-emerald-400 space-y-1">
-                <div><span className="text-slate-500"># Create folder & nested tree:</span></div>
-                <div>$ mkdir project</div>
-                <div>$ mkdir -p project/src/components</div>
-                <div><span className="text-slate-500"># Create empty files:</span></div>
-                <div>$ touch project/index.js project/README.md</div>
-              </div>
+              <InteractiveCmd cmd="mkdir project" desc="Create a single folder" />
+              <InteractiveCmd cmd="mkdir -p project/src/components" desc="Create nested directory tree" />
+              <InteractiveCmd cmd="touch project/index.js project/README.md" desc="Create empty files" />
             </div>
 
             <div className="p-4 bg-slate-50 rounded-2xl border border-sky-100 space-y-2">
               <span className="font-bold text-xs text-sky-900 block">2. Copying Files & Directories (cp)</span>
-              <div className="bg-slate-950 p-3 rounded-xl font-mono text-xs text-emerald-400 space-y-1">
-                <div><span className="text-slate-500"># Copy single file:</span></div>
-                <div>$ cp file.txt copy_file.txt</div>
-                <div><span className="text-slate-500"># Copy folder recursively (-r):</span></div>
-                <div>$ cp -r project/ project_backup/</div>
-              </div>
+              <InteractiveCmd cmd="cp file.txt copy_file.txt" desc="Copy a single file" />
+              <InteractiveCmd cmd="cp -r project/ project_backup/" desc="Copy a directory recursively (-r)" />
             </div>
 
             <div className="p-4 bg-slate-50 rounded-2xl border border-sky-100 space-y-2">
               <span className="font-bold text-xs text-sky-900 block">3. Moving & Renaming (mv)</span>
-              <div className="bg-slate-950 p-3 rounded-xl font-mono text-xs text-emerald-400 space-y-1">
-                <div><span className="text-slate-500"># Rename file:</span></div>
-                <div>$ mv old_name.txt new_name.txt</div>
-                <div><span className="text-slate-500"># Move file:</span></div>
-                <div>$ mv report.pdf ~/Documents/</div>
-              </div>
+              <InteractiveCmd cmd="mv old_name.txt new_name.txt" desc="Rename a file" />
+              <InteractiveCmd cmd="mv report.pdf ~/Documents/" desc="Move file to another directory" />
             </div>
 
             <div className="p-4 bg-rose-50/70 rounded-2xl border border-rose-200 space-y-2">
               <span className="font-bold text-xs text-rose-900 flex items-center gap-1">
                 ⚠️ 4. Deleting Files & Directories (rm, rmdir) — Permanent!
               </span>
-              <div className="bg-slate-950 p-3 rounded-xl font-mono text-xs text-rose-400 space-y-1">
-                <div><span className="text-slate-500"># Remove file & empty folder:</span></div>
-                <div>$ rm file.txt</div>
-                <div>$ rmdir empty_folder/</div>
-                <div><span className="text-slate-500"># Force delete folder & contents (-rf):</span></div>
-                <div>$ rm -rf unwanted_folder/</div>
-              </div>
+              <InteractiveCmd cmd="rm file.txt" desc="Remove a file" />
+              <InteractiveCmd cmd="rmdir empty_folder/" desc="Remove empty directory" />
+              <InteractiveCmd cmd="rm -rf unwanted_folder/" desc="Force delete directory and contents (-rf)" />
             </div>
           </div>
         </div>
@@ -437,14 +465,14 @@ export const CourseView: React.FC = () => {
               </ol>
             </div>
 
-            <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 font-mono text-xs text-emerald-400 space-y-1 shadow-lg">
-              <div className="text-slate-400"># Verification Commands Solution:</div>
-              <div>$ mkdir -p devops_lab/scripts</div>
-              <div>$ cd devops_lab/scripts</div>
-              <div>$ touch deploy.sh build.sh test.sh</div>
-              <div>$ mv test.sh ..</div>
-              <div>$ cd ..</div>
-              <div>$ ls -R</div>
+            <div className="space-y-2 pt-2">
+              <span className="font-bold text-xs text-slate-900 block">Verification Commands (Run Step-by-Step):</span>
+              <InteractiveCmd cmd="mkdir -p devops_lab/scripts" desc="Step 1: Create nested directory" />
+              <InteractiveCmd cmd="cd devops_lab/scripts" desc="Step 2: Change directory" />
+              <InteractiveCmd cmd="touch deploy.sh build.sh test.sh" desc="Step 3: Create empty files" />
+              <InteractiveCmd cmd="mv test.sh .." desc="Step 4: Move test.sh up one level" />
+              <InteractiveCmd cmd="cd .." desc="Step 5: Change to devops_lab" />
+              <InteractiveCmd cmd="ls -R" desc="Step 6: Verify recursive directory structure" />
             </div>
           </div>
         </div>
@@ -457,30 +485,7 @@ export const CourseView: React.FC = () => {
     const command = terminalInput.trim();
     if (!command) return;
 
-    let output = '';
-    const cmdLower = command.toLowerCase();
-
-    if (cmdLower === 'help') {
-      output = 'Available commands: ls, pwd, whoami, uname -a, cat intro.txt, systemctl status, clear';
-    } else if (cmdLower === 'pwd') {
-      output = '/home/student/linux-essentials';
-    } else if (cmdLower === 'ls' || cmdLower === 'ls -la') {
-      output = 'drwxr-xr-x 4 student student 4096 Jul 22 20:30 .\ndrwxr-xr-x 3 student student 4096 Jul 22 20:30 ..\n-rw-r--r-- 1 student student  842 Jul 22 20:30 intro.txt\n-rwxr-xr-x 1 student student 1024 Jul 22 20:30 backup.sh';
-    } else if (cmdLower === 'whoami') {
-      output = 'student@shaivika-lms';
-    } else if (cmdLower.includes('cat intro.txt')) {
-      output = 'Welcome to Linux Essentials! Master the terminal and command line tools.';
-    } else if (cmdLower.includes('systemctl')) {
-      output = '● nginx.service - High Performance HTTP Server\n   Loaded: loaded (/lib/systemd/system/nginx.service; enabled)\n   Active: active (running) since Wed 2026-07-22 20:00:00 IST';
-    } else if (cmdLower === 'clear') {
-      setTerminalHistory([]);
-      setTerminalInput('');
-      return;
-    } else {
-      output = `bash: ${command}: command simulated successfully.`;
-    }
-
-    setTerminalHistory([...terminalHistory, { cmd: command, output }]);
+    executeCommandInTerminal(command);
     setTerminalInput('');
   };
 
@@ -806,7 +811,7 @@ export const CourseView: React.FC = () => {
               <h2 className="font-heading font-extrabold text-xl text-slate-900">
                 Course Curriculum & Modules Index
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">Click any lesson to open its detailed interactive guide, CLI code syntax & labs.</p>
+              <p className="text-xs text-slate-500 mt-0.5">Click any lesson to read its content inline and run commands directly in the CLI terminal.</p>
             </div>
             <span className="text-xs font-bold text-sky-700 bg-sky-50 px-3 py-1 rounded-full border border-sky-200">
               {completedLessons.length} / 20 Lessons Completed
@@ -936,7 +941,7 @@ export const CourseView: React.FC = () => {
 
           <div className="space-y-3 min-h-[300px] max-h-[450px] overflow-y-auto p-2">
             <p className="text-slate-400">
-              Type Linux CLI commands below (e.g. <span className="text-emerald-300">pwd</span>, <span className="text-emerald-300">ls -la</span>, <span className="text-emerald-300">whoami</span>, <span className="text-emerald-300">systemctl status</span>, <span className="text-emerald-300">help</span>).
+              Type Linux CLI commands below or click <span className="text-emerald-300">"▶ Run in Terminal"</span> next to any command in the curriculum!
             </p>
 
             {terminalHistory.map((h, i) => (
