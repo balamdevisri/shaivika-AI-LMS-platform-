@@ -11,6 +11,9 @@ import {
   browserLocalPersistence,
   browserSessionPersistence,
   onAuthStateChanged,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  signInWithPopup,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '@/firebase';
@@ -22,6 +25,8 @@ interface AuthContextType {
   loading: boolean;
   signup: (name: string, email: string, password: string) => Promise<void>;
   login: (email: string, password: string, rememberMe?: boolean) => Promise<UserProfile | null>;
+  signInWithGoogle: () => Promise<UserProfile | null>;
+  signInWithGithub: () => Promise<UserProfile | null>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   sendVerificationEmail: () => Promise<void>;
@@ -141,7 +146,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signup = async (name: string, email: string, password: string): Promise<void> => {
     if (!auth) {
-      throw new Error('Firebase Auth is not configured. Please add VITE_FIREBASE_API_KEY in .env file.');
+      throw new Error('Firebase Auth is not configured.');
     }
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const firebaseUser = userCredential.user;
@@ -163,7 +168,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     rememberMe: boolean = true
   ): Promise<UserProfile | null> => {
     if (!auth) {
-      throw new Error('Firebase Auth is not configured. Please add VITE_FIREBASE_API_KEY in .env file.');
+      throw new Error('Firebase Auth is not configured.');
     }
     try {
       await setPersistence(
@@ -179,6 +184,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return profile;
   };
 
+  const signInWithGoogle = async (): Promise<UserProfile | null> => {
+    if (!auth) {
+      throw new Error('Firebase Auth is not configured.');
+    }
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    const profile = await fetchUserProfile(result.user);
+    return profile;
+  };
+
+  const signInWithGithub = async (): Promise<UserProfile | null> => {
+    if (!auth) {
+      throw new Error('Firebase Auth is not configured.');
+    }
+    const provider = new GithubAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    const profile = await fetchUserProfile(result.user);
+    return profile;
+  };
+
   const logout = async (): Promise<void> => {
     if (auth) {
       await signOut(auth);
@@ -189,7 +214,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const resetPassword = async (email: string): Promise<void> => {
     if (!auth) {
-      throw new Error('Firebase Auth is not configured. Please add VITE_FIREBASE_API_KEY in .env file.');
+      throw new Error('Firebase Auth is not configured.');
     }
     await sendPasswordResetEmail(auth, email);
   };
@@ -215,6 +240,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loading,
         signup,
         login,
+        signInWithGoogle,
+        signInWithGithub,
         logout,
         resetPassword,
         sendVerificationEmail,
