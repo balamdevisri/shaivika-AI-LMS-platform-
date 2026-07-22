@@ -6,6 +6,9 @@ import {
   PlayCircle,
   X,
   ChevronRight,
+  BookOpen,
+  Terminal,
+  CheckCircle2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -20,6 +23,7 @@ export const CoursesList: React.FC = () => {
     {
       id: 1,
       title: 'Introduction to Linux & System Administration',
+      subtitle: '🐧 Linux Essentials',
       instructor: 'Bhanu Prakash Achari',
       role: 'Linux Systems Architect & AI Specialist',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
@@ -29,8 +33,9 @@ export const CoursesList: React.FC = () => {
       duration: '32 hrs',
       category: 'Linux & Systems',
       level: 'Beginner to Advanced',
-      badge: 'Featured',
+      badge: 'Featured Track',
       thumbnail: '/assets/images/linux_course_thumbnail.png',
+      description: `Welcome to Linux Essentials! Linux is one of the world's most powerful and widely used operating systems, powering everything from web servers and cloud platforms to Android devices, supercomputers, and embedded systems. This course is designed for beginners who want to build a strong foundation in Linux. You will learn how Linux works, how to navigate the terminal, manage files and directories, understand permissions, and perform essential system operations using real-world commands. By the end of this course, you'll have the confidence to work efficiently in any Linux environment and be prepared for advanced topics such as shell scripting, DevOps, cloud computing, and cybersecurity.`,
       syllabus: [
         'Module 1: Linux Architecture, Kernel & CLI Fundamentals',
         'Module 2: File System Hierarchy, Permissions & Ownership',
@@ -49,49 +54,50 @@ export const CoursesList: React.FC = () => {
   });
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
+    <div className="space-y-8 font-['Sora'] text-slate-900 max-w-7xl mx-auto pb-12">
+      
+      {/* Header Banner */}
+      <div className="bg-white/95 backdrop-blur-2xl border border-sky-200/80 p-6 sm:p-8 rounded-3xl shadow-xl shadow-sky-500/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs text-[#94A3B8] mb-1 font-medium">
-            <Link to="/dashboard" className="hover:text-[#10B981]">Dashboard</Link>
-            <ChevronRight className="w-3.5 h-3.5 text-[#94A3B8]" />
-            <span className="font-semibold text-[#10B981]">Course Catalog</span>
+          <div className="flex items-center gap-2 text-xs text-slate-500 mb-2 font-semibold">
+            <Link to="/dashboard" className="hover:text-sky-600">Dashboard</Link>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+            <span className="text-sky-600 font-bold">Course Catalog</span>
           </div>
-          <h1 className="font-heading font-bold text-2xl sm:text-3xl text-white">
+          <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900">
             Enterprise Course Catalog
           </h1>
-          <p className="text-xs sm:text-sm text-[#94A3B8] mt-0.5">
-            Browse 250+ enterprise AI tracks with live interactive code sandboxes.
+          <p className="text-xs sm:text-sm text-slate-500 mt-1 font-medium">
+            Explore hands-on technical tracks powered by live interactive Linux terminals.
           </p>
         </div>
       </div>
 
       {/* Search & Filter Bar */}
-      <div className="bg-[#0F172A] p-4 rounded-2xl border border-white/10 shadow-lg flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="bg-white/90 border border-sky-200/80 p-4 sm:p-5 rounded-3xl shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
         
         {/* Search */}
         <div className="relative w-full md:w-96">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by title, instructor, or AI topic..."
-            className="w-full bg-[#020617] border border-white/10 rounded-xl py-2 pl-9 pr-4 text-xs text-white focus:outline-hidden"
+            placeholder="Search by course title, instructor, or topic..."
+            className="w-full bg-slate-50 border border-sky-200 rounded-xl py-2.5 pl-10 pr-4 text-xs text-slate-900 focus:outline-hidden font-medium"
           />
         </div>
 
         {/* Category Pills */}
-        <div className="flex overflow-x-auto gap-2 w-full md:w-auto scrollbar-none">
+        <div className="flex overflow-x-auto gap-2 w-full md:w-auto">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                 selectedCategory === cat
-                  ? 'bg-[#10B981] text-white shadow-md'
-                  : 'bg-[#020617] text-[#94A3B8] hover:text-white border border-white/10'
+                  ? 'bg-sky-600 text-white shadow-md shadow-sky-500/20'
+                  : 'bg-slate-50 text-slate-700 hover:text-slate-900 border border-sky-100'
               }`}
             >
               {cat}
@@ -104,51 +110,64 @@ export const CoursesList: React.FC = () => {
       {/* Courses Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredCourses.map((course) => (
-          <div key={course.id} className="glass-card p-0 overflow-hidden flex flex-col group">
-            {/* Thumbnail */}
-            <div className="relative h-48 overflow-hidden bg-slate-900">
+          <div
+            key={course.id}
+            className="bg-white/95 rounded-3xl border border-sky-200/90 overflow-hidden flex flex-col group shadow-xl shadow-sky-500/10 hover:border-sky-400 hover:shadow-2xl transition-all"
+          >
+            {/* Thumbnail Header */}
+            <div className="relative h-52 overflow-hidden bg-slate-900">
               <img
                 src={course.thumbnail}
                 alt={course.title}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              <div className="absolute top-3 left-3 bg-[#020617]/80 backdrop-blur-md text-white text-xs px-2.5 py-1 rounded-lg font-medium border border-white/10">
+              <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-md text-sky-800 text-xs px-3 py-1 rounded-xl font-bold border border-sky-200 shadow-xs">
                 {course.category}
               </div>
-              <div className="absolute top-3 right-3 bg-[#10B981] text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow-md">
+              <div className="absolute top-3 right-3 bg-sky-600 text-white text-xs font-bold px-3 py-1 rounded-xl shadow-md">
                 {course.badge}
               </div>
             </div>
 
-            {/* Content */}
+            {/* Content Body */}
             <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-1 text-amber-400 font-semibold">
-                    <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                  <div className="flex items-center gap-1 text-amber-500 font-bold">
+                    <Star className="w-4 h-4 fill-current text-amber-400" />
                     <span>{course.rating}</span>
-                    <span className="text-[#94A3B8] font-normal">({course.reviews})</span>
+                    <span className="text-slate-500 font-medium">({course.reviews} reviews)</span>
                   </div>
-                  <span className="text-[#94A3B8] bg-[#020617] px-2 py-0.5 rounded-md font-medium border border-white/10">
+                  <span className="text-sky-700 bg-sky-50 px-2.5 py-0.5 rounded-lg font-bold border border-sky-200 text-[11px]">
                     {course.level}
                   </span>
                 </div>
 
-                <h3 className="font-heading font-bold text-lg text-white group-hover:text-[#10B981] transition-colors line-clamp-2">
-                  {course.title}
-                </h3>
+                <div className="space-y-1">
+                  <span className="text-xs font-bold text-sky-600 block">{course.subtitle}</span>
+                  <h3 className="font-heading font-extrabold text-lg text-slate-900 group-hover:text-sky-600 transition-colors leading-snug">
+                    {course.title}
+                  </h3>
+                </div>
+
+                {/* Course Intro Teaser */}
+                <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed font-medium bg-slate-50 p-3 rounded-2xl border border-sky-100">
+                  {course.description}
+                </p>
               </div>
 
-              {/* Instructor */}
-              <div className="flex items-center gap-3 pt-2 border-t border-white/10">
-                <img
-                  src={course.avatar}
-                  alt={course.instructor}
-                  className="w-9 h-9 rounded-full object-cover border border-[#10B981]"
-                />
-                <div className="text-xs">
-                  <span className="font-semibold text-white block">{course.instructor}</span>
-                  <span className="text-[#94A3B8] block">{course.role}</span>
+              {/* Instructor Info */}
+              <div className="flex items-center justify-between pt-3 border-t border-sky-100">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={course.avatar}
+                    alt={course.instructor}
+                    className="w-10 h-10 rounded-full object-cover border-2 border-sky-400"
+                  />
+                  <div className="text-xs">
+                    <span className="font-bold text-slate-900 block">{course.instructor}</span>
+                    <span className="text-slate-500 block text-[11px] font-medium">{course.role}</span>
+                  </div>
                 </div>
               </div>
 
@@ -156,13 +175,15 @@ export const CoursesList: React.FC = () => {
               <div className="pt-2 flex gap-2">
                 <button
                   onClick={() => setSelectedCourseModal(course)}
-                  className="flex-1 btn-glass-secondary text-xs py-2 justify-center"
+                  className="flex-1 py-2.5 px-3 rounded-xl border border-sky-200 text-xs font-bold text-slate-700 hover:bg-sky-50 transition-all cursor-pointer flex items-center justify-center gap-1.5"
                 >
-                  Syllabus
+                  <BookOpen className="w-3.5 h-3.5 text-sky-600" />
+                  <span>Overview & Details</span>
                 </button>
+
                 <button
                   onClick={() => toast.success(`Enrolled in ${course.title}!`)}
-                  className="flex-1 btn-emerald-primary text-xs py-2 justify-center"
+                  className="flex-1 btn-blue-primary text-xs py-2.5 justify-center font-bold shadow-md shadow-sky-500/20 cursor-pointer"
                 >
                   Enroll Now
                 </button>
@@ -172,44 +193,67 @@ export const CoursesList: React.FC = () => {
         ))}
       </div>
 
-      {/* Course Detail Modal */}
+      {/* Course Details & Syllabus Modal */}
       {selectedCourseModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[#0F172A] rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl space-y-6 border border-white/10 animate-in zoom-in-95 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl space-y-6 border border-sky-200 animate-in zoom-in-95 max-h-[90vh] overflow-y-auto text-slate-900 font-['Sora']">
+            
+            {/* Modal Header */}
+            <div className="flex items-start justify-between border-b border-sky-100 pb-4">
               <div>
-                <span className="text-xs font-bold text-[#34D399] bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
-                  {selectedCourseModal.category} • {selectedCourseModal.level}
-                </span>
-                <h3 className="font-heading font-bold text-xl text-white mt-1">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-sky-700 text-xs font-bold mb-2">
+                  <Terminal className="w-3.5 h-3.5 text-sky-500" />
+                  <span>{selectedCourseModal.subtitle}</span>
+                </div>
+                <h3 className="font-heading font-extrabold text-xl sm:text-2xl text-slate-900">
                   {selectedCourseModal.title}
                 </h3>
               </div>
               <button
                 onClick={() => setSelectedCourseModal(null)}
-                className="text-[#94A3B8] hover:text-white p-1"
+                className="text-slate-400 hover:text-slate-900 p-1 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Syllabus */}
+            {/* Course Introduction Section */}
+            <div className="space-y-3 bg-sky-50/70 p-5 rounded-2xl border border-sky-200/80 text-xs">
+              <h4 className="font-heading font-bold text-sm text-sky-900 flex items-center gap-2">
+                <span>Course Introduction</span>
+              </h4>
+              <p className="text-slate-800 font-bold leading-relaxed">
+                Welcome to Linux Essentials!
+              </p>
+              <p className="text-slate-700 leading-relaxed font-medium">
+                Linux is one of the world's most powerful and widely used operating systems, powering everything from web servers and cloud platforms to Android devices, supercomputers, and embedded systems.
+              </p>
+              <p className="text-slate-700 leading-relaxed font-medium">
+                This course is designed for beginners who want to build a strong foundation in Linux. You will learn how Linux works, how to navigate the terminal, manage files and directories, understand permissions, and perform essential system operations using real-world commands.
+              </p>
+              <p className="text-sky-900 font-bold bg-white p-3 rounded-xl border border-sky-200 leading-relaxed shadow-xs">
+                By the end of this course, you'll have the confidence to work efficiently in any Linux environment and be prepared for advanced topics such as shell scripting, DevOps, cloud computing, and cybersecurity.
+              </p>
+            </div>
+
+            {/* Curriculum Breakdown */}
             <div className="space-y-3">
-              <h4 className="font-heading font-semibold text-sm text-white">Curriculum Breakdown</h4>
+              <h4 className="font-heading font-bold text-sm text-slate-900">Curriculum Modules</h4>
               <div className="space-y-2">
                 {selectedCourseModal.syllabus.map((item: string, idx: number) => (
-                  <div key={idx} className="p-3 rounded-xl bg-[#020617] border border-white/10 flex items-center gap-3 text-xs text-slate-200">
-                    <PlayCircle className="w-4 h-4 text-[#10B981] shrink-0" />
+                  <div key={idx} className="p-3.5 rounded-2xl bg-slate-50 border border-sky-100 flex items-center gap-3 text-xs text-slate-800 font-semibold">
+                    <PlayCircle className="w-4 h-4 text-sky-600 shrink-0" />
                     <span>{item}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="pt-4 border-t border-white/10 flex justify-end gap-3">
+            {/* Footer Action Buttons */}
+            <div className="pt-4 border-t border-sky-100 flex items-center justify-end gap-3">
               <button
                 onClick={() => setSelectedCourseModal(null)}
-                className="btn-glass-secondary text-xs py-2 px-4"
+                className="py-2.5 px-4 rounded-xl border border-sky-200 text-xs font-bold text-slate-600 hover:bg-sky-50 transition-all cursor-pointer"
               >
                 Close
               </button>
@@ -218,11 +262,13 @@ export const CoursesList: React.FC = () => {
                   toast.success(`Successfully enrolled in ${selectedCourseModal.title}!`);
                   setSelectedCourseModal(null);
                 }}
-                className="btn-emerald-primary text-xs py-2 px-5"
+                className="btn-blue-primary text-xs py-2.5 px-5 font-bold flex items-center gap-2 cursor-pointer shadow-md shadow-sky-500/20"
               >
-                Confirm Enrollment
+                <CheckCircle2 className="w-4 h-4" />
+                <span>Confirm Enrollment</span>
               </button>
             </div>
+
           </div>
         </div>
       )}
@@ -230,3 +276,5 @@ export const CoursesList: React.FC = () => {
     </div>
   );
 };
+
+export default CoursesList;
