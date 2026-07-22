@@ -11,9 +11,9 @@ import {
   browserLocalPersistence,
   browserSessionPersistence,
   onAuthStateChanged,
-  GoogleAuthProvider,
   GithubAuthProvider,
   signInWithPopup,
+  getAdditionalUserInfo,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '@/firebase';
@@ -25,7 +25,6 @@ interface AuthContextType {
   loading: boolean;
   signup: (name: string, email: string, password: string) => Promise<void>;
   login: (email: string, password: string, rememberMe?: boolean) => Promise<UserProfile | null>;
-  signInWithGoogle: () => Promise<UserProfile | null>;
   signInWithGithub: () => Promise<UserProfile | null>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
@@ -41,7 +40,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState<boolean>(true);
 
   // Fetch or create user document from Firestore
-  const fetchUserProfile = async (firebaseUser: User): Promise<UserProfile | null> => {
+  const fetchUserProfile = async (firebaseUser: User, githubHandle?: string): Promise<UserProfile | null> => {
+    const isGithub =
+      firebaseUser.providerData.some((p) => p.providerId === 'github.com') ||
+      firebaseUser.photoURL?.includes('githubusercontent');
+
+    const calculatedUsername =
+      githubHandle ||
+      (firebaseUser as any).reloadUserInfo?.screenName ||
+      (isGithub ? firebaseUser.email?.split('@')[0] : undefined);
+
+    const baseProfileData: Partial<UserProfile> = {
+      uid: firebaseUser.uid,
+      name: firebaseUser.displayName || 'Student User',
+      email: firebaseUser.email || '',
+      photoURL: firebaseUser.photoURL || null,
+      isVerified: firebaseUser.emailVerified || isGithub || false,
+      providerId: isGithub ? 'github.com' : 'password',
+      ...(calculatedUsername ? { githubUsername: calculatedUsername } : {}),
+    };
+
     if (!db) {
       const fallback: UserProfile = {
         uid: firebaseUser.uid,
@@ -51,7 +69,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         role: firebaseUser.email?.includes('admin') ? 'admin' : 'student',
         createdAt: new Date().toISOString(),
         lastLogin: new Date().toISOString(),
-        isVerified: firebaseUser.emailVerified,
+        isVerified: firebaseUser.emailVerified || isGithub || false,
+        providerId: isGithub ? 'github.com' : 'password',
+        githubUsername: calculatedUsername,
       };
       setUserProfile(fallback);
       return fallback;
@@ -63,17 +83,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (userSnap.exists()) {
         const data = userSnap.data() as UserProfile;
-        await updateDoc(userRef, {
-          lastLogin: new Date().toISOString(),
-          isVerified: firebaseUser.emailVerified,
-        });
-        const updatedProfile: UserProfile = {
+        const updatedPayload = {
           ...data,
+          ...baseProfileData,
           lastLogin: new Date().toISOString(),
-          isVerified: firebaseUser.emailVerified,
         };
-        setUserProfile(updatedProfile);
-        return updatedProfile;
+
+        await updateDoc(userRef, {
+          ...baseProfileData,
+          lastLogin: new Date().toISOString(),
+        });
+        
+        setUserProfile(updatedPayload as UserProfile);
+        return updatedPayload as UserProfile;
       } else {
         const newProfile: UserProfile = {
           uid: firebaseUser.uid,
@@ -83,7 +105,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           role: 'student',
           createdAt: new Date().toISOString(),
           lastLogin: new Date().toISOString(),
-          isVerified: firebaseUser.emailVerified,
+          isVerified: firebaseUser.emailVerified || isGithub || false,
+          providerId: isGithub ? 'github.com' : 'password',
+          githubUsername: calculatedUsername,
         };
         await setDoc(userRef, newProfile);
         setUserProfile(newProfile);
@@ -99,7 +123,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         role: firebaseUser.email?.includes('admin') ? 'admin' : 'student',
         createdAt: new Date().toISOString(),
         lastLogin: new Date().toISOString(),
-        isVerified: firebaseUser.emailVerified,
+        isVerified: firebaseUser.emailVerified || isGithub || false,
+        providerId: isGithub ? 'github.com' : 'password',
+        githubUsername: calculatedUsername,
       };
       setUserProfile(fallbackProfile);
       return fallbackProfile;
@@ -184,23 +210,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return profile;
   };
 
-  const signInWithGoogle = async (): Promise<UserProfile | null> => {
-    if (!auth) {
-      throw new Error('Firebase Auth is not configured.');
-    }
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    const profile = await fetchUserProfile(result.user);
-    return profile;
-  };
-
   const signInWithGithub = async (): Promise<UserProfile | null> => {
     if (!auth) {
       throw new Error('Firebase Auth is not configured.');
     }
     const provider = new GithubAuthProvider();
+    provider.addScope('user:email');
+    provider.addScope('read:user');
+
     const result = await signInWithPopup(auth, provider);
-    const profile = await fetchUserProfile(result.user);
+    const additionalInfo = getAdditionalUserInfo(result);
+    const githubUsername = additionalInfo?.username || (result.user as any).reloadUserInfo?.screenName;
+
+    const profile = await fetchUserProfile(result.user, githubUsername);
     return profile;
   };
 
@@ -240,7 +262,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loading,
         signup,
         login,
-        signInWithGoogle,
         signInWithGithub,
         logout,
         resetPassword,

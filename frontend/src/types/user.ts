@@ -9,4 +9,6 @@ export interface UserProfile {
   createdAt: string;
   lastLogin: string;
   isVerified: boolean;
+  providerId?: string;
+  githubUsername?: string;
 }

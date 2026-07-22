@@ -14,8 +14,10 @@ import {
   Eye,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const Dashboard: React.FC = () => {
+  const { user, userProfile } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const currentTab = searchParams.get('tab') || 'overview';
 
@@ -65,7 +67,7 @@ export const Dashboard: React.FC = () => {
             <span className="capitalize font-semibold text-blue-600">{currentTab}</span>
           </div>
           <h1 className="font-heading font-bold text-2xl sm:text-3xl text-slate-900">
-            Welcome back, Jane 👋
+            Welcome back, {userProfile?.name?.split(' ')[0] || user?.displayName?.split(' ')[0] || 'Student'} 👋
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
             You have 2 pending AI assignments and 1 quiz ready for evaluation.

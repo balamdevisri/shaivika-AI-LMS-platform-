@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   BookOpen,
@@ -16,6 +16,7 @@ import {
   X,
 } from 'lucide-react';
 import { BrandLogo } from '@/components/common/BrandLogo';
+import { useAuth } from '@/contexts/AuthContext';
 
 
 export const DashboardLayout: React.FC = () => {
@@ -24,6 +25,18 @@ export const DashboardLayout: React.FC = () => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const { user, userProfile, logout } = useAuth();
+
+  const handleSignOut = async () => {
+    try {
+      await logout();
+      navigate('/auth/login');
+    } catch (e) {
+      console.warn('Sign out notice:', e);
+    }
+  };
 
   const navItems = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -196,34 +209,63 @@ export const DashboardLayout: React.FC = () => {
             <div className="relative">
               <button
                 onClick={() => setProfileOpen(!profileOpen)}
-                className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-slate-100 transition-colors"
+                className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer"
               >
-                <img
-                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80"
-                  alt="Avatar"
-                  className="w-8 h-8 rounded-full object-cover border-2 border-blue-500"
-                />
-                <span className="hidden sm:inline-block font-heading font-semibold text-xs text-slate-900">
-                  Jane Devson
+                {userProfile?.photoURL || user?.photoURL ? (
+                  <img
+                    src={userProfile?.photoURL || user?.photoURL || ''}
+                    alt={userProfile?.name || 'User Avatar'}
+                    className="w-8 h-8 rounded-full object-cover border-2 border-sky-500 shadow-xs"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-linear-to-tr from-sky-500 to-blue-600 text-white font-extrabold text-xs flex items-center justify-center border-2 border-sky-400 shadow-xs">
+                    {(userProfile?.name || user?.displayName || 'S').charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <span className="hidden sm:inline-block font-heading font-semibold text-xs text-slate-900 max-w-[120px] truncate">
+                  {userProfile?.name || user?.displayName || 'Student User'}
                 </span>
                 <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:inline-block" />
               </button>
 
               {profileOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-white border border-slate-200 rounded-2xl shadow-2xl p-2 z-50 space-y-1 animate-in fade-in slide-in-from-top-2">
+                <div className="absolute right-0 mt-2 w-60 bg-white border border-slate-200 rounded-2xl shadow-2xl p-2 z-50 space-y-1 animate-in fade-in slide-in-from-top-2">
                   <div className="px-3 py-2 border-b border-slate-100">
-                    <p className="font-heading font-semibold text-xs text-slate-900">Jane Devson</p>
-                    <p className="text-[11px] text-slate-500">jane.devson@stanford.edu</p>
+                    <p className="font-heading font-semibold text-xs text-slate-900 truncate">
+                      {userProfile?.name || user?.displayName || 'Student User'}
+                    </p>
+                    <p className="text-[11px] text-slate-500 truncate">
+                      {userProfile?.email || user?.email || 'student@shaivika.ai'}
+                    </p>
+                    {userProfile?.githubUsername && (
+                      <span className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 text-[10px] font-mono font-medium">
+                        @{userProfile.githubUsername}
+                      </span>
+                    )}
                   </div>
-                  <Link to="/dashboard" className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-xl">
-                    <User className="w-4 h-4 text-slate-400" /> Account Settings
+                  <Link
+                    to="/profile"
+                    onClick={() => setProfileOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:text-sky-600 hover:bg-sky-50 rounded-xl transition-colors"
+                  >
+                    <User className="w-4 h-4 text-slate-400" /> Student Profile
                   </Link>
-                  <Link to="/dashboard?tab=certificates" className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:text-blue-600 hover:bg-slate-50 rounded-xl">
+                  <Link
+                    to="/dashboard?tab=certificates"
+                    onClick={() => setProfileOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2 text-xs text-slate-600 hover:text-sky-600 hover:bg-sky-50 rounded-xl transition-colors"
+                  >
                     <Award className="w-4 h-4 text-slate-400" /> My Certificates
                   </Link>
-                  <Link to="/auth/login" className="flex items-center gap-2 px-3 py-2 text-xs text-rose-600 hover:bg-rose-50 rounded-xl font-semibold">
+                  <button
+                    onClick={() => {
+                      setProfileOpen(false);
+                      handleSignOut();
+                    }}
+                    className="w-full text-left flex items-center gap-2 px-3 py-2 text-xs text-rose-600 hover:bg-rose-50 rounded-xl font-semibold transition-colors cursor-pointer"
+                  >
                     <LogOut className="w-4 h-4" /> Sign Out
-                  </Link>
+                  </button>
                 </div>
               )}
             </div>
