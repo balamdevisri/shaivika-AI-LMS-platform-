@@ -2,18 +2,19 @@ import { AppRouter } from './routes';
 import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { NotificationProvider } from './contexts/NotificationContext';
-import { Toaster } from 'sonner';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 
 function App() {
   return (
-    <ThemeProvider>
-      <NotificationProvider>
-        <AuthProvider>
-          <Toaster position="top-right" richColors />
-          <AppRouter />
-        </AuthProvider>
-      </NotificationProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <NotificationProvider>
+          <AuthProvider>
+            <AppRouter />
+          </AuthProvider>
+        </NotificationProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
 
