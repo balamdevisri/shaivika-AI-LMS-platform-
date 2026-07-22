@@ -4,12 +4,14 @@ import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Loader2 } from 'lucide-react
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import { BrandLogo } from '@/components/common/BrandLogo';
+import type { UserRole } from '@/types/user';
 
 export const Register: React.FC = () => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [role, setRole] = useState<UserRole>('student');
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -50,8 +52,8 @@ export const Register: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      await signup(fullName, email, password);
-      toast.success('Account created successfully! Verification email sent.');
+      await signup(fullName, email, password, role);
+      toast.success(`Account created as ${role === 'instructor' ? 'Instructor' : 'Student'}! Verification email sent.`);
       navigate('/auth/verify-email');
     } catch (err: any) {
       console.error('Registration error:', err);
@@ -88,8 +90,8 @@ export const Register: React.FC = () => {
       </div>
 
       <div className="space-y-2 text-center lg:text-left">
-        <h2 className="font-heading font-extrabold text-2xl text-slate-900">Create Student Account</h2>
-        <p className="text-xs text-slate-600 font-medium">Join 50K+ technical learners powering their education with AI.</p>
+        <h2 className="font-heading font-extrabold text-2xl text-slate-900">Create {role === 'instructor' ? 'Instructor' : 'Student'} Account</h2>
+        <p className="text-xs text-slate-600 font-medium">Join 50K+ technical learners & educators powering their platform with AI.</p>
       </div>
 
       {/* GitHub Authentication Button */}
@@ -117,6 +119,37 @@ export const Register: React.FC = () => {
       </div>
 
       <form onSubmit={handleRegister} className="space-y-4">
+        
+        {/* Account Role Selector */}
+        <div>
+          <label className="text-xs font-bold text-slate-700 block mb-1.5">Select Account Role</label>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => setRole('student')}
+              className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                role === 'student'
+                  ? 'bg-sky-600 text-white border-sky-600 shadow-md shadow-sky-500/20'
+                  : 'bg-slate-50 text-slate-700 border-sky-200 hover:bg-sky-50'
+              }`}
+            >
+              <span>🎓 Student Learner</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setRole('instructor')}
+              className={`py-2 px-3 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                role === 'instructor'
+                  ? 'bg-sky-600 text-white border-sky-600 shadow-md shadow-sky-500/20'
+                  : 'bg-slate-50 text-slate-700 border-sky-200 hover:bg-sky-50'
+              }`}
+            >
+              <span>👨‍🏫 Instructor</span>
+            </button>
+          </div>
+        </div>
+
         <div>
           <label className="text-xs font-bold text-slate-700 block mb-1">Full Name</label>
           <div className="relative">
@@ -216,7 +249,7 @@ export const Register: React.FC = () => {
             </>
           ) : (
             <>
-              <span>Create Account</span>
+              <span>Create {role === 'instructor' ? 'Instructor' : 'Student'} Account</span>
               <ArrowRight className="w-4 h-4" />
             </>
           )}

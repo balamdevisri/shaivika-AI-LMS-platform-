@@ -17,13 +17,13 @@ import {
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '@/firebase';
-import type { UserProfile } from '@/types/user';
+import type { UserProfile, UserRole } from '@/types/user';
 
 interface AuthContextType {
   user: User | null;
   userProfile: UserProfile | null;
   loading: boolean;
-  signup: (name: string, email: string, password: string) => Promise<void>;
+  signup: (name: string, email: string, password: string, role?: UserRole) => Promise<void>;
   login: (email: string, password: string, rememberMe?: boolean) => Promise<UserProfile | null>;
   signInWithGithub: () => Promise<UserProfile | null>;
   logout: () => Promise<void>;
@@ -40,7 +40,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState<boolean>(true);
 
   // Fetch or create user document from Firestore
-  const fetchUserProfile = async (firebaseUser: User, githubHandle?: string): Promise<UserProfile | null> => {
+  const fetchUserProfile = async (
+    firebaseUser: User,
+    githubHandle?: string,
+    initialRole?: UserRole
+  ): Promise<UserProfile | null> => {
     const isGithub =
       firebaseUser.providerData.some((p) => p.providerId === 'github.com') ||
       firebaseUser.photoURL?.includes('githubusercontent');
@@ -66,7 +70,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         name: firebaseUser.displayName || 'Student User',
         email: firebaseUser.email || '',
         photoURL: firebaseUser.photoURL || null,
-        role: firebaseUser.email?.includes('admin') ? 'admin' : 'student',
+        role: initialRole || (firebaseUser.email?.includes('admin') ? 'admin' : 'student'),
         createdAt: new Date().toISOString(),
         lastLogin: new Date().toISOString(),
         isVerified: firebaseUser.emailVerified || isGithub || false,
@@ -102,7 +106,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           name: firebaseUser.displayName || 'Student',
           email: firebaseUser.email || '',
           photoURL: firebaseUser.photoURL || null,
-          role: 'student',
+          role: initialRole || 'student',
           createdAt: new Date().toISOString(),
           lastLogin: new Date().toISOString(),
           isVerified: firebaseUser.emailVerified || isGithub || false,
@@ -120,7 +124,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         name: firebaseUser.displayName || 'Student User',
         email: firebaseUser.email || '',
         photoURL: firebaseUser.photoURL || null,
-        role: firebaseUser.email?.includes('admin') ? 'admin' : 'student',
+        role: initialRole || (firebaseUser.email?.includes('admin') ? 'admin' : 'student'),
         createdAt: new Date().toISOString(),
         lastLogin: new Date().toISOString(),
         isVerified: firebaseUser.emailVerified || isGithub || false,
@@ -170,7 +174,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  const signup = async (name: string, email: string, password: string): Promise<void> => {
+  const signup = async (
+    name: string,
+    email: string,
+    password: string,
+    role: UserRole = 'student'
+  ): Promise<void> => {
     if (!auth) {
       throw new Error('Firebase Auth is not configured.');
     }
@@ -185,7 +194,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.warn('Email verification failed:', e);
     }
 
-    await fetchUserProfile(firebaseUser);
+    await fetchUserProfile(firebaseUser, undefined, role);
   };
 
   const login = async (

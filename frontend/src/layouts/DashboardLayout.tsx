@@ -21,7 +21,6 @@ import { useAuth } from '@/contexts/AuthContext';
 
 export const DashboardLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [role, setRole] = useState<'Student' | 'Instructor' | 'Admin'>('Student');
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const location = useLocation();
@@ -81,22 +80,16 @@ export const DashboardLayout: React.FC = () => {
             </button>
           </div>
 
-          {/* Role Switcher */}
-          <div className="px-4 py-4 border-b border-slate-100">
-            <div className="bg-slate-100 p-1 rounded-xl flex items-center justify-between text-xs border border-slate-200">
-              {(['Student', 'Instructor', 'Admin'] as const).map((r) => (
-                <button
-                  key={r}
-                  onClick={() => setRole(r)}
-                  className={`flex-1 py-1.5 font-semibold rounded-lg transition-all ${
-                    role === r
-                      ? 'bg-blue-600 text-white shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }`}
-                >
-                  {r}
-                </button>
-              ))}
+          {/* Dynamic Account Badge */}
+          <div className="px-4 py-3 border-b border-slate-100">
+            <div className="bg-sky-50/80 px-3 py-2 rounded-xl flex items-center justify-between text-xs border border-sky-200/80">
+              <span className="text-[11px] font-bold text-sky-800 uppercase tracking-wider flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
+                <span>{(userProfile?.role || 'student').toUpperCase()} PORTAL</span>
+              </span>
+              <span className="text-[10px] text-sky-600 font-semibold bg-white px-2 py-0.5 rounded-md border border-sky-200">
+                Active
+              </span>
             </div>
           </div>
 
@@ -129,19 +122,35 @@ export const DashboardLayout: React.FC = () => {
 
         {/* Footer User Info */}
         <div className="p-4 border-t border-slate-100 space-y-3">
-          <div className="bg-slate-100 p-3 rounded-xl border border-slate-200 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
-                JD
-              </div>
-              <div className="text-xs overflow-hidden">
-                <span className="font-semibold text-slate-900 block truncate">Jane Devson</span>
-                <span className="text-slate-500 block text-[10px]">{role} Account</span>
+          <div className="bg-sky-50/70 p-3 rounded-2xl border border-sky-100 flex items-center justify-between">
+            <div className="flex items-center gap-2.5 min-w-0">
+              {userProfile?.photoURL || user?.photoURL ? (
+                <img
+                  src={userProfile?.photoURL || user?.photoURL || ''}
+                  alt={userProfile?.name || 'User Avatar'}
+                  className="w-8 h-8 rounded-full object-cover border border-sky-400 shrink-0"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-linear-to-tr from-sky-500 to-blue-600 text-white flex items-center justify-center font-bold text-xs shrink-0 border border-sky-300">
+                  {(userProfile?.name || user?.displayName || 'S').charAt(0).toUpperCase()}
+                </div>
+              )}
+              <div className="text-xs overflow-hidden min-w-0">
+                <span className="font-bold text-slate-900 block truncate">
+                  {userProfile?.name || user?.displayName || 'Student User'}
+                </span>
+                <span className="text-sky-700 block text-[10px] font-semibold capitalize truncate">
+                  {userProfile?.role || 'student'} Account
+                </span>
               </div>
             </div>
-            <Link to="/auth/login" className="text-slate-400 hover:text-rose-600 p-1" title="Log out">
+            <button
+              onClick={handleSignOut}
+              className="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-white transition-colors cursor-pointer shrink-0"
+              title="Sign Out"
+            >
               <LogOut className="w-4 h-4" />
-            </Link>
+            </button>
           </div>
         </div>
       </aside>
