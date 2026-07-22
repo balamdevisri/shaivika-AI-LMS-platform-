@@ -14,7 +14,6 @@ import {
   ChevronDown,
   Menu,
   X,
-  Layers,
 } from 'lucide-react';
 import { BrandLogo } from '@/components/common/BrandLogo';
 
@@ -33,7 +32,6 @@ export const DashboardLayout: React.FC = () => {
     { name: 'Schedule & Calendar', href: '/dashboard?tab=calendar', icon: Calendar },
     { name: 'Certificates', href: '/dashboard?tab=certificates', icon: Award },
     { name: 'Analytics & Reports', href: '/dashboard?tab=analytics', icon: BarChart3 },
-    { name: 'UI Components Kit', href: '/dashboard?tab=components', icon: Layers },
   ];
 
   const sampleNotifications = [

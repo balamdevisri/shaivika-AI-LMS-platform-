@@ -9,7 +9,6 @@ import {
   PlayCircle,
   ChevronRight,
   X,
-  Layers,
   Zap,
   Download,
   Eye,
@@ -92,7 +91,6 @@ export const Dashboard: React.FC = () => {
           { id: 'calendar', label: 'Calendar & Schedule' },
           { id: 'certificates', label: 'Certificates' },
           { id: 'analytics', label: 'Analytics' },
-          { id: 'components', label: 'UI Component Showcase' },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -455,67 +453,6 @@ export const Dashboard: React.FC = () => {
               <span className="text-xs font-bold text-slate-900">Perfect Attendance Badge Awarded</span>
             </div>
           </div>
-        </div>
-      )}
-
-
-      {/* ------------------- 6. UI COMPONENT SHOWCASE TAB ------------------- */}
-      {currentTab === 'components' && (
-        <div className="space-y-10 animate-in fade-in duration-300">
-          <div className="space-y-2 border-b border-slate-200 pb-4">
-            <h2 className="font-heading font-bold text-2xl text-slate-900">
-              KaizenQ UI Components & Design System
-            </h2>
-            <p className="text-xs text-slate-500">
-              Interactive demonstration of all enterprise components built with White-First Luxury Theme.
-            </p>
-          </div>
-
-          {/* Badges */}
-          <div className="glass-card-light p-6 space-y-4 bg-white">
-            <h3 className="font-heading font-bold text-base text-slate-900">1. Badges & Status Indicators</h3>
-            <div className="flex flex-wrap gap-3">
-              <span className="px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full">Primary Blue</span>
-              <span className="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-full border border-blue-200">Success Badge</span>
-              <span className="px-3 py-1 bg-amber-50 text-amber-700 text-xs font-bold rounded-full border border-amber-200">Warning Badge</span>
-              <span className="px-3 py-1 bg-rose-50 text-rose-700 text-xs font-bold rounded-full border border-rose-200">Error Badge</span>
-              <span className="px-3 py-1 bg-slate-100 text-slate-800 text-xs font-bold rounded-full border border-slate-200">Slate Badge</span>
-            </div>
-          </div>
-
-          {/* Buttons */}
-          <div className="glass-card-light p-6 space-y-4 bg-white">
-            <h3 className="font-heading font-bold text-base text-slate-900">2. Button Variations</h3>
-            <div className="flex flex-wrap gap-4 items-center">
-              <button className="btn-blue-primary">Primary Blue Button</button>
-              <button className="btn-glass-light">Secondary Glass Button</button>
-              <button
-                onClick={() => toast.success('Sonner Toast triggered!')}
-                className="bg-slate-900 text-white px-5 py-2.5 rounded-full font-heading font-semibold text-xs hover:bg-slate-800 shadow-md transition-all"
-              >
-                Trigger Sonner Toast
-              </button>
-            </div>
-          </div>
-
-          {/* Skeletons & Empty State */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="glass-card-light p-6 space-y-3 bg-white">
-              <h3 className="font-heading font-bold text-base text-slate-900">3. Skeleton Loading State</h3>
-              <div className="animate-pulse space-y-3">
-                <div className="h-4 bg-slate-200 rounded-lg w-3/4" />
-                <div className="h-3 bg-slate-200 rounded-lg w-1/2" />
-                <div className="h-20 bg-slate-100 rounded-xl" />
-              </div>
-            </div>
-
-            <div className="glass-card-light p-8 text-center space-y-3 flex flex-col items-center justify-center bg-white">
-              <Layers className="w-10 h-10 text-slate-400" />
-              <h4 className="font-heading font-bold text-base text-slate-900">No Notifications Found</h4>
-              <p className="text-xs text-slate-500">You are all caught up! Check back later.</p>
-            </div>
-          </div>
-
         </div>
       )}
 
