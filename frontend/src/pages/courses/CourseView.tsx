@@ -14,19 +14,56 @@ import {
   ChevronDown,
   Layers,
   Play,
+  Bot,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCourses } from '@/contexts/CourseContext';
+import { gitLessonsData } from '@/data/gitLessonsData';
 
 export const CourseView: React.FC = () => {
   const { courseId } = useParams();
   const { getCourseById } = useCourses();
   const dynamicCourse = getCourseById(courseId || '1');
 
+  const isGitCourse = courseId === 'git-github-mastery-course-id' || courseId === 'git-github-mastery' || dynamicCourse?.title?.toLowerCase().includes('git');
+
+  const renderMarkdown = (text: string) => {
+    if (!text) return null;
+    const lines = text.split('\n');
+    return lines.map((line, idx) => {
+      if (line.startsWith('### ')) {
+        return <h4 key={idx} className="font-heading font-extrabold text-sm sm:text-base text-slate-900 mt-4 mb-2">{line.replace('### ', '')}</h4>;
+      }
+      if (line.startsWith('#### ')) {
+        return <h5 key={idx} className="font-heading font-bold text-xs sm:text-sm text-slate-800 mt-3 mb-1">{line.replace('#### ', '')}</h5>;
+      }
+      if (line.startsWith('- ')) {
+        return <li key={idx} className="ml-4 list-disc text-slate-700 my-1 text-xs">{line.replace('- ', '')}</li>;
+      }
+      if (line.trim() === '') {
+        return <div key={idx} className="h-2" />;
+      }
+      return <p key={idx} className="text-slate-700 my-1 text-xs leading-relaxed">{line}</p>;
+    });
+  };
+
   const [activeTab, setActiveTab] = useState<'intro' | 'index' | 'terminal' | 'quiz'>('intro');
   const [activeModule, setActiveModule] = useState<number | null>(1);
-  const [completedLessons, setCompletedLessons] = useState<number[]>([101, 102]);
-  const [selectedLessonId, setSelectedLessonId] = useState<number | null>(101);
+  const [completedLessons, setCompletedLessons] = useState<any[]>([101, 102]);
+  const [selectedLessonId, setSelectedLessonId] = useState<any | null>(101);
+
+  // Reset values when course changes
+  React.useEffect(() => {
+    if (isGitCourse) {
+      setSelectedLessonId('git-les-101');
+      setCompletedLessons([]);
+      setActiveModule(1);
+    } else {
+      setSelectedLessonId(101);
+      setCompletedLessons([101, 102]);
+      setActiveModule(1);
+    }
+  }, [courseId, isGitCourse]);
 
   // Terminal Simulator State
   const [terminalInput, setTerminalInput] = useState('');
@@ -45,28 +82,64 @@ export const CourseView: React.FC = () => {
     let output = '';
     const cmdLower = cleanCmd.toLowerCase();
 
-    if (cmdLower === 'help') {
-      output = 'Available commands: ls, pwd, whoami, uname -a, cat intro.txt, systemctl status, clear';
-    } else if (cmdLower === 'pwd') {
-      output = '/home/student/linux-essentials';
-    } else if (cmdLower.includes('ls')) {
-      output = 'drwxr-xr-x 4 student student 4096 Jul 22 20:30 .\ndrwxr-xr-x 3 student student 4096 Jul 22 20:30 ..\n-rw-r--r-- 1 student student  842 Jul 22 20:30 intro.txt\n-rwxr-xr-x 1 student student 1024 Jul 22 20:30 backup.sh';
-    } else if (cmdLower.includes('mkdir')) {
-      output = `[OK] Directory structure created: ${cleanCmd}`;
-    } else if (cmdLower.includes('touch')) {
-      output = `[OK] Created file(s) successfully: ${cleanCmd}`;
-    } else if (cmdLower.includes('cp')) {
-      output = `[OK] Copied target file/directory recursively.`;
-    } else if (cmdLower.includes('mv')) {
-      output = `[OK] Moved / renamed item successfully.`;
-    } else if (cmdLower.includes('rm')) {
-      output = `[OK] Removed file/directory permanently.`;
-    } else if (cmdLower === 'whoami') {
-      output = 'student@shaivika-lms';
-    } else if (cmdLower.includes('tree')) {
-      output = '.\n├── bin\n├── devops_lab\n│   └── scripts\n│       ├── build.sh\n│       └── deploy.sh\n└── test.sh';
+    if (isGitCourse) {
+      if (cmdLower === 'help') {
+        output = 'Available git commands: git init, git status, git add, git commit, git log, git remote, git push, git clone, git branch, git checkout, git merge, git rebase, git stash';
+      } else if (cmdLower.startsWith('git init')) {
+        output = 'Initialized empty Git repository in /home/student/workspace/.git/';
+      } else if (cmdLower.startsWith('git status')) {
+        output = `On branch main\nNo commits yet\n\nUntracked files:\n  (use "git add <file>..." to include in what will be committed)\n\tindex.html\n\nnothing added to commit but untracked files present (use "git add" to track)`;
+      } else if (cmdLower.startsWith('git add .') || cmdLower.startsWith('git add index.html')) {
+        output = '[OK] Staged modifications and untracked files into index.';
+      } else if (cmdLower.startsWith('git commit')) {
+        output = `[main (root-commit) 7ca8c2f] feat: initial commit\n 1 file changed, 10 insertions(+)\n create mode 100644 index.html`;
+      } else if (cmdLower.startsWith('git log --oneline')) {
+        output = '7ca8c2f feat: initial commit';
+      } else if (cmdLower.startsWith('git log')) {
+        output = `commit 7ca8c2fd265ea58a2d1f (HEAD -> main)\nAuthor: Student <student@shaivika.ai>\nDate:   Jul 23 20:26:10 2026\n\n    feat: initial commit`;
+      } else if (cmdLower.startsWith('git remote -v')) {
+        output = 'origin\thttps://github.com/student/git-github-mastery.git (fetch)\norigin\thttps://github.com/student/git-github-mastery.git (push)';
+      } else if (cmdLower.startsWith('git remote add')) {
+        output = '[OK] Configured remote origin successfully.';
+      } else if (cmdLower.startsWith('git push')) {
+        output = `Enumerating objects: 3, done.\nCounting objects: 100% (3/3), done.\nWriting objects: 100% (3/3), 284 bytes, done.\nTo https://github.com/student/git-github-mastery.git\n * [new branch]      main -> main`;
+      } else if (cmdLower.startsWith('git clone')) {
+        output = 'Cloning into \'repo\'...\nremote: Enumerating objects: 12, done.\nremote: Total 12 (delta 2)\nReceiving objects: 100% (12/12), done.';
+      } else if (cmdLower.startsWith('git branch')) {
+        output = '* main\n  feature/auth';
+      } else if (cmdLower.startsWith('git switch') || cmdLower.startsWith('git checkout')) {
+        output = 'Switched to branch \'feature/auth\'';
+      } else if (cmdLower.startsWith('git merge')) {
+        output = 'Updating 7ca8c2f..48df21b\nFast-forward\n index.html | 2 +-\n 1 file changed, 1 insertion(+), 1 deletion(-)';
+      } else if (cmdLower.startsWith('git stash')) {
+        output = 'Saved working directory and index state WIP on main: 7ca8c2f feat: initial commit';
+      } else {
+        output = `git: '${cleanCmd}' is simulated successfully. Use 'git status' or 'git log' to see snapshots.`;
+      }
     } else {
-      output = `bash: ${cleanCmd}: command simulated successfully.`;
+      if (cmdLower === 'help') {
+        output = 'Available commands: ls, pwd, whoami, uname -a, cat intro.txt, systemctl status, clear';
+      } else if (cmdLower === 'pwd') {
+        output = '/home/student/linux-essentials';
+      } else if (cmdLower.includes('ls')) {
+        output = 'drwxr-xr-x 4 student student 4096 Jul 22 20:30 .\ndrwxr-xr-x 3 student student 4096 Jul 22 20:30 ..\n-rw-r--r-- 1 student student  842 Jul 22 20:30 intro.txt\n-rwxr-xr-x 1 student student 1024 Jul 22 20:30 backup.sh';
+      } else if (cmdLower.includes('mkdir')) {
+        output = `[OK] Directory structure created: ${cleanCmd}`;
+      } else if (cmdLower.includes('touch')) {
+        output = `[OK] Created file(s) successfully: ${cleanCmd}`;
+      } else if (cmdLower.includes('cp')) {
+        output = `[OK] Copied target file/directory recursively.`;
+      } else if (cmdLower.includes('mv')) {
+        output = `[OK] Moved / renamed item successfully.`;
+      } else if (cmdLower.includes('rm')) {
+        output = `[OK] Removed file/directory permanently.`;
+      } else if (cmdLower === 'whoami') {
+        output = 'student@shaivika-lms';
+      } else if (cmdLower.includes('tree')) {
+        output = '.\n├── bin\n├── devops_lab\n│   └── scripts\n│       ├── build.sh\n│       └── deploy.sh\n└── test.sh';
+      } else {
+        output = `bash: ${cleanCmd}: command simulated successfully.`;
+      }
     }
 
     setTerminalHistory((prev) => [...prev, { cmd: cleanCmd, output }]);
@@ -74,7 +147,7 @@ export const CourseView: React.FC = () => {
     toast.success(`Executed "${cleanCmd}" in CLI Terminal Lab!`);
   };
 
-  const courseData = {
+  const linuxCourseData = {
     id: dynamicCourse?.id || courseId || '1',
     title: dynamicCourse?.title || 'Introduction to Linux & System Administration',
     subtitle: dynamicCourse?.subtitle || '🐧 Linux Essentials',
@@ -172,6 +245,178 @@ export const CourseView: React.FC = () => {
       },
     ],
   };
+
+  const gitCourseData = {
+    id: 'git-github-mastery-course-id',
+    title: 'Git & GitHub Mastery',
+    subtitle: '🛠️ Git & GitHub Mastery',
+    instructor: 'Admin',
+    role: 'LMS Platform Systems Lead',
+    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80',
+    rating: 5.0,
+    reviews: 180,
+    students: '1,540',
+    duration: '20 Hours',
+    category: 'Development Tools',
+    level: 'Beginner to Advanced',
+    thumbnail: 'https://images.unsplash.com/photo-1618401471353-b98aedd07871?auto=format&fit=crop&w=600&q=80',
+    introText: [
+      `Welcome to Git & GitHub Mastery! Version control is a foundational skill for all developers. This course will take you from Git basics to advanced pipelines.`,
+      `You will learn local repository initialization, stage-commit lifecycles, remote repository synchronization, pull requests, code reviews, rebasing, and automated pipelines using GitHub Actions.`,
+      `By the end of this course, you will have a production-ready CI/CD setup and will earn your certification.`,
+    ],
+    outcomes: [
+      'Configure Git globally and link local repositories to GitHub securely',
+      'Create and merge branches, perform Pull Requests, and do collaborative code reviews',
+      'Resolve complex merge conflicts and leverage stashing, rebasing, and cherry-picking',
+      'Write custom GitHub Actions pipelines for automated testing & Netlify/Vercel deployments'
+    ],
+    modules: [
+      {
+        id: 1,
+        title: 'Module 1: Version Control & Git Basics',
+        duration: '3 Hours • 15 Lessons',
+        lessons: [
+          { id: 'git-les-101', title: '1.1 Introduction to Version Control', duration: '15 mins', type: 'reading' },
+          { id: 'git-les-102', title: '1.2 Centralized vs Distributed Version Control', duration: '15 mins', type: 'reading' },
+          { id: 'git-les-103', title: '1.3 Why Git', duration: '10 mins', type: 'reading' },
+          { id: 'git-les-104', title: '1.4 Why GitHub', duration: '10 mins', type: 'reading' },
+          { id: 'git-les-105', title: '1.5 Installing Git', duration: '20 mins', type: 'lab' },
+          { id: 'git-les-106', title: '1.6 Git Configuration', duration: '15 mins', type: 'lab' },
+          { id: 'git-les-107', title: '1.7 SSH Keys', duration: '20 mins', type: 'lab' },
+          { id: 'git-les-108', title: '1.8 Personal Access Tokens', duration: '15 mins', type: 'reading' },
+          { id: 'git-les-109', title: '1.9 git init', duration: '10 mins', type: 'lab' },
+          { id: 'git-les-110', title: '1.10 Git Lifecycle', duration: '20 mins', type: 'reading' },
+          { id: 'git-les-111', title: '1.11 git status', duration: '10 mins', type: 'lab' },
+          { id: 'git-les-112', title: '1.12 git add', duration: '10 mins', type: 'lab' },
+          { id: 'git-les-113', title: '1.13 git commit', duration: '15 mins', type: 'lab' },
+          { id: 'git-les-114', title: '1.14 git log', duration: '10 mins', type: 'lab' },
+          { id: 'git-les-115', title: '1.15 git diff', duration: '15 mins', type: 'lab' },
+        ],
+      },
+      {
+        id: 2,
+        title: 'Module 2: GitHub Foundations',
+        duration: '3 Hours • 16 Lessons',
+        lessons: [
+          { id: 'git-les-201', title: '2.1 Create Repository', duration: '10 mins', type: 'reading' },
+          { id: 'git-les-202', title: '2.2 Remote Repository', duration: '10 mins', type: 'reading' },
+          { id: 'git-les-203', title: '2.3 git remote add origin', duration: '10 mins', type: 'lab' },
+          { id: 'git-les-204', title: '2.4 git push', duration: '15 mins', type: 'lab' },
+          { id: 'git-les-205', title: '2.5 git pull', duration: '15 mins', type: 'lab' },
+          { id: 'git-les-206', title: '2.6 git fetch', duration: '10 mins', type: 'lab' },
+          { id: 'git-les-207', title: '2.7 git clone', duration: '15 mins', type: 'lab' },
+          { id: 'git-les-208', title: '2.8 Git Branches', duration: '15 mins', type: 'reading' },
+          { id: 'git-les-209', title: '2.9 git switch', duration: '10 mins', type: 'lab' },
+          { id: 'git-les-210', title: '2.10 git checkout', duration: '10 mins', type: 'lab' },
+          { id: 'git-les-211', title: '2.11 git merge', duration: '15 mins', type: 'lab' },
+          { id: 'git-les-212', title: '2.12 Pull Requests', duration: '15 mins', type: 'reading' },
+          { id: 'git-les-213', title: '2.13 Code Reviews', duration: '15 mins', type: 'reading' },
+          { id: 'git-les-214', title: '2.14 Reviewers', duration: '10 mins', type: 'reading' },
+          { id: 'git-les-215', title: '2.15 Labels', duration: '10 mins', type: 'reading' },
+          { id: 'git-les-216', title: '2.16 Milestones', duration: '10 mins', type: 'reading' },
+        ],
+      },
+      {
+        id: 3,
+        title: 'Module 3: Advanced Git',
+        duration: '4 Hours • 10 Lessons',
+        lessons: [
+          { id: 'git-les-301', title: '3.1 Merge Conflicts', duration: '20 mins', type: 'reading' },
+          { id: 'git-les-302', title: '3.2 Conflict Resolution', duration: '20 mins', type: 'lab' },
+          { id: 'git-les-303', title: '3.3 git restore', duration: '10 mins', type: 'lab' },
+          { id: 'git-les-304', title: '3.4 git reset', duration: '15 mins', type: 'lab' },
+          { id: 'git-les-305', title: '3.5 git revert', duration: '15 mins', type: 'lab' },
+          { id: 'git-les-306', title: '3.6 git stash', duration: '15 mins', type: 'lab' },
+          { id: 'git-les-307', title: '3.7 Git Rebase', duration: '15 mins', type: 'lab' },
+          { id: 'git-les-308', title: '3.8 Interactive Rebase', duration: '20 mins', type: 'lab' },
+          { id: 'git-les-309', title: '3.9 Squashing Commits', duration: '15 mins', type: 'reading' },
+          { id: 'git-les-310', title: '3.10 Cherry Pick', duration: '15 mins', type: 'lab' },
+        ],
+      },
+      {
+        id: 4,
+        title: 'Module 4: Repository Management',
+        duration: '3 Hours • 7 Lessons',
+        lessons: [
+          { id: 'git-les-401', title: '4.1 README.md', duration: '10 mins', type: 'reading' },
+          { id: 'git-les-402', title: '4.2 Markdown', duration: '15 mins', type: 'reading' },
+          { id: 'git-les-403', title: '4.3 LICENSE', duration: '10 mins', type: 'reading' },
+          { id: 'git-les-404', title: '4.4 .gitignore', duration: '10 mins', type: 'reading' },
+          { id: 'git-les-405', title: '4.5 GitHub Issues', duration: '15 mins', type: 'reading' },
+          { id: 'git-les-406', title: '4.6 Project Boards', duration: '15 mins', type: 'reading' },
+          { id: 'git-les-407', title: '4.7 GitHub Pages', duration: '20 mins', type: 'reading' },
+        ],
+      },
+      {
+        id: 5,
+        title: 'Module 5: GitHub Actions',
+        duration: '4 Hours • 12 Lessons',
+        lessons: [
+          { id: 'git-les-501', title: '5.1 CI/CD', duration: '15 mins', type: 'reading' },
+          { id: 'git-les-502', title: '5.2 GitHub Actions', duration: '15 mins', type: 'reading' },
+          { id: 'git-les-503', title: '5.3 Workflow Files', duration: '15 mins', type: 'reading' },
+          { id: 'git-les-504', title: '5.4 YAML', duration: '15 mins', type: 'reading' },
+          { id: 'git-les-505', title: '5.5 Jobs', duration: '10 mins', type: 'reading' },
+          { id: 'git-les-506', title: '5.6 Steps', duration: '10 mins', type: 'reading' },
+          { id: 'git-les-507', title: '5.7 Runners', duration: '10 mins', type: 'reading' },
+          { id: 'git-les-508', title: '5.8 Automated Testing', duration: '15 mins', type: 'reading' },
+          { id: 'git-les-509', title: '5.9 GitHub Secrets', duration: '15 mins', type: 'reading' },
+          { id: 'git-les-510', title: '5.10 Deploy to Vercel', duration: '20 mins', type: 'reading' },
+          { id: 'git-les-511', title: '5.11 Deploy to Netlify', duration: '20 mins', type: 'reading' },
+          { id: 'git-les-512', title: '5.12 Deploy to AWS', duration: '20 mins', type: 'reading' },
+        ],
+      },
+      {
+        id: 6,
+        title: 'Module 6: Modern GitHub',
+        duration: '3 Hours • 7 Lessons',
+        lessons: [
+          { id: 'git-les-601', title: '6.1 GitHub Codespaces', duration: '15 mins', type: 'reading' },
+          { id: 'git-les-602', title: '6.2 Dev Containers', duration: '15 mins', type: 'reading' },
+          { id: 'git-les-603', title: '6.3 GitHub Copilot', duration: '15 mins', type: 'reading' },
+          { id: 'git-les-604', title: '6.4 Prompt Engineering', duration: '15 mins', type: 'reading' },
+          { id: 'git-les-605', title: '6.5 Dependabot', duration: '15 mins', type: 'reading' },
+          { id: 'git-les-606', title: '6.6 Secret Scanning', duration: '15 mins', type: 'reading' },
+          { id: 'git-les-607', title: '6.7 Branch Protection Rules', duration: '20 mins', type: 'reading' },
+        ],
+      }
+    ],
+    quizQuestions: [
+      {
+        id: 1,
+        question: 'Which of the following is a Distributed VCS?',
+        options: ['SVN', 'Perforce', 'Git', 'CVS'],
+        correct: 2,
+      },
+      {
+        id: 2,
+        question: 'What hidden folder is initialized when running git init?',
+        options: ['.github', '.gitignore', '.git', '.gitconfig'],
+        correct: 2,
+      },
+      {
+        id: 3,
+        question: 'What reset flag undoes commits and completely deletes changes?',
+        options: ['--soft', '--mixed', '--hard', '--clean'],
+        correct: 2,
+      },
+      {
+        id: 4,
+        question: 'Which command stages all changes in the current directory?',
+        options: ['git add .', 'git commit -a', 'git status', 'git push'],
+        correct: 0,
+      },
+      {
+        id: 5,
+        question: 'What is the default tracking remote repository alias name?',
+        options: ['main', 'origin', 'github', 'upstream'],
+        correct: 1,
+      },
+    ],
+  };
+
+  const courseData = isGitCourse ? gitCourseData : linuxCourseData;
 
   // Reusable Interactive Command Box with Auto Terminal Execution
   const InteractiveCmd: React.FC<{ cmd: string; desc?: string }> = ({ cmd, desc }) => (
@@ -1312,118 +1557,225 @@ export const CourseView: React.FC = () => {
               <div className="flex items-center gap-2 border-b border-sky-100 pb-3">
                 <Sparkles className="w-5 h-5 text-sky-600 animate-pulse" />
                 <h2 className="font-heading font-extrabold text-lg sm:text-xl text-slate-900">
-                  Course Introduction
-                </h2>
-              </div>
-
-              <div className="space-y-4 text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
-                {courseData.introText.map((p, idx) => (
-                  <p key={idx}>{p}</p>
-                ))}
-              </div>
-            </div>
-
-            {/* Module 1 Deep Dive: Architecture Diagrams & Linux Distros */}
-            <div className="bg-white/95 border border-sky-200/80 p-6 sm:p-8 rounded-3xl shadow-xl shadow-sky-500/10 space-y-6">
-              <div className="flex items-center justify-between border-b border-sky-100 pb-3">
-                <div className="flex items-center gap-2">
-                  <Terminal className="w-5 h-5 text-sky-600" />
-                  <h3 className="font-heading font-extrabold text-lg sm:text-xl text-slate-900">
-                    Module 1: Linux Architecture & Components
-                  </h3>
+                   {!isGitCourse ? (
+              /* Module 1 Deep Dive: Architecture Diagrams & Linux Distros */
+              <div className="bg-white/95 border border-sky-200/80 p-6 sm:p-8 rounded-3xl shadow-xl shadow-sky-500/10 space-y-6">
+                <div className="flex items-center justify-between border-b border-sky-100 pb-3">
+                  <div className="flex items-center gap-2">
+                    <Terminal className="w-5 h-5 text-sky-600" />
+                    <h3 className="font-heading font-extrabold text-lg sm:text-xl text-slate-900">
+                      Module 1: Linux Architecture & Components
+                    </h3>
+                  </div>
+                  <span className="text-xs font-bold text-sky-700 bg-sky-50 px-3 py-1 rounded-full border border-sky-200">
+                    Core Fundamentals
+                  </span>
                 </div>
-                <span className="text-xs font-bold text-sky-700 bg-sky-50 px-3 py-1 rounded-full border border-sky-200">
-                  Core Fundamentals
-                </span>
-              </div>
 
-              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
-                Linux combines a wide range of open-source tools and components to form a complete computing environment. These components include file systems, user interfaces, system utilities and application programs, all working together to manage hardware and enable users to interact with their computer systems.
-              </p>
-
-              {/* Diagram 1: Unix and Linux OS Architecture */}
-              <div className="space-y-3 bg-slate-50 p-4 sm:p-5 rounded-2xl border border-sky-100">
-                <h4 className="font-heading font-bold text-xs sm:text-sm text-slate-900 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-sky-500" />
-                  1. Layered Architecture: Hardware → Kernel → Shell → User Applications
-                </h4>
-                <div className="rounded-2xl overflow-hidden border border-sky-200 bg-white shadow-xs">
-                  <img
-                    src="/assets/images/linux_os_architecture.png"
-                    alt="Unix and Linux Operating Systems Architecture"
-                    className="w-full object-cover max-h-96"
-                  />
-                </div>
-                <p className="text-xs text-slate-600 leading-relaxed font-medium">
-                  User applications (Web Browsers, Text Editors, Compilers) interact with the <strong>Shell</strong> (Command Line & GUI). The Shell makes system calls to the <strong>Kernel</strong> (Core control program), which directly manages CPU, Memory, and Hardware Devices.
+                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                  Linux combines a wide range of open-source tools and components to form a complete computing environment. These components include file systems, user interfaces, system utilities and application programs, all working together to manage hardware and enable users to interact with their computer systems.
                 </p>
-              </div>
 
-              {/* Diagram 2: Monolithic Kernel vs Microkernel */}
-              <div className="space-y-3 bg-slate-50 p-4 sm:p-5 rounded-2xl border border-sky-100">
-                <h4 className="font-heading font-bold text-xs sm:text-sm text-slate-900 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-sky-500" />
-                  2. Monolithic Kernel Architecture (e.g. Linux) vs. Microkernel (e.g. Minix)
-                </h4>
-                <div className="rounded-2xl overflow-hidden border border-sky-200 bg-white shadow-xs">
-                  <img
-                    src="/assets/images/linux_monolithic_vs_microkernel.png"
-                    alt="Monolithic Kernel vs Microkernel Architecture"
-                    className="w-full object-cover max-h-96"
-                  />
-                </div>
-                <p className="text-xs text-slate-600 leading-relaxed font-medium">
-                  Linux uses a <strong>Monolithic Kernel</strong> where File System, Device Drivers, IPC (Inter-Process Communication), and Process Scheduler operate together inside a single Kernel Space for maximum performance and low-latency hardware execution.
-                </p>
-              </div>
-
-              {/* Diagram 3: Kernel Subsystem Managers */}
-              <div className="space-y-3 bg-slate-50 p-4 sm:p-5 rounded-2xl border border-sky-100">
-                <h4 className="font-heading font-bold text-xs sm:text-sm text-slate-900 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-sky-500" />
-                  3. Kernel Subsystem Managers & Hardware Interface
-                </h4>
-                <div className="rounded-2xl overflow-hidden border border-sky-200 bg-white shadow-xs">
-                  <img
-                    src="/assets/images/linux_kernel_managers.png"
-                    alt="Kernel Subsystem Managers"
-                    className="w-full object-cover max-h-96"
-                  />
-                </div>
-                <p className="text-xs text-slate-600 leading-relaxed font-medium">
-                  The Linux Kernel coordinates four core managers: <strong>Process Scheduler</strong> (CPU queue allocation), <strong>Memory Manager</strong> (Virtual vs Physical RAM), <strong>Device Drivers</strong> (Storage, Display, USB), and <strong>File System Manager</strong>.
-                </p>
-              </div>
-
-              {/* Distributions in Linux */}
-              <div className="space-y-4 pt-4 border-t border-sky-100">
-                <div className="space-y-1">
-                  <h3 className="font-heading font-extrabold text-lg text-slate-900">
-                    Distributions in Linux (Distros)
-                  </h3>
-                  <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                    A Linux distribution (distro) is a complete operating system built around the Linux kernel along with system tools, libraries, and applications. Different distributions are designed for various purposes such as desktops, servers, cybersecurity, and development.
+                {/* Diagram 1: Unix and Linux OS Architecture */}
+                <div className="space-y-3 bg-slate-50 p-4 sm:p-5 rounded-2xl border border-sky-100">
+                  <h4 className="font-heading font-bold text-xs sm:text-sm text-slate-900 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-sky-500" />
+                    1. Layered Architecture: Hardware → Kernel → Shell → User Applications
+                  </h4>
+                  <div className="rounded-2xl overflow-hidden border border-sky-200 bg-white shadow-xs">
+                    <img
+                      src="/assets/images/linux_os_architecture.png"
+                      alt="Unix and Linux Operating Systems Architecture"
+                      className="w-full object-cover max-h-96"
+                    />
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                    User applications (Web Browsers, Text Editors, Compilers) interact with the <strong>Shell</strong> (Command Line & GUI). The Shell makes system calls to the <strong>Kernel</strong> (Core control program), which directly manages CPU, Memory, and Hardware Devices.
                   </p>
                 </div>
 
-                {/* Distros Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  {[
-                    { name: 'Ubuntu', badge: 'Beginner-Friendly', color: 'border-orange-200 bg-orange-50/50 text-orange-900', desc: 'A beginner-friendly Linux distribution used for desktops, servers, and cloud computing.' },
-                    { name: 'Debian', badge: 'Server & Stability', color: 'border-rose-200 bg-rose-50/50 text-rose-900', desc: 'A stable and reliable Linux distribution widely used for enterprise servers.' },
-                    { name: 'Kali Linux', badge: 'Cybersecurity', color: 'border-sky-200 bg-sky-50/50 text-sky-900', desc: 'A security-focused Linux distribution used for ethical hacking and penetration testing.' },
-                    { name: 'MX Linux', badge: 'Lightweight', color: 'border-slate-200 bg-slate-100/60 text-slate-900', desc: 'A lightweight Linux distribution suitable for older hardware.' },
-                    { name: 'Manjaro', badge: 'Arch-Based', color: 'border-emerald-200 bg-emerald-50/50 text-emerald-900', desc: 'A user-friendly Arch-based Linux distribution with rolling updates.' },
-                    { name: 'Linux Mint', badge: 'Windows Migrators', color: 'border-green-200 bg-green-50/50 text-green-900', desc: 'A simple and beginner-friendly Linux distribution ideal for Windows users.' },
-                    { name: 'Solus', badge: 'Desktop Performance', color: 'border-blue-200 bg-blue-50/50 text-blue-900', desc: 'A modern Linux distribution focused on desktop performance and simplicity.' },
-                    { name: 'Fedora', badge: 'Developer-Focused', color: 'border-indigo-200 bg-indigo-50/50 text-indigo-900', desc: 'A developer-focused Linux distribution featuring the latest technologies.' },
-                    { name: 'openSUSE', badge: 'Enterprise & Dev', color: 'border-lime-200 bg-lime-50/50 text-lime-900', desc: 'A powerful Linux distribution used for development and enterprise environments.' },
-                    { name: 'Deepin', badge: 'Visually Attractive', color: 'border-purple-200 bg-purple-50/50 text-purple-900', desc: 'A visually attractive Linux distribution with an easy-to-use aesthetic interface.' },
-                  ].map((distro, i) => (
-                    <div key={i} className={`p-3.5 rounded-2xl border ${distro.color} space-y-1 shadow-xs`}>
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-xs">{distro.name}</span>
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white border border-slate-200">
+                {/* Diagram 2: Monolithic Kernel vs Microkernel */}
+                <div className="space-y-3 bg-slate-50 p-4 sm:p-5 rounded-2xl border border-sky-100">
+                  <h4 className="font-heading font-bold text-xs sm:text-sm text-slate-900 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-sky-500" />
+                    2. Monolithic Kernel Architecture (e.g. Linux) vs. Microkernel (e.g. Minix)
+                  </h4>
+                  <div className="rounded-2xl overflow-hidden border border-sky-200 bg-white shadow-xs">
+                    <img
+                      src="/assets/images/linux_monolithic_vs_microkernel.png"
+                      alt="Monolithic Kernel vs Microkernel Architecture"
+                      className="w-full object-cover max-h-96"
+                    />
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                    Linux uses a <strong>Monolithic Kernel</strong> where File System, Device Drivers, IPC (Inter-Process Communication), and Process Scheduler operate together inside a single Kernel Space for maximum performance and low-latency hardware execution.
+                  </p>
+                </div>
+
+                {/* Diagram 3: Kernel Subsystem Managers */}
+                <div className="space-y-3 bg-slate-50 p-4 sm:p-5 rounded-2xl border border-sky-100">
+                  <h4 className="font-heading font-bold text-xs sm:text-sm text-slate-900 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-sky-500" />
+                    3. Kernel Subsystem Managers & Hardware Interface
+                  </h4>
+                  <div className="rounded-2xl overflow-hidden border border-sky-200 bg-white shadow-xs">
+                    <img
+                      src="/assets/images/linux_kernel_managers.png"
+                      alt="Kernel Subsystem Managers"
+                      className="w-full object-cover max-h-96"
+                    />
+                  </div>
+                  <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                    The Linux Kernel coordinates four core managers: <strong>Process Scheduler</strong> (CPU queue allocation), <strong>Memory Manager</strong> (Virtual vs Physical RAM), <strong>Device Drivers</strong> (Storage, Display, USB), and <strong>File System Manager</strong>.
+                  </p>
+                </div>
+
+                {/* Distributions in Linux */}
+                <div className="space-y-4 pt-4 border-t border-sky-100">
+                  <div className="space-y-1">
+                    <h3 className="font-heading font-extrabold text-lg text-slate-900">
+                      Distributions in Linux (Distros)
+                    </h3>
+                    <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                      A Linux distribution (distro) is a complete operating system built around the Linux kernel along with system tools, libraries, and applications. Different distributions are designed for various purposes such as desktops, servers, cybersecurity, and development.
+                    </p>
+                  </div>
+
+                  {/* Distros Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    {[
+                      { name: 'Ubuntu', badge: 'Beginner-Friendly', color: 'border-orange-200 bg-orange-50/50 text-orange-900', desc: 'A beginner-friendly Linux distribution used for desktops, servers, and cloud computing.' },
+                      { name: 'Debian', badge: 'Server & Stability', color: 'border-rose-200 bg-rose-50/50 text-rose-900', desc: 'A stable and reliable Linux distribution widely used for enterprise servers.' },
+                      { name: 'Kali Linux', badge: 'Cybersecurity', color: 'border-sky-200 bg-sky-50/50 text-sky-900', desc: 'A security-focused Linux distribution used for ethical hacking and penetration testing.' },
+                      { name: 'MX Linux', badge: 'Lightweight', color: 'border-slate-200 bg-slate-100/60 text-slate-900', desc: 'A lightweight Linux distribution suitable for older hardware.' },
+                      { name: 'Manjaro', badge: 'Arch-Based', color: 'border-emerald-200 bg-emerald-50/50 text-emerald-900', desc: 'A user-friendly Arch-based Linux distribution with rolling updates.' },
+                      { name: 'Linux Mint', badge: 'Windows Migrators', color: 'border-green-200 bg-green-50/50 text-green-900', desc: 'A simple and beginner-friendly Linux distribution ideal for Windows users.' },
+                      { name: 'Solus', badge: 'Desktop Performance', color: 'border-blue-200 bg-blue-50/50 text-blue-900', desc: 'A modern Linux distribution focused on desktop performance and simplicity.' },
+                      { name: 'Fedora', badge: 'Developer-Focused', color: 'border-indigo-200 bg-indigo-50/50 text-indigo-900', desc: 'A developer-focused Linux distribution featuring the latest technologies.' },
+                      { name: 'openSUSE', badge: 'Enterprise & Dev', color: 'border-lime-200 bg-lime-50/50 text-lime-900', desc: 'A powerful Linux distribution used for development and enterprise environments.' },
+                      { name: 'Deepin', badge: 'Visually Attractive', color: 'border-purple-200 bg-purple-50/50 text-purple-900', desc: 'A visually attractive Linux distribution with an easy-to-use aesthetic interface.' },
+                    ].map((distro, i) => (
+                      <div key={i} className={`p-3.5 rounded-2xl border ${distro.color} space-y-1 shadow-xs`}>
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-xs">{distro.name}</span>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white border border-slate-200">
+                            {distro.badge}
+                          </span>
+                        </div>
+                        <p className="text-[11px] opacity-90 font-medium leading-relaxed">{distro.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* Git Architecture Visualization Card */
+              <div className="bg-white/95 border border-sky-200/80 p-6 sm:p-8 rounded-3xl shadow-xl shadow-sky-500/10 space-y-6">
+                <div className="flex items-center justify-between border-b border-sky-100 pb-3">
+                  <div className="flex items-center gap-2">
+                    <Terminal className="w-5 h-5 text-sky-600" />
+                    <h3 className="font-heading font-extrabold text-lg sm:text-xl text-slate-900">
+                      Git Architecture & Workflow Lifecycles
+                    </h3>
+                  </div>
+                  <span className="text-xs font-bold text-sky-700 bg-sky-50 px-3 py-1 rounded-full border border-sky-200">
+                    Distributed Version Control
+                  </span>
+                </div>
+
+                <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                  Git manages project history as a series of content snapshots. Files move dynamically through stages as you edit, stage, commit locally, and synchronize upstream to GitHub.
+                </p>
+
+                {/* Responsive Git Lifecycle Diagram */}
+                <div className="space-y-4 bg-slate-900/95 p-5 rounded-2xl border border-slate-800 text-white font-mono">
+                  <h4 className="font-heading font-bold text-xs sm:text-sm text-slate-200 flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                    Local to Remote Git Pipeline
+                  </h4>
+                  
+                  <div className="flex flex-col md:flex-row items-stretch justify-between gap-3 text-center text-[11px]">
+                    <div className="flex-1 p-3.5 bg-red-950/40 border border-red-900/50 rounded-xl flex flex-col justify-between">
+                      <div>
+                        <h5 className="font-bold text-red-400 text-xs">Working Directory</h5>
+                        <p className="text-[10px] text-slate-400 mt-1">Untracked & Modified files</p>
+                      </div>
+                      <div className="text-slate-500 text-[10px] mt-2 italic">Local workspace</div>
+                    </div>
+                    
+                    <div className="flex items-center justify-center text-emerald-400 font-extrabold text-xs py-1 md:py-0">
+                      <span className="md:hidden">▼ git add</span>
+                      <span className="hidden md:inline">➔ git add ➔</span>
+                    </div>
+
+                    <div className="flex-1 p-3.5 bg-amber-950/40 border border-amber-900/50 rounded-xl flex flex-col justify-between">
+                      <div>
+                        <h5 className="font-bold text-amber-400 text-xs">Staging Area</h5>
+                        <p className="text-[10px] text-slate-400 mt-1">Snapshot index file (.git/index)</p>
+                      </div>
+                      <div className="text-slate-500 text-[10px] mt-2 italic">Prepared modifications</div>
+                    </div>
+
+                    <div className="flex items-center justify-center text-emerald-400 font-extrabold text-xs py-1 md:py-0">
+                      <span className="md:hidden">▼ git commit</span>
+                      <span className="hidden md:inline">➔ git commit ➔</span>
+                    </div>
+
+                    <div className="flex-1 p-3.5 bg-blue-950/40 border border-blue-900/50 rounded-xl flex flex-col justify-between">
+                      <div>
+                        <h5 className="font-bold text-blue-400 text-xs">Local Repo</h5>
+                        <p className="text-[10px] text-slate-400 mt-1">Object database commits (.git/objects)</p>
+                      </div>
+                      <div className="text-slate-500 text-[10px] mt-2 italic">Permanent snapshot (HEAD)</div>
+                    </div>
+
+                    <div className="flex items-center justify-center text-emerald-400 font-extrabold text-xs py-1 md:py-0">
+                      <span className="md:hidden">▼ git push</span>
+                      <span className="hidden md:inline">➔ git push ➔</span>
+                    </div>
+
+                    <div className="flex-1 p-3.5 bg-emerald-950/40 border border-emerald-900/50 rounded-xl flex flex-col justify-between">
+                      <div>
+                        <h5 className="font-bold text-emerald-400 text-xs">Remote GitHub</h5>
+                        <p className="text-[10px] text-slate-400 mt-1">Public or private hosting upstream</p>
+                      </div>
+                      <div className="text-slate-500 text-[10px] mt-2 italic">Cloud sharing hub</div>
+                    </div>
+                  </div>
+                  
+                  <p className="text-[10px] text-slate-400 leading-relaxed pt-2 border-t border-slate-800">
+                    * Run <strong>git pull</strong> or <strong>git clone</strong> to synchronize remote repositories back to your local environment.
+                  </p>
+                </div>
+
+                {/* Git Workflow Steps */}
+                <div className="space-y-4 pt-4 border-t border-sky-100">
+                  <div className="space-y-1">
+                    <h3 className="font-heading font-extrabold text-lg text-slate-900">
+                      Git Collaboration Best Practices
+                    </h3>
+                    <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                      Follow standard branch-based pipelines to build robust, bug-free software packages dynamically.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    {[
+                      { title: '1. Branch Strategy', desc: 'Never commit directly to main. Create feature branches (e.g. feature/auth, bugfix/layout) to isolate developmental changes.' },
+                      { title: '2. Small Commits', desc: 'Keep commits small and descriptive. Use conventional commit prefix messages (feat: , fix: , docs: ) to document progress.' },
+                      { title: '3. Pull Requests', desc: 'Open Pull Requests (PR) early to discuss additions. Assign teammates for code reviews and require checkmarks before merge.' },
+                      { title: '4. Rebase vs Merge', desc: 'Use rebasing to maintain linear commit flows, and merging to record explicit branch additions in the history logs.' },
+                    ].map((step, i) => (
+                      <div key={i} className="p-4 rounded-2xl border border-sky-100 bg-slate-50/50 space-y-1">
+                        <span className="font-extrabold text-slate-900 block">{step.title}</span>
+                        <p className="text-[11px] text-slate-600 font-medium leading-relaxed">{step.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+    <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white border border-slate-200">
                           {distro.badge}
                         </span>
                       </div>
@@ -1461,19 +1813,19 @@ export const CourseView: React.FC = () => {
               <div className="space-y-3 text-xs font-medium">
                 <div className="flex justify-between py-2 border-b border-sky-100">
                   <span className="text-slate-500">Total Duration</span>
-                  <span className="font-bold text-slate-900">32 Hours</span>
+                  <span className="font-bold text-slate-900">{courseData.duration}</span>
                 </div>
                 <div className="flex justify-between py-2 border-b border-sky-100">
                   <span className="text-slate-500">Modules</span>
-                  <span className="font-bold text-slate-900">4 Modules</span>
+                  <span className="font-bold text-slate-900">{courseData.modules.length} Modules</span>
                 </div>
                 <div className="flex justify-between py-2 border-b border-sky-100">
                   <span className="text-slate-500">Total Lessons</span>
-                  <span className="font-bold text-slate-900">20 Lessons</span>
+                  <span className="font-bold text-slate-900">{courseData.modules.flatMap((m) => m.lessons).length} Lessons</span>
                 </div>
                 <div className="flex justify-between py-2 border-b border-sky-100">
                   <span className="text-slate-500">Interactive Labs</span>
-                  <span className="font-bold text-slate-900">14 CLI Labs</span>
+                  <span className="font-bold text-slate-900">{courseData.modules.flatMap((m) => m.lessons).filter((l) => l.type === 'lab').length} CLI Labs</span>
                 </div>
                 <div className="flex justify-between py-2">
                   <span className="text-slate-500">Certificate</span>
@@ -1506,7 +1858,7 @@ export const CourseView: React.FC = () => {
               <p className="text-xs text-slate-500 mt-0.5">Click any lesson to read its content inline and run commands directly in the CLI terminal.</p>
             </div>
             <span className="text-xs font-bold text-sky-700 bg-sky-50 px-3 py-1 rounded-full border border-sky-200">
-              {completedLessons.length} / 20 Lessons Completed
+              {completedLessons.length} / {courseData.modules.flatMap((m) => m.lessons).length} Lessons Completed
             </span>
           </div>
 
@@ -1581,31 +1933,160 @@ export const CourseView: React.FC = () => {
                             </div>
 
                             {/* Direct Inline Topic Content Drawer */}
-                            {isSelected && (
-                              <div className="p-5 sm:p-6 bg-white rounded-2xl border border-sky-200 shadow-lg space-y-4 animate-in fade-in slide-in-from-top-2">
-                                <div className="flex items-center justify-between border-b border-sky-100 pb-3">
-                                  <span className="text-xs font-bold text-sky-700 bg-sky-50 px-3 py-1 rounded-full border border-sky-200">
-                                    {module1LessonsContent[lesson.id]?.badge || 'Interactive Lesson'} • {lesson.duration}
-                                  </span>
-                                  <button
-                                    onClick={() => {
-                                      setActiveTab('terminal');
-                                      toast.info('Interactive CLI Terminal Lab launched!');
-                                    }}
-                                    className="btn-blue-primary text-xs py-1.5 px-3 font-bold flex items-center gap-1.5 cursor-pointer shadow-xs"
-                                  >
-                                    <Terminal className="w-3.5 h-3.5" />
-                                    <span>Launch Terminal Lab</span>
-                                  </button>
-                                </div>
+                            {isSelected && (() => {
+                              const activeLessonObj = isGitCourse 
+                                ? (gitLessonsData[lesson.id] || {
+                                    id: lesson.id,
+                                    title: lesson.title,
+                                    time: lesson.duration || '15 mins',
+                                    badge: 'Topic Guide',
+                                    content: `### ${lesson.title}\nDetailed syllabus notes for this topic are prepared. Practice related commands in the terminal lab!`,
+                                  })
+                                : module1LessonsContent[lesson.id];
 
-                                {module1LessonsContent[lesson.id]?.render || (
-                                  <div className="p-4 bg-sky-50 text-slate-700 rounded-2xl text-xs font-medium">
-                                    Detailed topic guide for this lesson is ready. Practice hands-on Linux CLI commands in the Terminal Lab!
+                              const allLessons = courseData.modules.flatMap((m) => m.lessons);
+                              const currentLessonIndex = allLessons.findIndex((l) => l.id === lesson.id);
+                              const hasPrevLesson = currentLessonIndex > 0;
+                              const hasNextLesson = currentLessonIndex < allLessons.length - 1;
+
+                              const handlePrevLesson = () => {
+                                if (hasPrevLesson) {
+                                  setSelectedLessonId(allLessons[currentLessonIndex - 1].id);
+                                }
+                              };
+
+                              const handleNextLesson = () => {
+                                if (hasNextLesson) {
+                                  setSelectedLessonId(allLessons[currentLessonIndex + 1].id);
+                                }
+                              };
+
+                              const isDone = completedLessons.includes(lesson.id);
+
+                              return (
+                                <div className="p-5 sm:p-6 bg-white rounded-2xl border border-sky-200 shadow-lg space-y-4 animate-in fade-in slide-in-from-top-2">
+                                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-sky-100 pb-3">
+                                    <span className="text-xs font-bold text-sky-700 bg-sky-50 px-3 py-1 rounded-full border border-sky-200">
+                                      {activeLessonObj?.badge || 'Interactive Lesson'} • {lesson.duration || activeLessonObj?.time}
+                                    </span>
+                                    <div className="flex items-center gap-2">
+                                      <button
+                                        onClick={() => {
+                                          const event = new CustomEvent('open-ai-tutor', {
+                                            detail: {
+                                              lessonTitle: lesson.title,
+                                              lessonContent: activeLessonObj?.content || ''
+                                            }
+                                          });
+                                          window.dispatchEvent(event);
+                                          toast.info('AI Tutor panel activated for this topic!');
+                                        }}
+                                        className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold rounded-lg text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+                                      >
+                                        <Bot className="w-3.5 h-3.5" />
+                                        <span>Ask AI Tutor</span>
+                                      </button>
+                                      <button
+                                        onClick={() => {
+                                          setActiveTab('terminal');
+                                          toast.info('Interactive CLI Terminal Lab launched!');
+                                        }}
+                                        className="btn-blue-primary text-xs py-1.5 px-3 font-bold flex items-center gap-1.5 cursor-pointer shadow-xs"
+                                      >
+                                        <Terminal className="w-3.5 h-3.5" />
+                                        <span>Launch Terminal Lab</span>
+                                      </button>
+                                    </div>
                                   </div>
-                                )}
-                              </div>
-                            )}
+
+                                  {isGitCourse ? (
+                                    <div className="space-y-4">
+                                      {/* Markdown content */}
+                                      <div className="text-slate-700 space-y-2">
+                                        {activeLessonObj?.content && renderMarkdown(activeLessonObj.content)}
+                                      </div>
+
+                                      {/* Practice Commands */}
+                                      {activeLessonObj?.commands && activeLessonObj.commands.length > 0 && (
+                                        <div className="space-y-2 mt-4">
+                                          <h5 className="font-heading font-bold text-xs text-slate-500 uppercase tracking-wider">Practice Commands:</h5>
+                                          {activeLessonObj.commands.map((cmdObj: any, cidx: number) => (
+                                            <InteractiveCmd key={cidx} cmd={cmdObj.command} desc={cmdObj.description} />
+                                          ))}
+                                        </div>
+                                      )}
+
+                                      {/* Study Resources */}
+                                      {activeLessonObj?.resources && activeLessonObj.resources.length > 0 && (
+                                        <div className="space-y-2 mt-4 pt-4 border-t border-sky-100">
+                                          <h5 className="font-heading font-bold text-xs text-slate-500 uppercase tracking-wider">Study Resources:</h5>
+                                          <div className="flex flex-wrap gap-2">
+                                            {activeLessonObj.resources.map((res: any, ridx: number) => (
+                                              <a
+                                                key={ridx}
+                                                href={res.url}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="px-3 py-1.5 bg-sky-50 hover:bg-sky-100 text-sky-700 rounded-lg text-[11px] font-bold border border-sky-200 flex items-center gap-1.5"
+                                              >
+                                                <BookOpen className="w-3.5 h-3.5" />
+                                                <span>{res.title}</span>
+                                              </a>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  ) : (
+                                    /* Linux Course render content fallback */
+                                    activeLessonObj?.render || (
+                                      <div className="p-4 bg-sky-50 text-slate-700 rounded-2xl text-xs font-medium">
+                                        Detailed topic guide for this lesson is ready. Practice hands-on Linux CLI commands in the Terminal Lab!
+                                      </div>
+                                    )
+                                  )}
+
+                                  {/* Next/Prev Navigation and Mark as Complete */}
+                                  <div className="flex items-center justify-between pt-5 border-t border-sky-100 mt-6">
+                                    <button
+                                      disabled={!hasPrevLesson}
+                                      onClick={handlePrevLesson}
+                                      className={`px-4 py-2 border rounded-xl text-xs font-bold transition-all flex items-center gap-1 ${
+                                        hasPrevLesson
+                                          ? 'border-sky-200 text-slate-700 hover:bg-sky-50 cursor-pointer'
+                                          : 'border-slate-100 text-slate-300 bg-slate-50 cursor-not-allowed'
+                                      }`}
+                                    >
+                                      <span>Previous Topic</span>
+                                    </button>
+
+                                    <button
+                                      onClick={() => toggleLessonComplete(lesson.id)}
+                                      className={`px-4 py-2 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition-all cursor-pointer ${
+                                        isDone
+                                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                          : 'bg-emerald-600 hover:bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/10'
+                                      }`}
+                                    >
+                                      <CheckCircle2 className="w-4 h-4" />
+                                      <span>{isDone ? 'Topic Completed' : 'Mark as Complete'}</span>
+                                    </button>
+
+                                    <button
+                                      disabled={!hasNextLesson}
+                                      onClick={handleNextLesson}
+                                      className={`px-4 py-2 border rounded-xl text-xs font-bold transition-all flex items-center gap-1 ${
+                                        hasNextLesson
+                                          ? 'border-sky-200 text-slate-700 hover:bg-sky-50 cursor-pointer'
+                                          : 'border-slate-100 text-slate-300 bg-slate-50 cursor-not-allowed'
+                                      }`}
+                                    >
+                                      <span>Next Topic</span>
+                                    </button>
+                                  </div>
+                                </div>
+                              );
+                            })()}
                           </div>
                         );
                       })}
