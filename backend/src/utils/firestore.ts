@@ -46,6 +46,12 @@ export const toDocument = <T extends Record<string, any>>(data: T): Record<strin
     delete doc.id;
   }
 
+  // Translate status from frontend ('Published'/'Draft') to database format ('published'/'draft')
+  if ('status' in doc && typeof doc.status === 'string') {
+    if (doc.status === 'Published') doc.status = 'published';
+    else if (doc.status === 'Draft') doc.status = 'draft';
+  }
+
   for (const key of Object.keys(doc)) {
     const val = doc[key];
     if (val instanceof Date) {
@@ -76,6 +82,12 @@ export const fromDocument = <T>(doc: any): T => {
   const id = doc.id;
 
   const converted: Record<string, any> = { ...data, id };
+
+  // Translate status from database format ('published'/'draft') to frontend ('Published'/'Draft')
+  if ('status' in converted && typeof converted.status === 'string') {
+    if (converted.status === 'published') converted.status = 'Published';
+    else if (converted.status === 'draft') converted.status = 'Draft';
+  }
 
   const convertTimestamps = (obj: any): any => {
     if (!obj || typeof obj !== 'object') return obj;

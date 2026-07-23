@@ -25,3 +25,10 @@ export const isFirestoreInitialized = (): boolean => {
  * Course collection getter.
  */
 export const coursesCollection = () => getCollection('courses');
+export const modulesCollection = () => getCollection('modules');
+export const lessonsCollection = () => getCollection('lessons');
+export const quizzesCollection = () => getCollection('quizzes');
+export const resourcesCollection = () => getCollection('resources');
+export const assignmentsCollection = () => getCollection('assignments');
+export const progressCollection = () => getCollection('progress');
+export const certificatesCollection = () => getCollection('certificates');

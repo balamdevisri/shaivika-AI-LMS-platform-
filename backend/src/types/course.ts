@@ -133,3 +133,157 @@ export const CourseValidationSchema = z.object({
 
 export type CreateCourseInput = z.infer<typeof CourseValidationSchema>;
 export type UpdateCourseInput = Partial<CreateCourseInput>;
+
+// Module Interface & Zod Schema
+export interface Module {
+  id: string;
+  courseId: string;
+  title: string;
+  order: number;
+  duration: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export const ModuleValidationSchema = z.object({
+  courseId: z.string({ required_error: 'Course ID is required' }),
+  title: z.string({ required_error: 'Module title is required' }).min(3),
+  order: z.number({ required_error: 'Module order is required' }).int().nonnegative(),
+  duration: z.string({ required_error: 'Module duration is required' }),
+});
+
+// Lesson Interface & Zod Schema
+export interface LessonCodeExample {
+  title: string;
+  code: string;
+  description?: string;
+}
+
+export interface LessonCommand {
+  command: string;
+  description?: string;
+}
+
+export interface LessonResource {
+  title: string;
+  url: string;
+  type: string;
+}
+
+export interface Lesson {
+  id: string;
+  courseId: string;
+  moduleId: string;
+  title: string;
+  order: number;
+  duration: string;
+  type: 'video' | 'lab' | 'quiz' | 'reading';
+  readingTime: string;
+  videoUrl?: string;
+  content: string; // Markdown notes
+  codeExamples?: LessonCodeExample[];
+  commands?: LessonCommand[];
+  resources?: LessonResource[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export const LessonValidationSchema = z.object({
+  courseId: z.string({ required_error: 'Course ID is required' }),
+  moduleId: z.string({ required_error: 'Module ID is required' }),
+  title: z.string({ required_error: 'Lesson title is required' }).min(3),
+  order: z.number({ required_error: 'Lesson order is required' }).int().nonnegative(),
+  duration: z.string({ required_error: 'Lesson duration is required' }),
+  type: z.enum(['video', 'lab', 'quiz', 'reading']),
+  readingTime: z.string().default('5 mins'),
+  videoUrl: z.string().url().optional().or(z.literal('')),
+  content: z.string().default(''),
+  codeExamples: z.array(z.object({
+    title: z.string(),
+    code: z.string(),
+    description: z.string().optional(),
+  })).optional(),
+  commands: z.array(z.object({
+    command: z.string(),
+    description: z.string().optional(),
+  })).optional(),
+  resources: z.array(z.object({
+    title: z.string(),
+    url: z.string().url(),
+    type: z.string(),
+  })).optional(),
+});
+
+// Quiz Interface & Zod Schema
+export interface QuizQuestion {
+  id: number;
+  question: string;
+  options: string[];
+  correct: number;
+}
+
+export interface Quiz {
+  id: string;
+  courseId: string;
+  moduleId: string;
+  title: string;
+  questions: QuizQuestion[];
+  passingScore: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export const QuizValidationSchema = z.object({
+  courseId: z.string({ required_error: 'Course ID is required' }),
+  moduleId: z.string({ required_error: 'Module ID is required' }),
+  title: z.string({ required_error: 'Quiz title is required' }).min(3),
+  questions: z.array(z.object({
+    id: z.number(),
+    question: z.string(),
+    options: z.array(z.string()).min(2),
+    correct: z.number().int().nonnegative(),
+  })).min(1),
+  passingScore: z.number().min(0).max(100).default(70),
+});
+
+// Assignment Interface & Zod Schema
+export interface Assignment {
+  id: string;
+  courseId: string;
+  moduleId: string;
+  title: string;
+  description: string;
+  submissionGuidelines?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export const AssignmentValidationSchema = z.object({
+  courseId: z.string({ required_error: 'Course ID is required' }),
+  moduleId: z.string({ required_error: 'Module ID is required' }),
+  title: z.string({ required_error: 'Assignment title is required' }).min(3),
+  description: z.string({ required_error: 'Assignment description is required' }).min(10),
+  submissionGuidelines: z.string().optional(),
+});
+
+// Progress Interface & Zod Schema
+export interface Progress {
+  id: string;
+  uid: string;
+  courseId: string;
+  completedLessons: string[];
+  completedModules: string[];
+  quizScores: Record<string, number>;
+  assignmentCompleted: Record<string, boolean>;
+  percentage: number;
+  updatedAt: Date;
+}
+
+// Certificate Interface & Zod Schema
+export interface Certificate {
+  id: string;
+  uid: string;
+  courseId: string;
+  issuedAt: Date;
+  certificateUrl: string;
+}
