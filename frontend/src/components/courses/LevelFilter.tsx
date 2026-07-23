@@ -18,10 +18,10 @@ export const LevelFilter: React.FC<LevelFilterProps> = ({ selectedLevel, onSelec
     <select
       value={selectedLevel}
       onChange={(e) => onSelectLevel(e.target.value as any)}
-      className="bg-slate-900/80 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 outline-none font-['Sora'] font-medium cursor-pointer"
+      className="bg-white border border-sky-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 outline-none font-['Sora'] font-semibold cursor-pointer shadow-xs focus:border-sky-500"
     >
       {levels.map((lvl) => (
-        <option key={lvl.value} value={lvl.value} className="bg-slate-900 text-slate-200">
+        <option key={lvl.value} value={lvl.value} className="bg-white text-slate-800">
           {lvl.label}
         </option>
       ))}

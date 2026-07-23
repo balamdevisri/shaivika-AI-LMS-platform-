@@ -23,7 +23,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   const isFree = course.price === 0;
 
   return (
-    <div className="group relative flex flex-col justify-between rounded-3xl bg-slate-900/80 border border-slate-800/80 hover:border-indigo-500/50 backdrop-blur-xl p-4 transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-500/10 font-['Sora'] text-slate-100">
+    <div className="group relative flex flex-col justify-between rounded-3xl bg-white border border-sky-100 hover:border-sky-300 p-4 transition-all duration-300 shadow-md shadow-sky-100/50 hover:shadow-xl hover:shadow-sky-100 font-['Sora'] text-slate-900">
       <div className="space-y-3">
         <div className="relative">
           <CourseThumbnail src={course.thumbnail} alt={course.title} category={course.category} />
@@ -38,7 +38,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
                 e.preventDefault();
                 onBookmark(course.id);
               }}
-              className="absolute top-3 right-3 p-2 rounded-xl bg-slate-900/70 border border-slate-700/50 text-slate-300 hover:text-white hover:bg-indigo-600 transition-colors backdrop-blur-md cursor-pointer"
+              className="absolute top-3 right-3 p-2 rounded-xl bg-white/80 border border-sky-200 text-slate-700 hover:text-white hover:bg-sky-600 transition-colors backdrop-blur-md cursor-pointer shadow-xs"
               title="Bookmark Course"
             >
               <Bookmark className="w-4 h-4" />
@@ -46,20 +46,20 @@ export const CourseCard: React.FC<CourseCardProps> = ({
           )}
         </div>
 
-        <div className="flex items-center justify-between text-xs text-slate-400 font-medium">
-          <span className="capitalize px-2.5 py-0.5 rounded-md bg-slate-800/70 border border-slate-700/50 text-slate-300">
+        <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
+          <span className="capitalize px-2.5 py-0.5 rounded-md bg-sky-50 border border-sky-200 text-sky-800 font-semibold">
             {course.level.replace('_', ' ')}
           </span>
-          <span className="font-heading font-extrabold text-sm text-indigo-400">
+          <span className="font-heading font-extrabold text-sm text-sky-600">
             {isFree ? 'Free' : `$${course.price.toFixed(2)}`}
           </span>
         </div>
 
-        <h3 className="font-heading font-bold text-base text-white group-hover:text-indigo-300 transition-colors line-clamp-2 leading-snug">
+        <h3 className="font-heading font-bold text-base text-slate-900 group-hover:text-sky-600 transition-colors line-clamp-2 leading-snug">
           <Link to={`/course/${course.slug}`}>{course.title}</Link>
         </h3>
 
-        <p className="text-xs text-slate-400 line-clamp-2 font-normal leading-relaxed">
+        <p className="text-xs text-slate-600 line-clamp-2 font-normal leading-relaxed">
           {course.shortDescription}
         </p>
 
@@ -68,13 +68,13 @@ export const CourseCard: React.FC<CourseCardProps> = ({
             {course.skills.slice(0, 3).map((skill, idx) => (
               <span
                 key={idx}
-                className="text-[10px] font-semibold text-slate-300 bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700/40"
+                className="text-[10px] font-semibold text-sky-800 bg-sky-50 px-2 py-0.5 rounded border border-sky-200"
               >
                 {skill}
               </span>
             ))}
             {course.skills.length > 3 && (
-              <span className="text-[10px] text-slate-500 font-medium self-center">
+              <span className="text-[10px] text-slate-400 font-medium self-center">
                 +{course.skills.length - 3} more
               </span>
             )}
@@ -82,30 +82,30 @@ export const CourseCard: React.FC<CourseCardProps> = ({
         )}
       </div>
 
-      <div className="pt-4 mt-4 border-t border-slate-800/80 space-y-3">
-        <div className="flex items-center justify-between text-xs text-slate-400 font-medium">
-          <div className="flex items-center gap-1 text-amber-400 font-bold">
+      <div className="pt-4 mt-4 border-t border-sky-100 space-y-3">
+        <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
+          <div className="flex items-center gap-1 text-amber-500 font-bold">
             <Star className="w-3.5 h-3.5 fill-current text-amber-400" />
             <span>{course.rating.toFixed(1)}</span>
           </div>
 
-          <div className="flex items-center gap-1 text-slate-400">
-            <Users className="w-3.5 h-3.5 text-sky-400" />
+          <div className="flex items-center gap-1 text-slate-500">
+            <Users className="w-3.5 h-3.5 text-sky-600" />
             <span>{course.enrollmentCount.toLocaleString()}</span>
           </div>
 
-          <div className="flex items-center gap-1 text-slate-400">
-            <Clock className="w-3.5 h-3.5 text-purple-400" />
+          <div className="flex items-center gap-1 text-slate-500">
+            <Clock className="w-3.5 h-3.5 text-purple-600" />
             <span>{course.duration}</span>
           </div>
         </div>
 
         <Link
           to={`/course/${course.slug}`}
-          className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-xs shadow-lg shadow-indigo-500/20 transition-all duration-200 group-hover:shadow-indigo-500/30"
+          className="w-full py-2.5 px-4 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-sky-600/20"
         >
-          <span>View Track Details</span>
-          <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+          <span>View Course Details</span>
+          <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
     </div>

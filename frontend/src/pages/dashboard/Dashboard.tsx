@@ -103,9 +103,9 @@ export const Dashboard: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
         <div>
           <div className="flex items-center gap-2 text-xs text-slate-500 mb-1 font-medium">
-            <Link to="/dashboard" className="hover:text-blue-600">Dashboard</Link>
+            <Link to="/dashboard" className="hover:text-sky-600">Dashboard</Link>
             <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-            <span className="capitalize font-semibold text-blue-600">{currentTab}</span>
+            <span className="capitalize font-semibold text-sky-600">{currentTab}</span>
           </div>
           <h1 className="font-heading font-bold text-2xl sm:text-3xl text-slate-900">
             Welcome back, {userProfile?.name?.split(' ')[0] || user?.displayName?.split(' ')[0] || 'Student'} 👋
@@ -116,7 +116,7 @@ export const Dashboard: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <Link to="/courses" className="btn-blue-primary text-xs py-2 px-3.5 font-bold flex items-center gap-1.5">
+          <Link to="/courses" className="py-2.5 px-4 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-sky-600/20">
             <Compass className="w-4 h-4" />
             <span>Explore All Courses (Free)</span>
           </Link>
@@ -128,10 +128,10 @@ export const Dashboard: React.FC = () => {
         <div className="space-y-8 animate-in fade-in duration-300">
           {/* Key Metrics Stats Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="glass-card-light p-5 border-l-4 border-l-blue-600 bg-white">
+            <div className="glass-card-light p-5 border-l-4 border-l-sky-600 bg-white">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Enrolled Tracks</span>
-                <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                <div className="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center">
                   <BookOpen className="w-4 h-4" />
                 </div>
               </div>

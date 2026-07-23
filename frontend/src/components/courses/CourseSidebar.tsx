@@ -58,14 +58,14 @@ export const CourseSidebar: React.FC<CourseSidebarProps> = ({
   };
 
   return (
-    <div className="sticky top-24 rounded-3xl bg-slate-900/90 border border-slate-800 p-6 backdrop-blur-2xl shadow-2xl space-y-6 font-['Sora'] text-slate-100">
+    <div className="sticky top-24 rounded-3xl bg-white border border-sky-100 p-6 shadow-md shadow-sky-100/50 space-y-6 font-['Sora'] text-slate-900">
       <div className="space-y-1">
-        <span className="text-xs text-slate-400 font-semibold uppercase">Total Enrollment Fee</span>
+        <span className="text-xs text-slate-500 font-semibold uppercase">Total Enrollment Fee</span>
         <div className="flex items-baseline gap-2">
-          <span className="font-heading font-extrabold text-3xl text-emerald-400">
+          <span className="font-heading font-extrabold text-3xl text-sky-600">
             Free Track
           </span>
-          <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold uppercase">
+          <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800 font-bold uppercase">
             100% Free
           </span>
         </div>
@@ -75,10 +75,10 @@ export const CourseSidebar: React.FC<CourseSidebarProps> = ({
         <button
           onClick={handleAction}
           disabled={isEnrolling}
-          className={`w-full py-3.5 px-6 rounded-2xl text-white font-bold text-sm shadow-xl flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 transition-all duration-300 ${
+          className={`w-full py-3.5 px-6 rounded-2xl text-white font-bold text-sm shadow-md shadow-sky-600/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 transition-all duration-300 ${
             isEnrolled
-              ? 'bg-linear-to-r from-emerald-600 via-indigo-600 to-purple-600 hover:from-emerald-500 hover:to-purple-500 shadow-indigo-500/25 animate-pulse'
-              : 'bg-linear-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 shadow-indigo-500/25'
+              ? 'bg-sky-600 hover:bg-sky-700'
+              : 'bg-sky-600 hover:bg-sky-700'
           }`}
         >
           {isEnrolling ? (
@@ -101,62 +101,51 @@ export const CourseSidebar: React.FC<CourseSidebarProps> = ({
 
         <button
           onClick={handleBookmark}
-          className={`w-full py-3 px-4 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer ${
+          className={`w-full py-2.5 px-4 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
             isBookmarked
-              ? 'bg-indigo-950/60 border-indigo-500/50 text-indigo-300'
-              : 'border-slate-700 bg-slate-800/60 text-slate-300 hover:bg-slate-800'
+              ? 'bg-sky-50 border-sky-300 text-sky-700'
+              : 'bg-white border-sky-200 text-slate-700 hover:bg-sky-50'
           }`}
         >
-          <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current text-indigo-400' : ''}`} />
-          <span>{isBookmarked ? 'Saved in Bookmarks' : 'Bookmark Course'}</span>
+          <Bookmark className="w-4 h-4" />
+          <span>{isBookmarked ? 'Saved to Bookmarks' : 'Bookmark Course Track'}</span>
         </button>
       </div>
 
-      <div className="space-y-3 pt-4 border-t border-slate-800">
-        <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
-          What's included in this free track
+      <div className="space-y-3 pt-4 border-t border-sky-100 text-xs">
+        <h4 className="font-heading font-bold text-slate-900 uppercase text-[10px] tracking-wider">
+          Included in Track
         </h4>
-
-        <ul className="space-y-2.5 text-xs text-slate-300 font-medium">
-          <li className="flex items-center gap-2.5">
-            <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span>Full Lifetime Access to all Modules</span>
-          </li>
-          <li className="flex items-center gap-2.5">
-            <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span>Interactive Terminal & Code Environment</span>
-          </li>
-          <li className="flex items-center gap-2.5">
-            <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span>AI Automated Assessment & Feedback</span>
-          </li>
-          <li className="flex items-center gap-2.5">
-            <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span>Official SHAIVIKA Certificate of Completion</span>
-          </li>
-        </ul>
-      </div>
-
-      <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800/80 space-y-3">
-        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-          Track Instructor
-        </span>
-        <div className="flex items-center gap-3">
-          <img
-            src={course.instructor.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'}
-            alt={course.instructor.name}
-            className="w-11 h-11 rounded-full object-cover border border-indigo-500/40"
-          />
-          <div>
-            <h5 className="font-heading font-bold text-xs text-white">{course.instructor.name}</h5>
-            <p className="text-[11px] text-slate-400">{course.instructor.role || 'Senior Technical Instructor'}</p>
+        <div className="space-y-2 text-slate-700">
+          <div className="flex items-center gap-2.5">
+            <Check className="w-4 h-4 text-emerald-600" />
+            <span>Interactive Web Linux Terminal Sandbox</span>
+          </div>
+          <div className="flex items-center gap-2.5">
+            <Check className="w-4 h-4 text-emerald-600" />
+            <span>5-15s Focus Timers & Gamified XP Rewards</span>
+          </div>
+          <div className="flex items-center gap-2.5">
+            <Check className="w-4 h-4 text-emerald-600" />
+            <span>Downloadable PDF Cheatsheets & Diagrams</span>
+          </div>
+          <div className="flex items-center gap-2.5">
+            <ShieldCheck className="w-4 h-4 text-sky-600" />
+            <span>Verified Certificate of Completion</span>
           </div>
         </div>
       </div>
 
-      <div className="flex items-center justify-center gap-2 text-[11px] text-slate-400 font-medium pt-2">
-        <ShieldCheck className="w-4 h-4 text-indigo-400" />
-        <span>SHAIVIKA AI Foundation Guaranteed Track</span>
+      <div className="p-4 rounded-2xl bg-sky-50 border border-sky-100 flex items-center gap-3">
+        <img
+          src={course.instructor.avatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'}
+          alt={course.instructor.name}
+          className="w-10 h-10 rounded-full object-cover border border-sky-300"
+        />
+        <div>
+          <h5 className="font-heading font-bold text-xs text-slate-900">{course.instructor.name}</h5>
+          <p className="text-[10px] text-slate-500">{course.instructor.role || 'Senior Specialist'}</p>
+        </div>
       </div>
     </div>
   );

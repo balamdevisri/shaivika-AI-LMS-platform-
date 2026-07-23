@@ -58,7 +58,7 @@ export const CoursesList: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8 font-['Sora'] text-slate-100 max-w-7xl mx-auto pb-16">
+    <div className="space-y-8 font-['Sora'] text-slate-900 max-w-7xl mx-auto pb-16">
       <CourseHeader
         title="Enterprise AI Technical Course Catalog"
         description="Explore hands-on technical tracks powered by live interactive Linux terminals and automated AI feedback."
@@ -66,7 +66,7 @@ export const CoursesList: React.FC = () => {
         breadcrumbs={[{ label: 'Home', path: '/' }, { label: 'Course Catalog' }]}
       />
 
-      <div className="space-y-4 rounded-3xl bg-slate-900/80 border border-slate-800 p-6 backdrop-blur-xl shadow-xl">
+      <div className="space-y-4 rounded-3xl bg-white border border-sky-100 p-6 shadow-md shadow-sky-100/50">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="w-full sm:w-96">
             <SearchBar value={search} onChange={(val) => { setSearch(val); setPage(1); }} />
@@ -75,13 +75,13 @@ export const CoursesList: React.FC = () => {
           <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
             <LevelFilter selectedLevel={selectedLevel} onSelectLevel={(lvl) => { setSelectedLevel(lvl); setPage(1); }} />
 
-            <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-950 border border-slate-800">
+            <div className="flex items-center gap-1 p-1 rounded-xl bg-sky-50 border border-sky-200">
               <button
                 onClick={() => setViewMode('grid')}
                 className={`p-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   viewMode === 'grid'
-                    ? 'bg-indigo-600 text-white shadow-md'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-sky-600 text-white shadow-xs'
+                    : 'text-slate-500 hover:text-sky-700'
                 }`}
                 title="Grid View"
               >
@@ -91,8 +91,8 @@ export const CoursesList: React.FC = () => {
                 onClick={() => setViewMode('list')}
                 className={`p-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                   viewMode === 'list'
-                    ? 'bg-indigo-600 text-white shadow-md'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-sky-600 text-white shadow-xs'
+                    : 'text-slate-500 hover:text-sky-700'
                 }`}
                 title="List View"
               >
@@ -110,22 +110,26 @@ export const CoursesList: React.FC = () => {
       </div>
 
       {loading ? (
-        <LoadingSkeleton count={6} variant={viewMode === 'grid' ? 'card' : 'list'} />
+        <LoadingSkeleton count={6} />
       ) : courses.length === 0 ? (
         <EmptyState onReset={handleReset} />
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-8">
           {viewMode === 'grid' ? (
             <CourseGrid courses={courses} />
           ) : (
             <CourseList courses={courses} />
           )}
 
-          <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+          {totalPages > 1 && (
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={(p) => setPage(p)}
+            />
+          )}
         </div>
       )}
     </div>
   );
 };
-
-export default CoursesList;

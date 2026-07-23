@@ -35,75 +35,77 @@ export const CourseBanner: React.FC<CourseBannerProps> = ({
   onStartCourse,
 }) => {
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-slate-900/90 border border-indigo-500/20 shadow-2xl p-6 sm:p-10 text-white font-['Sora']">
+    <div className="relative overflow-hidden rounded-3xl bg-linear-to-r from-sky-600 via-sky-700 to-indigo-800 border border-sky-500 shadow-xl p-6 sm:p-10 text-white font-['Sora']">
       {bannerUrl && (
         <div className="absolute inset-0 z-0">
           <img src={bannerUrl} alt={title} className="w-full h-full object-cover opacity-20 filter blur-xs" />
-          <div className="absolute inset-0 bg-linear-to-r from-slate-950 via-slate-950/90 to-indigo-950/80" />
+          <div className="absolute inset-0 bg-linear-to-r from-sky-900/90 via-sky-800/80 to-indigo-900/90" />
         </div>
       )}
 
-      <div className="absolute -top-24 -right-24 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-sky-600/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-sky-400/20 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative z-10 space-y-4 max-w-4xl">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 text-xs font-bold uppercase tracking-wider">
+            <span className="px-3 py-1 rounded-full bg-white/20 border border-white/30 text-white text-xs font-bold uppercase tracking-wider">
               {category}
             </span>
-            <span className="px-3 py-1 rounded-full bg-purple-500/20 border border-purple-500/30 text-purple-300 text-xs font-bold capitalize">
+            <span className="px-3 py-1 rounded-full bg-sky-900/40 border border-sky-400/30 text-sky-100 text-xs font-bold capitalize">
               {level.replace('_', ' ')}
             </span>
             {status && <CourseStatusBadge status={status} />}
             {aiGenerated && (
-              <span className="px-3 py-1 rounded-full bg-linear-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/40 text-cyan-300 text-xs font-bold flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-cyan-400" /> AI Synthesized
+              <span className="px-3 py-1 rounded-full bg-amber-400/20 border border-amber-400/40 text-amber-200 text-xs font-bold flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-amber-300 fill-current" /> AI Assisted Track
               </span>
             )}
           </div>
-
-          {onStartCourse && (
-            <button
-              onClick={onStartCourse}
-              className="py-2.5 px-5 rounded-2xl bg-linear-to-r from-emerald-600 to-indigo-600 hover:from-emerald-500 hover:to-indigo-500 text-white font-bold text-xs shadow-xl shadow-emerald-500/20 flex items-center gap-2 cursor-pointer transition-all"
-            >
-              <PlayCircle className="w-4 h-4" />
-              <span>Start Learning</span>
-            </button>
-          )}
         </div>
 
         <h1 className="font-heading font-extrabold text-2xl sm:text-4xl text-white leading-tight">
           {title}
         </h1>
 
-        <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-normal max-w-3xl">
+        <p className="text-xs sm:text-base text-sky-100 font-normal leading-relaxed max-w-3xl">
           {subtitle}
         </p>
 
-        <div className="pt-4 border-t border-slate-800/80 flex flex-wrap items-center gap-6 text-xs sm:text-sm text-slate-300 font-medium">
-          <div className="flex items-center gap-1.5 text-amber-400 font-bold">
-            <Star className="w-4 h-4 fill-current text-amber-400" />
+        <div className="flex flex-wrap items-center gap-6 text-xs text-sky-100 font-medium pt-2 border-t border-white/15">
+          <div className="flex items-center gap-1.5 text-amber-300 font-bold">
+            <Star className="w-4 h-4 fill-current text-amber-300" />
             <span>{rating.toFixed(1)}</span>
-            <span className="text-slate-400 font-normal">({ratingCount.toLocaleString()} reviews)</span>
+            <span className="text-sky-200 font-normal">({ratingCount} reviews)</span>
           </div>
 
-          <div className="flex items-center gap-1.5 text-slate-300">
-            <Shield className="w-4 h-4 text-sky-400" />
+          <div className="flex items-center gap-1.5">
+            <Shield className="w-4 h-4 text-sky-200" />
             <span>{enrollmentCount.toLocaleString()} Students Enrolled</span>
           </div>
 
-          <div className="flex items-center gap-1.5 text-slate-300">
-            <Clock className="w-4 h-4 text-purple-400" />
-            <span>{duration}</span>
+          <div className="flex items-center gap-1.5">
+            <Clock className="w-4 h-4 text-sky-200" />
+            <span>{duration} Total Length</span>
           </div>
 
-          <div className="flex items-center gap-1.5 text-slate-300">
-            <Globe className="w-4 h-4 text-emerald-400" />
-            <span>{language}</span>
+          <div className="flex items-center gap-1.5">
+            <Globe className="w-4 h-4 text-sky-200" />
+            <span>Language: {language}</span>
           </div>
         </div>
+
+        {onStartCourse && (
+          <div className="pt-4">
+            <button
+              onClick={onStartCourse}
+              className="py-3.5 px-8 rounded-2xl bg-white text-sky-800 hover:bg-sky-50 font-extrabold text-xs flex items-center gap-2.5 shadow-lg transition-all cursor-pointer"
+            >
+              <PlayCircle className="w-4 h-4 text-sky-600" />
+              <span>Start Learning Track Now ➔</span>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
