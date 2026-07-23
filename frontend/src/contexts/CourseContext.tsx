@@ -101,7 +101,7 @@ export const CourseProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     localStorage.setItem('shaivika_courses_data', JSON.stringify(courses));
   }, [courses]);
 
-  const publishedCourses = courses.filter((c) => c.status === 'Published');
+  const publishedCourses = courses.filter((c) => c.status?.toLowerCase() === 'published');
 
   const addCourse = async (coursePayload: Partial<CourseItem>) => {
     const newId = Date.now();
