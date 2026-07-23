@@ -1557,7 +1557,18 @@ export const CourseView: React.FC = () => {
               <div className="flex items-center gap-2 border-b border-sky-100 pb-3">
                 <Sparkles className="w-5 h-5 text-sky-600 animate-pulse" />
                 <h2 className="font-heading font-extrabold text-lg sm:text-xl text-slate-900">
-                   {!isGitCourse ? (
+                  Course Introduction
+                </h2>
+              </div>
+
+              <div className="space-y-4 text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                {courseData.introText.map((p, idx) => (
+                  <p key={idx}>{p}</p>
+                ))}
+              </div>
+            </div>
+
+            {!isGitCourse ? (
               /* Module 1 Deep Dive: Architecture Diagrams & Linux Distros */
               <div className="bg-white/95 border border-sky-200/80 p-6 sm:p-8 rounded-3xl shadow-xl shadow-sky-500/10 space-y-6">
                 <div className="flex items-center justify-between border-b border-sky-100 pb-3">
@@ -1775,16 +1786,6 @@ export const CourseView: React.FC = () => {
                 </div>
               </div>
             )}
-    <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-white border border-slate-200">
-                          {distro.badge}
-                        </span>
-                      </div>
-                      <p className="text-[11px] opacity-90 font-medium leading-relaxed">{distro.desc}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
 
             {/* Learning Outcomes Card */}
             <div className="bg-white/95 border border-sky-200/80 p-6 sm:p-8 rounded-3xl shadow-xl shadow-sky-500/10 space-y-4">
