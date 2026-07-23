@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import {
   BookOpen,
@@ -12,14 +12,24 @@ import {
   Zap,
   Download,
   Eye,
+  Sparkles,
+  PlusCircle,
+  Compass,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
+import { courseService } from '@/services/courseService';
+import type { ICourse } from '../../../../shared/types/course';
 
 export const Dashboard: React.FC = () => {
   const { user, userProfile } = useAuth();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const currentTab = searchParams.get('tab') || 'overview';
+
+  // Dynamic Courses State
+  const [enrolledCourses, setEnrolledCourses] = useState<ICourse[]>([]);
+  const [catalogCourses, setCatalogCourses] = useState<ICourse[]>([]);
+  const [loadingCourses, setLoadingCourses] = useState(true);
 
   // Quiz Modal State
   const [quizModalOpen, setQuizModalOpen] = useState(false);
@@ -28,6 +38,37 @@ export const Dashboard: React.FC = () => {
 
   // Certificate Modal State
   const [certificateModalOpen, setCertificateModalOpen] = useState(false);
+
+  // Fetch courses dynamically from courseService
+  const loadDashboardCourses = useCallback(async () => {
+    setLoadingCourses(true);
+    try {
+      const enrolled = await courseService.getEnrolledCourses('default_student');
+      const catalogResult = await courseService.getCourses({ status: 'published', limit: 8 });
+      setEnrolledCourses(enrolled);
+      setCatalogCourses(catalogResult.courses);
+    } catch (err) {
+      console.warn('Error loading dynamic dashboard courses:', err);
+    } finally {
+      setLoadingCourses(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadDashboardCourses();
+  }, [loadDashboardCourses]);
+
+  const handleEnrollFree = async (course: ICourse) => {
+    try {
+      const res = await courseService.enrollCourse(course.id, 'default_student');
+      if (res.success) {
+        toast.success(`Enrolled free in "${course.title}"!`);
+        await loadDashboardCourses();
+      }
+    } catch (e) {
+      toast.error('Failed to enroll.');
+    }
+  };
 
   // Sample Quiz Questions
   const quizQuestions = [
@@ -57,7 +98,7 @@ export const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8 text-slate-900">
+    <div className="space-y-8 text-slate-900 font-['Sora']">
       {/* Top Breadcrumb & Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
         <div>
@@ -69,229 +110,232 @@ export const Dashboard: React.FC = () => {
           <h1 className="font-heading font-bold text-2xl sm:text-3xl text-slate-900">
             Welcome back, {userProfile?.name?.split(' ')[0] || user?.displayName?.split(' ')[0] || 'Student'} 👋
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-            You have 2 pending AI assignments and 1 quiz ready for evaluation.
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5 font-medium">
+            You are enrolled in {enrolledCourses.length} active course track{enrolledCourses.length !== 1 ? 's' : ''}.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => setQuizModalOpen(true)}
-            className="btn-blue-primary text-xs py-2.5 px-4 shadow-md shadow-blue-500/20 flex items-center gap-1.5"
-          >
-            <Zap className="w-4 h-4" />
-            <span>Take AI Skills Quiz</span>
-          </button>
+          <Link to="/courses" className="btn-blue-primary text-xs py-2 px-3.5 font-bold flex items-center gap-1.5">
+            <Compass className="w-4 h-4" />
+            <span>Explore All Courses (Free)</span>
+          </Link>
         </div>
       </div>
-
-      {/* Navigation Sub-Tabs */}
-      <div className="flex overflow-x-auto gap-2 border-b border-slate-200 pb-2 scrollbar-none">
-        {[
-          { id: 'overview', label: 'Overview' },
-          { id: 'assignments', label: 'Assignments & Quizzes' },
-          { id: 'calendar', label: 'Calendar & Schedule' },
-          { id: 'certificates', label: 'Certificates' },
-          { id: 'analytics', label: 'Analytics' },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setSearchParams({ tab: tab.id })}
-            className={`px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl whitespace-nowrap transition-all ${
-              currentTab === tab.id
-                ? 'bg-blue-600 text-white shadow-xs'
-                : 'bg-white text-slate-600 hover:text-blue-600 border border-slate-200'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
 
       {/* ------------------- 1. OVERVIEW TAB ------------------- */}
       {currentTab === 'overview' && (
         <div className="space-y-8 animate-in fade-in duration-300">
-          
-          {/* Top 4 Stat Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="glass-card-light p-5 space-y-2 border-l-4 border-l-blue-600 bg-white">
-              <div className="flex items-center justify-between text-xs text-slate-500 font-semibold">
-                <span>Enrolled Courses</span>
-                <BookOpen className="w-4 h-4 text-blue-600" />
-              </div>
-              <span className="font-heading font-extrabold text-3xl text-slate-900 block">4 Active</span>
-              <p className="text-[11px] text-blue-600 font-medium">2 modules completed this month</p>
-            </div>
-
-            <div className="glass-card-light p-5 space-y-2 border-l-4 border-l-indigo-600 bg-white">
-              <div className="flex items-center justify-between text-xs text-slate-500 font-semibold">
-                <span>Learning Time</span>
-                <Clock className="w-4 h-4 text-indigo-600" />
-              </div>
-              <span className="font-heading font-extrabold text-3xl text-slate-900 block">148.5 hrs</span>
-              <p className="text-[11px] text-indigo-600 font-medium">+14.2% higher than class avg</p>
-            </div>
-
-            <div className="glass-card-light p-5 space-y-2 border-l-4 border-l-amber-500 bg-white">
-              <div className="flex items-center justify-between text-xs text-slate-500 font-semibold">
-                <span>Quiz Score Avg</span>
-                <FileCheck className="w-4 h-4 text-amber-500" />
-              </div>
-              <span className="font-heading font-extrabold text-3xl text-slate-900 block">94.8%</span>
-              <p className="text-[11px] text-amber-600 font-medium">Grade A+ (Top 3 in cohort)</p>
-            </div>
-
-            <div className="glass-card-light p-5 space-y-2 border-l-4 border-l-cyan-500 bg-white">
-              <div className="flex items-center justify-between text-xs text-slate-500 font-semibold">
-                <span>Certificates</span>
-                <Award className="w-4 h-4 text-cyan-500" />
-              </div>
-              <span className="font-heading font-extrabold text-3xl text-slate-900 block">3 Verified</span>
-              <button
-                onClick={() => setSearchParams({ tab: 'certificates' })}
-                className="text-[11px] text-blue-600 hover:underline font-semibold block"
-              >
-                View digital credentials →
-              </button>
-            </div>
-          </div>
-
-          {/* SVG Charts & Activity Row */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            
-            {/* Weekly Learning Activity SVG Chart */}
-            <div className="lg:col-span-8 glass-card-light p-6 space-y-4 bg-white">
+          {/* Key Metrics Stats Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="glass-card-light p-5 border-l-4 border-l-blue-600 bg-white">
               <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-heading font-bold text-lg text-slate-900">Study Hours & AI Engagement</h3>
-                  <p className="text-xs text-slate-500">Weekly activity curve across active modules</p>
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Enrolled Tracks</span>
+                <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                  <BookOpen className="w-4 h-4" />
                 </div>
-                <span className="text-xs font-semibold bg-blue-50 text-blue-600 px-2.5 py-1 rounded-lg border border-blue-200">
-                  Last 7 Days
+              </div>
+              <div className="mt-3 flex items-baseline gap-2">
+                <span className="font-heading font-extrabold text-2xl text-slate-900">{enrolledCourses.length}</span>
+                <span className="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+                  Active
                 </span>
               </div>
+            </div>
 
-              {/* Chart Graphic */}
-              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <svg className="w-full h-44 text-blue-600" viewBox="0 0 500 120" fill="none">
-                  <path
-                    d="M 0 100 Q 60 20, 120 70 T 240 30 T 360 80 T 500 15"
-                    stroke="#3B82F6"
-                    strokeWidth="3"
-                    fill="none"
-                  />
-                  <path
-                    d="M 0 100 Q 60 20, 120 70 T 240 30 T 360 80 T 500 15 V 120 H 0 Z"
-                    fill="url(#chartBlueAreaLight)"
-                    opacity="0.15"
-                  />
-                  <defs>
-                    <linearGradient id="chartBlueAreaLight" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#3B82F6" />
-                      <stop offset="100%" stopColor="#F8FAFC" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-                <div className="flex justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-200">
-                  <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+            <div className="glass-card-light p-5 border-l-4 border-l-purple-600 bg-white">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Learning Time</span>
+                <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                  <Clock className="w-4 h-4" />
                 </div>
+              </div>
+              <div className="mt-3 flex items-baseline gap-2">
+                <span className="font-heading font-extrabold text-2xl text-slate-900">42 hrs</span>
+                <span className="text-[11px] font-semibold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-md">
+                  +4 hrs this week
+                </span>
               </div>
             </div>
 
-            {/* Upcoming Deadlines */}
-            <div className="lg:col-span-4 glass-card-light p-6 space-y-4 bg-white">
-              <h3 className="font-heading font-bold text-lg text-slate-900">Upcoming Schedule</h3>
-              
-              <div className="space-y-3">
-                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex gap-3 items-start">
-                  <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs shrink-0">
-                    OCT 24
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-xs text-slate-900">GraphQL API Architecture</h4>
-                    <p className="text-[11px] text-slate-500">Fullstack Dev • 11:59 PM</p>
-                  </div>
+            <div className="glass-card-light p-5 border-l-4 border-l-amber-500 bg-white">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Certificates</span>
+                <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                  <Award className="w-4 h-4" />
                 </div>
-
-                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex gap-3 items-start">
-                  <div className="w-10 h-10 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs shrink-0">
-                    OCT 26
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-xs text-slate-900">Live AI Workshop: RAG Embeddings</h4>
-                    <p className="text-[11px] text-slate-500">Mentor: Dr. Sarah Jenkins</p>
-                  </div>
-                </div>
+              </div>
+              <div className="mt-3 flex items-baseline gap-2">
+                <span className="font-heading font-extrabold text-2xl text-slate-900">1 Issued</span>
+                <span className="text-[11px] font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md">
+                  Verified
+                </span>
               </div>
             </div>
 
+            <div className="glass-card-light p-5 border-l-4 border-l-emerald-500 bg-white">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">AI Evaluation Score</span>
+                <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                  <FileCheck className="w-4 h-4" />
+                </div>
+              </div>
+              <div className="mt-3 flex items-baseline gap-2">
+                <span className="font-heading font-extrabold text-2xl text-slate-900">94%</span>
+                <span className="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+                  Top 5%
+                </span>
+              </div>
+            </div>
           </div>
 
-          {/* Currently Enrolled Courses Progress */}
+          {/* DYNAMIC: Currently Enrolled Tracks (Continue Learning) */}
           <div className="space-y-4">
-            <h3 className="font-heading font-bold text-xl text-slate-900">Continue Learning</h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="glass-card-light p-6 flex flex-col justify-between space-y-4 bg-white">
-                <div className="space-y-2">
-                  <span className="text-[11px] font-bold text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
-                    Development
-                  </span>
-                  <h4 className="font-heading font-bold text-base text-slate-900">
-                    Fullstack Next.js & React Enterprise Architecture
-                  </h4>
-                  <p className="text-xs text-slate-500">Current Lesson: 14. Server Actions & Mutating State</p>
-                </div>
-
-                <div className="space-y-1">
-                  <div className="flex justify-between text-xs font-semibold text-slate-700">
-                    <span>Course Completion</span>
-                    <span className="text-blue-600">85%</span>
-                  </div>
-                  <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
-                    <div className="h-full bg-linear-to-r from-blue-500 to-indigo-600 w-[85%]" />
-                  </div>
-                </div>
-
-                <Link to="/dashboard/courses" className="btn-blue-primary text-xs py-2.5 justify-center">
-                  <PlayCircle className="w-4 h-4" />
-                  <span>Resume Lesson</span>
-                </Link>
-              </div>
-
-              <div className="glass-card-light p-6 flex flex-col justify-between space-y-4 bg-white">
-                <div className="space-y-2">
-                  <span className="text-[11px] font-bold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-200">
-                    AI & Data
-                  </span>
-                  <h4 className="font-heading font-bold text-base text-slate-900">
-                    AI & Large Language Model Application Design
-                  </h4>
-                  <p className="text-xs text-slate-500">Current Lesson: 08. Fine-tuning RAG Embeddings</p>
-                </div>
-
-                <div className="space-y-1">
-                  <div className="flex justify-between text-xs font-semibold text-slate-700">
-                    <span>Course Completion</span>
-                    <span className="text-blue-600">60%</span>
-                  </div>
-                  <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
-                    <div className="h-full bg-linear-to-r from-blue-500 to-indigo-600 w-[60%]" />
-                  </div>
-                </div>
-
-                <Link to="/dashboard/courses" className="btn-blue-primary text-xs py-2.5 justify-center">
-                  <PlayCircle className="w-4 h-4" />
-                  <span>Resume Lesson</span>
-                </Link>
-              </div>
+            <div className="flex items-center justify-between">
+              <h3 className="font-heading font-bold text-xl text-slate-900 flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-blue-600" /> Continue Learning (Enrolled Tracks)
+              </h3>
+              <span className="text-xs font-semibold text-slate-500">
+                {enrolledCourses.length} Enrolled Course{enrolledCourses.length !== 1 ? 's' : ''}
+              </span>
             </div>
+
+            {loadingCourses ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-pulse">
+                <div className="h-44 bg-slate-100 rounded-2xl border border-slate-200" />
+                <div className="h-44 bg-slate-100 rounded-2xl border border-slate-200" />
+              </div>
+            ) : enrolledCourses.length === 0 ? (
+              <div className="p-8 text-center bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+                <Sparkles className="w-8 h-8 text-blue-600 mx-auto" />
+                <h4 className="font-bold text-sm text-slate-900">You haven't enrolled in any course tracks yet</h4>
+                <p className="text-xs text-slate-500">Browse our free courses below and click 'Enroll Free' to start learning.</p>
+                <Link to="/courses" className="btn-blue-primary text-xs py-2 px-4 inline-flex">
+                  Browse Free Courses Catalog
+                </Link>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {enrolledCourses.map((course) => {
+                  const progress = course.progress || 25;
+                  return (
+                    <div
+                      key={course.id}
+                      className="glass-card-light p-6 flex flex-col justify-between space-y-4 bg-white rounded-2xl border border-slate-200 shadow-xs hover:border-blue-300 transition-all"
+                    >
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[11px] font-bold text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
+                            {course.category}
+                          </span>
+                          <span className="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                            Enrolled (Free)
+                          </span>
+                        </div>
+
+                        <h4 className="font-heading font-bold text-base text-slate-900 leading-snug">
+                          {course.title}
+                        </h4>
+                        <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed font-normal">
+                          {course.shortDescription}
+                        </p>
+                      </div>
+
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-xs font-semibold text-slate-700">
+                          <span>Progress</span>
+                          <span className="text-blue-600">{progress}% Completed</span>
+                        </div>
+                        <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                          <div
+                            className="h-full bg-linear-to-r from-blue-500 to-indigo-600 transition-all duration-500"
+                            style={{ width: `${progress}%` }}
+                          />
+                        </div>
+                      </div>
+
+                      <Link
+                        to={`/course/${course.slug}`}
+                        className="btn-blue-primary text-xs py-2.5 justify-center font-bold"
+                      >
+                        <PlayCircle className="w-4 h-4" />
+                        <span>Resume Course Track</span>
+                      </Link>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
+          {/* DYNAMIC: All Admin-Created Available Courses (Free to Enroll) */}
+          <div className="space-y-4 pt-4 border-t border-slate-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-heading font-bold text-xl text-slate-900 flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-indigo-600" /> Explore Available Courses (100% Free)
+                </h3>
+                <p className="text-xs text-slate-500 font-medium">All courses created by Admin are open for immediate enrollment</p>
+              </div>
+              <Link to="/courses" className="text-xs font-semibold text-blue-600 hover:underline flex items-center gap-1">
+                View All ({catalogCourses.length}) <ChevronRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {catalogCourses.map((course) => {
+                const isEnrolled = enrolledCourses.some((e) => e.id === course.id);
+
+                return (
+                  <div
+                    key={course.id}
+                    className="p-5 rounded-2xl bg-white border border-slate-200 hover:border-indigo-300 transition-all shadow-xs flex flex-col justify-between space-y-4"
+                  >
+                    <div className="space-y-3">
+                      <div className="relative h-32 rounded-xl overflow-hidden bg-slate-100">
+                        <img src={course.thumbnail} alt={course.title} className="w-full h-full object-cover" />
+                        <span className="absolute top-2 left-2 px-2.5 py-0.5 rounded-md bg-slate-950/80 text-white text-[10px] font-bold uppercase backdrop-blur-xs">
+                          {course.category}
+                        </span>
+                        <span className="absolute bottom-2 right-2 px-2.5 py-0.5 rounded-full bg-emerald-500 text-white text-[10px] font-extrabold uppercase shadow-md">
+                          Free
+                        </span>
+                      </div>
+
+                      <h4 className="font-heading font-bold text-sm text-slate-900 line-clamp-2 leading-snug">
+                        {course.title}
+                      </h4>
+
+                      <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed font-normal">
+                        {course.shortDescription}
+                      </p>
+                    </div>
+
+                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                      <span className="text-xs font-bold text-emerald-600">$0.00 Free</span>
+                      {isEnrolled ? (
+                        <Link
+                          to={`/course/${course.slug}`}
+                          className="px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold flex items-center gap-1"
+                        >
+                          <CheckCircle2 className="w-3.5 h-3.5" /> Enrolled
+                        </Link>
+                      ) : (
+                        <button
+                          onClick={() => handleEnrollFree(course)}
+                          className="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md flex items-center gap-1.5 cursor-pointer"
+                        >
+                          <PlusCircle className="w-3.5 h-3.5" /> Enroll Free
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       )}
-
 
       {/* ------------------- 2. ASSIGNMENTS TAB ------------------- */}
       {(currentTab === 'assignments' || quizModalOpen) && (
@@ -300,275 +344,144 @@ export const Dashboard: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-heading font-bold text-lg text-slate-900">Assignments & Assessment Board</h3>
-                <p className="text-xs text-slate-500">Manage pending homework submissions and quiz evaluations</p>
+                <p className="text-xs text-slate-500 font-medium">Manage pending homework submissions and quiz evaluations</p>
               </div>
               <button
                 onClick={() => setQuizModalOpen(true)}
-                className="btn-blue-primary text-xs py-2 px-3.5"
+                className="btn-blue-primary text-xs py-2 px-3.5 cursor-pointer font-bold"
               >
-                Launch AI Practice Quiz
+                <Zap className="w-4 h-4" /> Start AI Quiz
               </button>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse text-xs sm:text-sm">
-                <thead>
-                  <tr className="border-b border-slate-200 text-slate-500 font-semibold">
-                    <th className="py-3 px-4">Assignment Name</th>
-                    <th className="py-3 px-4">Course Track</th>
-                    <th className="py-3 px-4">Due Date</th>
-                    <th className="py-3 px-4">Status</th>
-                    <th className="py-3 px-4">Grade</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  <tr className="hover:bg-slate-50">
-                    <td className="py-3.5 px-4 font-semibold text-slate-900">GraphQL API Architecture</td>
-                    <td className="py-3.5 px-4 text-slate-500">Fullstack Web Dev</td>
-                    <td className="py-3.5 px-4 text-slate-500">Oct 24, 2026</td>
-                    <td className="py-3.5 px-4">
-                      <span className="px-2.5 py-1 bg-amber-50 text-amber-700 rounded-full font-bold text-[11px] border border-amber-200">
-                        Pending
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-4 text-slate-400">—</td>
-                  </tr>
-                  <tr className="hover:bg-slate-50">
-                    <td className="py-3.5 px-4 font-semibold text-slate-900">RAG Vector Search Optimization</td>
-                    <td className="py-3.5 px-4 text-slate-500">AI Application Design</td>
-                    <td className="py-3.5 px-4 text-slate-500">Oct 18, 2026</td>
-                    <td className="py-3.5 px-4">
-                      <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full font-bold text-[11px] border border-emerald-200">
-                        Submitted
-                      </span>
-                    </td>
-                    <td className="py-3.5 px-4 font-bold text-blue-600">98 / 100 (A+)</td>
-                  </tr>
-                </tbody>
-              </table>
+            <div className="space-y-3">
+              <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+                <div>
+                  <h4 className="font-bold text-sm text-slate-900">Linux Kernel Security Audit Lab</h4>
+                  <p className="text-xs text-slate-500">Module 4 • Linux & Systems Track</p>
+                </div>
+                <span className="px-3 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-lg">
+                  Pending Review
+                </span>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-
-      {/* ------------------- 3. CALENDAR TAB ------------------- */}
-      {currentTab === 'calendar' && (
-        <div className="glass-card-light p-6 space-y-6 animate-in fade-in duration-300 bg-white">
-          <div className="flex items-center justify-between">
-            <h3 className="font-heading font-bold text-lg text-slate-900">Academic Schedule & Live Workshops</h3>
-            <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">October 2026</span>
-          </div>
-
-          <div className="grid grid-cols-7 gap-2 text-center text-xs font-bold text-slate-500 py-2 border-b border-slate-200">
-            <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
-          </div>
-
-          <div className="grid grid-cols-7 gap-2">
-            {[...Array(31)].map((_, i) => {
-              const day = i + 1;
-              const hasLecture = day === 24 || day === 26;
-              return (
-                <div
-                  key={day}
-                  className={`h-20 p-2 rounded-xl border border-slate-200 flex flex-col justify-between text-xs ${
-                    day === 20 ? 'bg-blue-600 text-white font-bold' : 'bg-slate-50 text-slate-800'
-                  }`}
-                >
-                  <span className="font-semibold">{day}</span>
-                  {hasLecture && (
-                    <span className="text-[10px] bg-amber-500 text-white p-1 rounded-md line-clamp-1">
-                      Live Workshop
-                    </span>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-
-      {/* ------------------- 4. CERTIFICATES TAB ------------------- */}
+      {/* ------------------- 3. CERTIFICATES TAB ------------------- */}
       {(currentTab === 'certificates' || certificateModalOpen) && (
         <div className="space-y-6 animate-in fade-in duration-300">
-          <div className="glass-card-light bg-linear-to-r from-blue-600 via-indigo-600 to-violet-600 text-white p-8 rounded-3xl space-y-4 border border-blue-400/30">
-            <div className="flex items-center gap-3">
-              <Award className="w-10 h-10 text-cyan-300" />
+          <div className="glass-card-light p-6 space-y-4 bg-white">
+            <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-heading font-bold text-2xl text-white">Verified Engineering Credentials</h3>
-                <p className="text-xs text-blue-100">ISO/IEC 27001 Authenticated Digital Certificates</p>
+                <h3 className="font-heading font-bold text-lg text-slate-900">Verified Accomplishments</h3>
+                <p className="text-xs text-slate-500 font-medium">Official SHAIVIKA AI LMS Certificates</p>
               </div>
-            </div>
-
-            <div className="pt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20 space-y-3">
-                <span className="text-xs text-cyan-300 font-mono">ID: KAIZENQ-2026-88941</span>
-                <h4 className="font-heading font-bold text-lg text-white">Fullstack Systems & AI Architecture</h4>
-                <p className="text-xs text-blue-100">Issued to Jane Devson • Issued on Oct 10, 2026</p>
-                <button
-                  onClick={() => setCertificateModalOpen(true)}
-                  className="bg-white text-blue-600 font-heading font-bold text-xs py-2 px-4 rounded-full hover:bg-slate-50 transition-all flex items-center gap-1.5 shadow-md"
-                >
-                  <Eye className="w-4 h-4 text-blue-600" />
-                  <span>View Certificate PDF</span>
-                </button>
-              </div>
+              <button
+                onClick={() => setCertificateModalOpen(true)}
+                className="btn-blue-primary text-xs py-2 px-3.5 cursor-pointer font-bold"
+              >
+                <Eye className="w-4 h-4" /> View Certificate
+              </button>
             </div>
           </div>
         </div>
       )}
 
-
-      {/* ------------------- 5. ANALYTICS TAB ------------------- */}
-      {currentTab === 'analytics' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in duration-300">
-          <div className="glass-card-light p-6 space-y-4 bg-white">
-            <h3 className="font-heading font-bold text-lg text-slate-900">Skill Mastery Index</h3>
-            <div className="space-y-3">
-              <div>
-                <div className="flex justify-between text-xs font-semibold mb-1 text-slate-700">
-                  <span>React & Next.js Architecture</span>
-                  <span className="text-blue-600">96%</span>
-                </div>
-                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
-                  <div className="h-full bg-blue-600 rounded-full w-[96%]" />
-                </div>
-              </div>
-              <div>
-                <div className="flex justify-between text-xs font-semibold mb-1 text-slate-700">
-                  <span>RAG & Vector Databases</span>
-                  <span className="text-blue-600">82%</span>
-                </div>
-                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
-                  <div className="h-full bg-indigo-600 rounded-full w-[82%]" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="glass-card-light p-6 space-y-4 bg-white">
-            <h3 className="font-heading font-bold text-lg text-slate-900">Engagement & Attendance Log</h3>
-            <p className="text-xs text-slate-500">100% Attendance recorded across 14 virtual sessions</p>
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-blue-600" />
-              <span className="text-xs font-bold text-slate-900">Perfect Attendance Badge Awarded</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-
-      {/* ----------------- QUIZ RUNNER MODAL ----------------- */}
+      {/* Quiz Modal */}
       {quizModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 max-w-lg w-full shadow-2xl space-y-6 border border-slate-200 animate-in zoom-in-95 text-slate-900">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-heading font-bold text-lg text-slate-900 flex items-center gap-2">
-                <Zap className="w-5 h-5 text-blue-600" /> Interactive AI Quiz
-              </h3>
-              <button onClick={() => setQuizModalOpen(false)} className="text-slate-400 hover:text-slate-900">
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-6 border border-slate-200 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+              <h3 className="font-heading font-bold text-lg text-slate-900">AI Evaluation Quiz</h3>
+              <button onClick={() => setQuizModalOpen(false)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {quizScore === null ? (
-              <div className="space-y-6">
-                {quizQuestions.map((q, qIdx) => (
-                  <div key={qIdx} className="space-y-3">
-                    <p className="text-xs sm:text-sm font-semibold text-slate-900">
-                      {qIdx + 1}. {q.question}
-                    </p>
-                    <div className="space-y-2">
-                      {q.options.map((opt, oIdx) => (
-                        <button
-                          key={oIdx}
-                          onClick={() => handleAnswerSelect(qIdx, oIdx)}
-                          className={`w-full text-left px-3.5 py-2.5 rounded-xl border text-xs sm:text-sm transition-all ${
-                            selectedAnswers[qIdx] === oIdx
-                              ? 'border-blue-600 bg-blue-50 text-blue-700 font-bold'
-                              : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100'
-                          }`}
-                        >
-                          {opt}
-                        </button>
-                      ))}
-                    </div>
+            <div className="space-y-4">
+              {quizQuestions.map((q, qIdx) => (
+                <div key={qIdx} className="space-y-2">
+                  <p className="text-xs font-bold text-slate-800">{qIdx + 1}. {q.question}</p>
+                  <div className="space-y-1.5">
+                    {q.options.map((opt, oIdx) => (
+                      <button
+                        key={oIdx}
+                        onClick={() => handleAnswerSelect(qIdx, oIdx)}
+                        className={`w-full text-left p-2.5 rounded-xl text-xs font-medium border transition-colors cursor-pointer ${
+                          selectedAnswers[qIdx] === oIdx
+                            ? 'bg-blue-50 border-blue-500 text-blue-700 font-bold'
+                            : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
+                        }`}
+                      >
+                        {opt}
+                      </button>
+                    ))}
                   </div>
-                ))}
-
-                <button
-                  onClick={submitQuiz}
-                  className="btn-blue-primary w-full py-3 justify-center text-xs font-bold shadow-md shadow-blue-500/20"
-                >
-                  Submit Assessment Answers
-                </button>
-              </div>
-            ) : (
-              <div className="text-center space-y-4 py-4">
-                <div className="w-16 h-16 rounded-full bg-blue-50 text-blue-600 font-heading font-extrabold text-2xl mx-auto flex items-center justify-center border border-blue-200">
-                  {quizScore}%
                 </div>
-                <h4 className="font-heading font-bold text-xl text-slate-900">AI Evaluation Complete!</h4>
-                <p className="text-xs text-slate-500">Your score has been saved to your learner profile analytics.</p>
-                <button
-                  onClick={() => {
-                    setQuizScore(null);
-                    setQuizModalOpen(false);
-                  }}
-                  className="btn-blue-primary px-6 py-2.5 text-xs font-bold"
-                >
-                  Return to Dashboard
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-
-      {/* ----------------- CERTIFICATE MODAL ----------------- */}
-      {certificateModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white text-slate-900 rounded-3xl p-8 max-w-xl w-full shadow-2xl space-y-6 border border-slate-200 text-center animate-in zoom-in-95">
-            <div className="w-16 h-16 rounded-full bg-linear-to-r from-blue-600 via-indigo-600 to-violet-600 flex items-center justify-center mx-auto text-white shadow-xl shadow-blue-500/20">
-              <Award className="w-8 h-8" />
+              ))}
             </div>
 
-            <span className="text-xs font-mono text-blue-600 uppercase tracking-widest block font-bold">
-              Official ISO Authenticated Credential
-            </span>
+            {quizScore !== null && (
+              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs font-bold text-center">
+                Score: {quizScore} / 100 — Certificate Eligible!
+              </div>
+            )}
 
-            <h3 className="font-heading font-extrabold text-2xl text-slate-900">
-              Certificate of Completion
-            </h3>
-
-            <p className="text-xs sm:text-sm text-slate-600">
-              This certifies that <strong className="text-slate-900 font-semibold">Jane Devson</strong> has successfully mastered <strong className="text-slate-900 font-semibold">Fullstack Systems & AI Architecture</strong> on KaizenQ.
-            </p>
-
-            <div className="pt-4 flex items-center justify-center gap-3">
+            <div className="flex justify-end gap-2 pt-2">
               <button
-                onClick={() => {
-                  toast.success('Downloading high-resolution PDF certificate...');
-                  setCertificateModalOpen(false);
-                }}
-                className="btn-blue-primary text-xs py-2.5 px-5"
-              >
-                <Download className="w-4 h-4" />
-                <span>Download PDF</span>
-              </button>
-              <button
-                onClick={() => setCertificateModalOpen(false)}
-                className="btn-glass-light text-xs py-2.5 px-4"
+                onClick={() => setQuizModalOpen(false)}
+                className="px-4 py-2 rounded-xl text-xs font-bold border border-slate-200 text-slate-600"
               >
                 Close
               </button>
+              <button onClick={submitQuiz} className="btn-blue-primary text-xs py-2 px-4 font-bold">
+                Submit Quiz
+              </button>
             </div>
           </div>
         </div>
       )}
 
+      {/* Certificate Preview Modal */}
+      {certificateModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-2xl w-full space-y-6 border border-slate-200 shadow-2xl text-center">
+            <div className="flex justify-between items-center border-b border-slate-100 pb-4">
+              <span className="text-xs font-bold text-blue-600 uppercase tracking-widest">Official Certificate</span>
+              <button onClick={() => setCertificateModalOpen(false)} className="text-slate-400 hover:text-slate-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-8 rounded-2xl bg-linear-to-b from-blue-50 via-indigo-50 to-white border-4 border-double border-indigo-200 space-y-4">
+              <Award className="w-12 h-12 text-blue-600 mx-auto" />
+              <h2 className="font-heading font-extrabold text-xl text-slate-900 uppercase tracking-wide">
+                Certificate of Enterprise Completion
+              </h2>
+              <p className="text-xs text-slate-500 font-medium">This is to certify that</p>
+              <h3 className="font-heading font-bold text-lg text-blue-600 underline">
+                {userProfile?.name || 'Bhanu Prakash Achari'}
+              </h3>
+              <p className="text-xs text-slate-600 font-normal max-w-md mx-auto">
+                has successfully completed the enterprise technical track in <strong>Linux Essentials & AI Platform Architecture</strong>.
+              </p>
+            </div>
+
+            <div className="flex justify-center gap-3">
+              <button
+                onClick={() => toast.success('Certificate PDF download started!')}
+                className="btn-blue-primary text-xs py-2.5 px-5 font-bold flex items-center gap-2"
+              >
+                <Download className="w-4 h-4" /> Download Certificate PDF
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+
+export default Dashboard;

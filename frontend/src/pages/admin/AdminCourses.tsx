@@ -1,224 +1,220 @@
-import React, { useState } from 'react';
-import { BookOpen, Plus, Search, CheckCircle2, X, Users, Star, Loader2 } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
+import type { ICourse, CourseStatus } from '../../../../shared/types/course';
+import { courseService } from '../../services/courseService';
+import { CourseHeader } from '../../components/courses/CourseHeader';
+import { CourseTable } from '../../components/courses/CourseTable';
+import { SearchBar } from '../../components/courses/SearchBar';
+import { CategoryFilter } from '../../components/courses/CategoryFilter';
+import { Pagination } from '../../components/courses/Pagination';
+import { EmptyState } from '../../components/courses/EmptyState';
+import { LoadingSkeleton } from '../../components/courses/LoadingSkeleton';
+import { Plus, BookOpen, CheckCircle2, Archive, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
-import { useCourses } from '@/contexts/CourseContext';
 
 export const AdminCourses: React.FC = () => {
-  const { courses, addCourse, toggleCourseStatus } = useCourses();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [modalOpen, setModalOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [courses, setCourses] = useState<ICourse[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedStatus, setSelectedStatus] = useState<CourseStatus | 'all'>('all');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
-  // New Course Form State
-  const [newTitle, setNewTitle] = useState('');
-  const [newInstructor, setNewInstructor] = useState('');
-  const [newCategory, setNewCategory] = useState('Linux & Systems');
+  const categories = ['All', 'Linux & Systems', 'AI & Data', 'DevOps', 'Development', 'Cybersecurity'];
 
-  const filteredCourses = courses.filter((c) =>
-    c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c.instructor.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c.category.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const handleCreateCourse = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newTitle || !newInstructor) {
-      toast.error('Please fill in title and instructor name.');
-      return;
-    }
-
-    setIsSubmitting(true);
+  const fetchCourses = useCallback(async () => {
+    setLoading(true);
     try {
-      await addCourse({
-        title: newTitle,
-        instructor: newInstructor,
-        category: newCategory,
-        status: 'Published',
+      const result = await courseService.getCourses({
+        search,
+        category: selectedCategory,
+        status: selectedStatus,
+        page,
+        limit: 8,
       });
-      setIsSubmitting(false);
-      setModalOpen(false);
-      setNewTitle('');
-      setNewInstructor('');
-      toast.success(`Course "${newTitle}" published dynamically to main page!`);
+
+      setCourses(result.courses);
+      setTotalPages(result.totalPages);
+      setTotalCount(result.total);
     } catch (err: any) {
-      setIsSubmitting(false);
+      toast.error('Failed to load courses.');
+    } finally {
+      setLoading(false);
+    }
+  }, [search, selectedCategory, selectedStatus, page]);
+
+  useEffect(() => {
+    fetchCourses();
+  }, [fetchCourses]);
+
+  const handlePublish = async (id: string) => {
+    try {
+      await courseService.publishCourse(id);
+      toast.success('Course published successfully!');
+      fetchCourses();
+    } catch (e) {
       toast.error('Failed to publish course.');
     }
   };
 
+  const handleUnpublish = async (id: string) => {
+    try {
+      await courseService.unpublishCourse(id);
+      toast.success('Course status changed to draft.');
+      fetchCourses();
+    } catch (e) {
+      toast.error('Failed to unpublish course.');
+    }
+  };
+
+  const handleArchive = async (id: string) => {
+    try {
+      await courseService.archiveCourse(id);
+      toast.success('Course archived.');
+      fetchCourses();
+    } catch (e) {
+      toast.error('Failed to archive course.');
+    }
+  };
+
+  const handleDuplicate = async (id: string) => {
+    try {
+      const copy = await courseService.duplicateCourse(id);
+      if (copy) {
+        toast.success(`Duplicated "${copy.title}" as draft!`);
+        fetchCourses();
+      }
+    } catch (e) {
+      toast.error('Failed to duplicate course.');
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this course permanently?')) return;
+    try {
+      await courseService.deleteCourse(id);
+      toast.success('Course deleted.');
+      fetchCourses();
+    } catch (e) {
+      toast.error('Failed to delete course.');
+    }
+  };
+
+  const handleResetFilters = () => {
+    setSearch('');
+    setSelectedCategory('All');
+    setSelectedStatus('all');
+    setPage(1);
+  };
+
   return (
-    <div className="space-y-8 text-slate-900 font-['Sora'] max-w-7xl mx-auto pb-12">
-      
-      {/* Header Banner */}
-      <div className="bg-white/95 backdrop-blur-2xl border border-sky-200/80 p-6 sm:p-8 rounded-3xl shadow-xl shadow-sky-500/10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-sky-700 text-xs font-bold uppercase tracking-wider mb-2">
-            <BookOpen className="w-3.5 h-3.5 text-sky-500" />
-            <span>Curriculum Management</span>
+    <div className="space-y-8 font-['Sora'] text-slate-100 max-w-7xl mx-auto pb-16">
+      <CourseHeader
+        title="Admin Curriculum & Course Management"
+        description="Create, publish, edit, archive, and manage technical courses and AI evaluation rubrics."
+        badgeText="Admin Management Portal"
+        breadcrumbs={[{ label: 'Admin', path: '/admin/dashboard' }, { label: 'Course Management' }]}
+        action={
+          <Link
+            to="/admin/courses/create"
+            className="py-3 px-5 rounded-2xl bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-bold shadow-xl shadow-indigo-500/25 flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Create New Course</span>
+          </Link>
+        }
+      />
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-xl flex items-center gap-4">
+          <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400">
+            <BookOpen className="w-6 h-6" />
           </div>
-          <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900">
-            Admin Course Track Management
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1 font-medium">
-            Create, edit, and publish enterprise technical courses and AI assessment rubrics.
-          </p>
+          <div>
+            <span className="text-xs text-slate-400 font-semibold uppercase">Total Courses</span>
+            <h4 className="font-heading font-extrabold text-2xl text-white">{totalCount}</h4>
+          </div>
         </div>
 
-        <button
-          onClick={() => setModalOpen(true)}
-          className="btn-blue-primary text-xs py-3 px-5 shadow-lg shadow-sky-500/20 flex items-center justify-center gap-2 font-bold cursor-pointer"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add New Course Track</span>
-        </button>
+        <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-xl flex items-center gap-4">
+          <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+            <CheckCircle2 className="w-6 h-6" />
+          </div>
+          <div>
+            <span className="text-xs text-slate-400 font-semibold uppercase">Published Tracks</span>
+            <h4 className="font-heading font-extrabold text-2xl text-white">
+              {courses.filter((c) => c.status === 'published').length}
+            </h4>
+          </div>
+        </div>
+
+        <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 backdrop-blur-xl flex items-center gap-4">
+          <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
+            <Archive className="w-6 h-6" />
+          </div>
+          <div>
+            <span className="text-xs text-slate-400 font-semibold uppercase">Drafts & Archived</span>
+            <h4 className="font-heading font-extrabold text-2xl text-white">
+              {courses.filter((c) => c.status !== 'published').length}
+            </h4>
+          </div>
+        </div>
       </div>
 
-      {/* Main Table Container */}
-      <div className="bg-white/90 border border-sky-200/80 rounded-3xl p-6 space-y-4 shadow-sm">
-        
-        {/* Search & Filter */}
+      <div className="space-y-4 rounded-3xl bg-slate-900/80 border border-slate-800 p-6 backdrop-blur-xl">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="relative w-full sm:w-96">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search courses by title, instructor, or topic..."
-              className="w-full bg-slate-50 border border-sky-200 rounded-xl py-2.5 pl-10 pr-4 text-xs text-slate-900 focus:outline-hidden transition-all font-medium"
-            />
+          <div className="w-full sm:w-96">
+            <SearchBar value={search} onChange={(val) => { setSearch(val); setPage(1); }} />
+          </div>
+
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <select
+              value={selectedStatus}
+              onChange={(e) => { setSelectedStatus(e.target.value as any); setPage(1); }}
+              className="bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 focus:outline-none font-medium cursor-pointer"
+            >
+              <option value="all">All Statuses</option>
+              <option value="published">Published</option>
+              <option value="draft">Draft</option>
+              <option value="archived">Archived</option>
+            </select>
+
+            <button
+              onClick={fetchCourses}
+              className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
+              title="Refresh"
+            >
+              <RefreshCw className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
-        {/* Courses Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
-          {filteredCourses.map((course) => (
-            <div
-              key={course.id}
-              className="p-5 rounded-2xl bg-slate-50/80 border border-sky-200/80 hover:border-sky-300 transition-all space-y-3 shadow-xs flex flex-col justify-between"
-            >
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold text-sky-700 bg-sky-100/80 px-2.5 py-0.5 rounded-md border border-sky-200">
-                    {course.category}
-                  </span>
-                  <button
-                    onClick={() => toggleCourseStatus(course.id)}
-                    className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider cursor-pointer ${
-                      course.status === 'Published'
-                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                        : 'bg-amber-50 text-amber-700 border border-amber-200'
-                    }`}
-                  >
-                    {course.status}
-                  </button>
-                </div>
-
-                <h3 className="font-heading font-bold text-sm text-slate-900 leading-snug">
-                  {course.title}
-                </h3>
-                <p className="text-xs text-slate-500 font-medium">Instructor: {course.instructor}</p>
-              </div>
-
-              <div className="pt-3 border-t border-sky-100 flex items-center justify-between text-xs text-slate-600 font-medium">
-                <span className="flex items-center gap-1">
-                  <Users className="w-3.5 h-3.5 text-sky-600" />
-                  {course.students}
-                </span>
-                <span className="flex items-center gap-1 font-bold text-amber-600">
-                  <Star className="w-3.5 h-3.5 fill-current text-amber-400" />
-                  {course.rating}
-                </span>
-                <span className="font-mono text-[11px] text-slate-500">{course.tracks}</span>
-              </div>
-            </div>
-          ))}
-        </div>
+        <CategoryFilter
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onSelectCategory={(cat) => { setSelectedCategory(cat); setPage(1); }}
+        />
       </div>
 
-      {/* Add Course Modal */}
-      {modalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-6 border border-sky-200 animate-in zoom-in-95 text-slate-900 font-['Sora']">
-            <div className="flex items-center justify-between border-b border-sky-100 pb-3">
-              <h3 className="font-heading font-bold text-lg text-slate-900 flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-sky-600" /> Create New Course Track
-              </h3>
-              <button onClick={() => setModalOpen(false)} className="text-slate-400 hover:text-slate-900 cursor-pointer">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleCreateCourse} className="space-y-4">
-              <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1">Course Title</label>
-                <input
-                  type="text"
-                  required
-                  value={newTitle}
-                  onChange={(e) => setNewTitle(e.target.value)}
-                  placeholder="Advanced Bash & Linux Kernel Security"
-                  className="w-full bg-slate-50 border border-sky-200 rounded-xl py-2.5 px-3 text-xs text-slate-900 focus:outline-hidden transition-all font-medium"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1">Instructor Name</label>
-                <input
-                  type="text"
-                  required
-                  value={newInstructor}
-                  onChange={(e) => setNewInstructor(e.target.value)}
-                  placeholder="Bhanu Prakash Achari"
-                  className="w-full bg-slate-50 border border-sky-200 rounded-xl py-2.5 px-3 text-xs text-slate-900 focus:outline-hidden transition-all font-medium"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1">Category</label>
-                <select
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
-                  className="w-full bg-slate-50 border border-sky-200 rounded-xl py-2.5 px-3 text-xs text-slate-900 focus:outline-hidden transition-all font-medium cursor-pointer"
-                >
-                  <option value="Linux & Systems">Linux & Systems</option>
-                  <option value="Development">Development</option>
-                  <option value="AI & Data">AI & Data</option>
-                  <option value="DevOps">DevOps</option>
-                </select>
-              </div>
-
-              <div className="pt-2 flex items-center justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setModalOpen(false)}
-                  className="py-2.5 px-4 rounded-xl border border-sky-200 text-xs font-bold text-slate-600 hover:bg-sky-50 transition-all cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="btn-blue-primary text-xs py-2.5 px-5 font-bold flex items-center gap-2 cursor-pointer disabled:opacity-50"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Creating...</span>
-                    </>
-                  ) : (
-                    <>
-                      <CheckCircle2 className="w-4 h-4" />
-                      <span>Publish Course</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
-          </div>
+      {loading ? (
+        <LoadingSkeleton count={4} variant="card" />
+      ) : courses.length === 0 ? (
+        <EmptyState onReset={handleResetFilters} />
+      ) : (
+        <div className="space-y-6">
+          <CourseTable
+            courses={courses}
+            onPublish={handlePublish}
+            onUnpublish={handleUnpublish}
+            onArchive={handleArchive}
+            onDuplicate={handleDuplicate}
+            onDelete={handleDelete}
+          />
+          <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
         </div>
       )}
-
     </div>
   );
 };
