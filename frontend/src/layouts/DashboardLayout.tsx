@@ -15,7 +15,6 @@ import {
   X,
   UserCheck,
   GraduationCap,
-  Settings,
 } from 'lucide-react';
 import { BrandLogo } from '@/components/common/BrandLogo';
 import { useAuth } from '@/contexts/AuthContext';
@@ -47,8 +46,6 @@ export const DashboardLayout: React.FC = () => {
         { name: 'Courses', href: '/admin/courses', icon: BookOpen },
         { name: 'Students', href: '/admin/students', icon: UserCheck },
         { name: 'Instructors', href: '/admin/instructors', icon: GraduationCap },
-        { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
-        { name: 'Settings', href: '/admin/settings', icon: Settings },
       ]
     : [
         { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
