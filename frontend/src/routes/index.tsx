@@ -2,29 +2,20 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { PublicLayout } from '@/layouts/PublicLayout';
 import { AuthLayout } from '@/layouts/AuthLayout';
 import { DashboardLayout } from '@/layouts/DashboardLayout';
-
 import { LandingPage } from '@/pages/LandingPage';
 import { Login } from '@/pages/auth/Login';
 import { Register } from '@/pages/auth/Register';
 import { ForgotPassword } from '@/pages/auth/ForgotPassword';
 import { VerifyEmail } from '@/pages/auth/VerifyEmail';
 import { Unauthorized } from '@/pages/auth/Unauthorized';
-
 import { Dashboard } from '@/pages/dashboard/Dashboard';
 import { Profile } from '@/pages/dashboard/Profile';
-
-// Course Pages
 import { CoursesList } from '@/pages/courses/CoursesList';
 import { CourseView } from '@/pages/courses/CourseView';
-
-// Admin Pages
 import { AdminDashboard } from '@/pages/admin/AdminDashboard';
-import { AdminCourses } from '@/pages/admin/AdminCourses';
-import { AdminCourseCreate } from '@/pages/admin/AdminCourseCreate';
-import { AdminCourseEdit } from '@/pages/admin/AdminCourseEdit';
+import { Courses } from '@/pages/admin/Courses';
 import { AdminStudents } from '@/pages/admin/AdminStudents';
 import { AdminInstructors } from '@/pages/admin/AdminInstructors';
-
 import { StudentRoute } from '@/components/auth/StudentRoute';
 import { AdminRoute } from '@/components/auth/AdminRoute';
 
@@ -50,7 +41,7 @@ const router = createBrowserRouter([
       { path: 'verify-email', element: <VerifyEmail /> },
     ],
   },
-  // Student Protected Routes
+  // Student Protected Routes (/dashboard, /courses, /profile)
   {
     path: '/',
     element: (
@@ -66,7 +57,7 @@ const router = createBrowserRouter([
       { path: 'profile', element: <Profile /> },
     ],
   },
-  // Admin Protected Routes
+  // Admin Protected Routes (/admin/dashboard, /admin/courses, /admin/students, /admin/instructors)
   {
     path: '/admin',
     element: (
@@ -76,14 +67,14 @@ const router = createBrowserRouter([
     ),
     children: [
       { path: 'dashboard', element: <AdminDashboard /> },
-      { path: 'courses', element: <AdminCourses /> },
-      { path: 'courses/create', element: <AdminCourseCreate /> },
-      { path: 'courses/edit/:id', element: <AdminCourseEdit /> },
+      { path: 'courses', element: <Courses /> },
       { path: 'students', element: <AdminStudents /> },
       { path: 'instructors', element: <AdminInstructors /> },
+      { path: 'analytics', element: <div className="p-8 bg-white border border-sky-100 rounded-3xl shadow-xs"><h1 className="font-heading font-extrabold text-2xl text-slate-900">Analytics</h1><p className="text-slate-500 mt-2">Kaizen Q analytics and reporting features are coming soon.</p></div> },
+      { path: 'settings', element: <div className="p-8 bg-white border border-sky-100 rounded-3xl shadow-xs"><h1 className="font-heading font-extrabold text-2xl text-slate-900">Settings</h1><p className="text-slate-500 mt-2">Kaizen Q administrative and configuration settings are coming soon.</p></div> },
     ],
   },
-  // Fallback 404
+  // Fallback 404 / Unauthorized redirect
   {
     path: '*',
     element: <Unauthorized />,

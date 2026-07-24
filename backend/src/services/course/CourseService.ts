@@ -306,12 +306,12 @@ export class CourseService {
         {
           title: 'Git & GitHub Mastery',
           slug: 'git-github-mastery',
-          description: 'Implement version control, branching strategies, interactive rebasing, merge conflict resolution, repository management, GitHub Actions CI/CD pipelines, and secure branch protection rules from scratch.',
+          description: 'Learn Git & GitHub from beginner to professional, including version control, branching, pull requests, GitHub Actions, CI/CD, Codespaces, and Copilot.',
           shortDescription: 'Master version control, repository management, and CI/CD pipelines.',
           category: 'Development Tools',
           subcategory: 'Git',
-          level: 'Beginner',
-          thumbnail: 'https://images.unsplash.com/photo-1618401471353-b98aedd07871?auto=format&fit=crop&w=600&q=80',
+          level: 'Beginner to Advanced',
+          thumbnail: 'https://images.unsplash.com/photo-1618401471353-b98aedd07871?auto=format&fit=crop&w=1200&q=80',
           bannerImage: 'https://images.unsplash.com/photo-1618401471353-b98aedd07871?auto=format&fit=crop&w=1200&q=80',
           duration: '20 Hours',
           price: 0,
@@ -319,12 +319,12 @@ export class CourseService {
           status: 'published',
           language: 'English',
           instructor: {
-            uid: 'instructor-admin',
-            name: 'Admin',
+            uid: 'instructor-kaizen-q',
+            name: 'Kaizen Q Team',
           },
           lessonsCount: 66,
           modulesCount: 6,
-          studentsEnrolled: 1540,
+          studentsEnrolled: 0,
           rating: 5.0,
           totalRatings: 180,
           tags: ['git', 'github', 'ci-cd', 'devops', 'version-control'],
@@ -545,8 +545,17 @@ export class CourseService {
             await this.seedGitCourseDetails(docRef.id);
           }
         } else {
+          // If the course exists, update its details to ensure the requested instructor/desc etc. are correct.
           if (courseData.slug === 'git-github-mastery') {
-            await this.seedGitCourseDetails(existing.docs[0].id);
+            const courseDoc = existing.docs[0];
+            await courseDoc.ref.update({
+              description: courseData.description,
+              level: courseData.level,
+              instructor: courseData.instructor,
+              studentsEnrolled: courseData.studentsEnrolled,
+              updatedAt: new Date(),
+            });
+            await this.seedGitCourseDetails(courseDoc.id);
           }
         }
       }
@@ -564,10 +573,9 @@ export class CourseService {
       const { modulesCollection, lessonsCollection, quizzesCollection, assignmentsCollection } = await import('../../firebase/collections');
       
       const existingModules = await modulesCollection().where('courseId', '==', courseId).limit(1).get();
-      if (!existingModules.empty) {
-        return; // already seeded details
-      }
-
+      // If modules already exist, we still want to make sure they are up to date (specifically Module 6 title)
+      // and if empty, we write them.
+      
       console.log('Seeding Git & GitHub detailed syllabus collections...');
 
       const modulesData = [
@@ -576,7 +584,7 @@ export class CourseService {
         { id: 'git-mod-3', title: 'Module 3: Advanced Git', order: 3, duration: '4 Hours' },
         { id: 'git-mod-4', title: 'Module 4: Repository Management', order: 4, duration: '3 Hours' },
         { id: 'git-mod-5', title: 'Module 5: GitHub Actions', order: 5, duration: '4 Hours' },
-        { id: 'git-mod-6', title: 'Module 6: Modern GitHub', order: 6, duration: '3 Hours' },
+        { id: 'git-mod-6', title: 'Module 6: Modern GitHub Ecosystem', order: 6, duration: '3 Hours' },
       ];
 
       for (const mod of modulesData) {

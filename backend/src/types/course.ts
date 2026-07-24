@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
 export type CourseStatus = 'draft' | 'published' | 'archived';
-export type CourseLevel = 'Beginner' | 'Intermediate' | 'Advanced';
+export type CourseLevel = 'Beginner' | 'Intermediate' | 'Advanced' | 'Beginner to Advanced';
 export type CourseLanguage = 'English' | 'Telugu' | 'Hindi';
-
+// ...
 export type CourseCategory = 
   | 'Programming'
   | 'Artificial Intelligence'
@@ -56,7 +56,7 @@ export interface Course {
 
 // Zod schemas for validation
 export const CourseStatusSchema = z.enum(['draft', 'published', 'archived']);
-export const CourseLevelSchema = z.enum(['Beginner', 'Intermediate', 'Advanced']);
+export const CourseLevelSchema = z.enum(['Beginner', 'Intermediate', 'Advanced', 'Beginner to Advanced']);
 export const CourseLanguageSchema = z.enum(['English', 'Telugu', 'Hindi']);
 
 export const CourseValidationSchema = z.object({
