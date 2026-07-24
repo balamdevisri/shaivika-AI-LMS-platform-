@@ -74,7 +74,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose, onS
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               required
-              className="w-full bg-slate-50 border border-sky-200 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-sky-500 font-bold"
+              className="w-full bg-slate-50 border border-sky-200 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500/20 font-bold"
             />
           </div>
 
@@ -85,7 +85,7 @@ export const EditUserModal: React.FC<EditUserModalProps> = ({ user, onClose, onS
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full bg-slate-50 border border-sky-200 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-sky-500 font-bold"
+              className="w-full bg-slate-50 border border-sky-200 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500/20 font-bold"
             />
           </div>
 

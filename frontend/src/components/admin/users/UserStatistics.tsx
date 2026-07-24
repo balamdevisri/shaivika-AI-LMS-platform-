@@ -109,7 +109,7 @@ export const UserStatistics: React.FC<UserStatisticsProps> = ({ stats }) => {
               </div>
 
               <div
-                className={`w-12 h-12 rounded-2xl bg-gradient-to-tr ${c.gradient} text-white flex items-center justify-center shadow-md transform group-hover:scale-110 transition-transform duration-300 shrink-0`}
+                className={`w-12 h-12 rounded-2xl bg-linear-to-tr ${c.gradient} text-white flex items-center justify-center shadow-md transform group-hover:scale-110 transition-transform duration-300 shrink-0`}
               >
                 <IconComponent className="w-6 h-6" />
               </div>
