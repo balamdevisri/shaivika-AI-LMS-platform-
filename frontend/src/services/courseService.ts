@@ -73,90 +73,6 @@ const DEFAULT_COURSES: ICourse[] = [
     createdAt: new Date('2026-01-15').toISOString(),
     updatedAt: new Date('2026-02-10').toISOString(),
   },
-  {
-    id: 'course_ai_llm_202',
-    title: 'Enterprise AI & LLM Infrastructure Engineering',
-    slug: 'enterprise-ai-llm-infrastructure-engineering',
-    shortDescription: 'Deploy, fine-tune, and scale open-source Large Language Models with PyTorch, vLLM, and Docker.',
-    description: `Deep dive into the architecture of modern AI models. Learn prompt engineering, RAG (Retrieval Augmented Generation), vector database integration, parameter-efficient fine-tuning (LoRA), and high-performance vLLM deployment on cloud GPUs.`,
-    thumbnail: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80',
-    banner: 'https://images.unsplash.com/photo-1677442136019-21780efad99a?w=1200&auto=format&fit=crop&q=80',
-    category: 'AI & Data',
-    level: 'advanced',
-    duration: '45 hrs',
-    language: 'English',
-    price: 0,
-    instructor: {
-      id: 'inst_bhanu',
-      name: 'Bhanu Prakash Achari',
-      role: 'Principal AI Engineer',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    },
-    skills: ['PyTorch', 'vLLM', 'RAG', 'Vector Databases', 'LangChain', 'Fine-Tuning'],
-    prerequisites: ['Python proficiency', 'Linear Algebra basics'],
-    learningOutcomes: [
-      'Architect scalable RAG systems with Pinecone & Qdrant',
-      'Optimize GPU memory usage for 70B parameter models using Quantization (AWQ/GPTQ)',
-      'Build real-time AI agents with tool use and streaming responses',
-    ],
-    status: 'published',
-    visibility: 'public',
-    featured: true,
-    tags: ['ai', 'llm', 'pytorch', 'rag', 'python'],
-    enrollmentCount: 14200,
-    rating: 4.95,
-    ratingCount: 890,
-    syllabus: [
-      { id: 'm1', title: 'Module 1: LLM Fundamentals & Transformer Architecture', duration: '10 hrs 00 mins', lessonsCount: 10 },
-      { id: 'm2', title: 'Module 2: RAG Systems & Vector Database Engineering', duration: '12 hrs 30 mins', lessonsCount: 14 },
-      { id: 'm3', title: 'Module 3: Fine-Tuning & Quantization (QLoRA)', duration: '13 hrs 15 mins', lessonsCount: 15 },
-      { id: 'm4', title: 'Module 4: Enterprise Production Deployment with vLLM', duration: '9 hrs 15 mins', lessonsCount: 10 },
-    ],
-    createdAt: new Date('2026-02-01').toISOString(),
-    updatedAt: new Date('2026-03-01').toISOString(),
-  },
-  {
-    id: 'course_devops_303',
-    title: 'Cloud-Native Kubernetes & DevOps Masterclass',
-    slug: 'cloud-native-kubernetes-devops-masterclass',
-    shortDescription: 'Master Containerization with Docker, Kubernetes Cluster Administration, Helm, and GitOps CI/CD pipelines.',
-    description: `Learn how to containerize microservices, deploy multi-node Kubernetes clusters, orchestrate Helm releases, configure ingress controllers, and implement automated GitOps workflows with ArgoCD and GitHub Actions.`,
-    thumbnail: 'https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?w=800&auto=format&fit=crop&q=80',
-    banner: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&auto=format&fit=crop&q=80',
-    category: 'DevOps',
-    level: 'intermediate',
-    duration: '40 hrs',
-    language: 'English',
-    price: 0,
-    instructor: {
-      id: 'inst_bhanu',
-      name: 'Bhanu Prakash Achari',
-      role: 'DevOps Architect',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    },
-    skills: ['Docker', 'Kubernetes', 'Helm', 'ArgoCD', 'CI/CD', 'Prometheus'],
-    prerequisites: ['Linux terminal basics', 'Basic understanding of HTTP & microservices'],
-    learningOutcomes: [
-      'Write production Dockerfiles and optimize container image size',
-      'Manage Kubernetes Deployments, StatefulSets, Services, and Ingress',
-      'Implement zero-downtime rolling upgrades and automated canary deployments',
-    ],
-    status: 'published',
-    visibility: 'public',
-    featured: false,
-    tags: ['devops', 'kubernetes', 'docker', 'cloud'],
-    enrollmentCount: 9800,
-    rating: 4.88,
-    ratingCount: 620,
-    syllabus: [
-      { id: 'm1', title: 'Module 1: Docker Deep Dive & Multistage Builds', duration: '8 hrs 30 mins', lessonsCount: 8 },
-      { id: 'm2', title: 'Module 2: Kubernetes Primitives & Architecture', duration: '12 hrs 15 mins', lessonsCount: 12 },
-      { id: 'm3', title: 'Module 3: Helm Package Manager & Ingress Control', duration: '10 hrs 00 mins', lessonsCount: 10 },
-      { id: 'm4', title: 'Module 4: GitOps with ArgoCD & Monitoring', duration: '9 hrs 15 mins', lessonsCount: 10 },
-    ],
-    createdAt: new Date('2026-02-20').toISOString(),
-    updatedAt: new Date('2026-03-05').toISOString(),
-  },
 ];
 
 export interface EnrollmentRecord {
@@ -165,16 +81,47 @@ export interface EnrollmentRecord {
   enrolledAt: string;
 }
 
+export interface XPClaimRecord {
+  id: string;
+  title: string;
+  xp: number;
+  category: 'Subtopic Completion' | 'Module Certificate' | 'AI Terminal Lab' | 'Quiz Evaluation' | 'Daily Login';
+  timestamp: string;
+  courseId?: string;
+  courseTitle?: string;
+}
+
+export interface CourseProgressCheckpoint {
+  courseId: string;
+  progressPercent: number;
+  lastModuleIdx: number;
+  lastLessonIdx: number;
+  lastSubtopicIdx: number;
+  lastSubtopicTitle?: string;
+  completedSubtopics: string[];
+  completedModules: number[];
+  lastUpdated: string;
+}
+
 class CourseService {
   private localCacheKey = 'shaivika_enterprise_courses';
   private enrollmentsKey = 'shaivika_user_enrollments';
   private pointsKey = 'shaivika_user_xp_points';
+  private xpClaimsKey = 'shaivika_user_xp_claims';
+  private checkpointKey = 'shaivika_user_checkpoint';
 
   private getStoredCourses(): ICourse[] {
     const data = localStorage.getItem(this.localCacheKey);
     if (data) {
       try {
-        return JSON.parse(data);
+        const parsed: ICourse[] = JSON.parse(data);
+        const filtered = parsed.filter(
+          (c) => c.id !== 'course_ai_llm_202' && c.id !== 'course_devops_303'
+        );
+        if (filtered.length !== parsed.length) {
+          localStorage.setItem(this.localCacheKey, JSON.stringify(filtered));
+        }
+        return filtered;
       } catch (e) {
         console.warn('Error parsing cached course data:', e);
       }
@@ -191,13 +138,27 @@ class CourseService {
     const data = localStorage.getItem(this.enrollmentsKey);
     if (data) {
       try {
-        return JSON.parse(data);
+        const parsed: Record<string, EnrollmentRecord[]> = JSON.parse(data);
+        let modified = false;
+        Object.keys(parsed).forEach((userKey) => {
+          const original = parsed[userKey];
+          const filtered = original.filter(
+            (e) => e.courseId !== 'course_ai_llm_202' && e.courseId !== 'course_devops_303'
+          );
+          if (filtered.length !== original.length) {
+            parsed[userKey] = filtered;
+            modified = true;
+          }
+        });
+        if (modified) {
+          localStorage.setItem(this.enrollmentsKey, JSON.stringify(parsed));
+        }
+        return parsed;
       } catch (e) {}
     }
     const defaultEnrollments: Record<string, EnrollmentRecord[]> = {
       default_student: [
         { courseId: 'course_linux_101', progress: 25, enrolledAt: new Date().toISOString() },
-        { courseId: 'course_ai_llm_202', progress: 10, enrolledAt: new Date().toISOString() },
       ],
     };
     localStorage.setItem(this.enrollmentsKey, JSON.stringify(defaultEnrollments));
@@ -218,6 +179,82 @@ class CourseService {
     const updated = current + points;
     localStorage.setItem(`${this.pointsKey}_${userId}`, String(updated));
     return updated;
+  }
+
+  getXPClaimLogs(userId = 'default_student'): XPClaimRecord[] {
+    const data = localStorage.getItem(`${this.xpClaimsKey}_${userId}`);
+    if (data) {
+      try {
+        return JSON.parse(data);
+      } catch (e) {}
+    }
+    const initialClaims: XPClaimRecord[] = [
+      {
+        id: 'claim_1',
+        title: 'Completed Subtopic 1.1.1: Monolithic Kernel Architecture',
+        xp: 20,
+        category: 'Subtopic Completion',
+        timestamp: new Date(Date.now() - 3600000 * 2).toISOString(),
+        courseId: 'course_linux_101',
+        courseTitle: 'Linux Systems & Administration Mastery',
+      },
+      {
+        id: 'claim_2',
+        title: 'Module 1 Live Interactive Terminal Hands-on Lab',
+        xp: 50,
+        category: 'AI Terminal Lab',
+        timestamp: new Date(Date.now() - 3600000 * 5).toISOString(),
+        courseId: 'course_linux_101',
+        courseTitle: 'Linux Systems & Administration Mastery',
+      },
+      {
+        id: 'claim_3',
+        title: 'System Calls & POSIX File Security Checkpoint Quiz',
+        xp: 30,
+        category: 'Quiz Evaluation',
+        timestamp: new Date(Date.now() - 3600000 * 24).toISOString(),
+        courseId: 'course_linux_101',
+        courseTitle: 'Linux Systems & Administration Mastery',
+      },
+      {
+        id: 'claim_4',
+        title: 'Student Account Onboarding & Setup Bonus',
+        xp: 50,
+        category: 'Daily Login',
+        timestamp: new Date(Date.now() - 3600000 * 48).toISOString(),
+      },
+    ];
+    localStorage.setItem(`${this.xpClaimsKey}_${userId}`, JSON.stringify(initialClaims));
+    return initialClaims;
+  }
+
+  addXPClaim(claim: XPClaimRecord, userId = 'default_student'): XPClaimRecord[] {
+    const current = this.getXPClaimLogs(userId);
+    const updated = [claim, ...current];
+    localStorage.setItem(`${this.xpClaimsKey}_${userId}`, JSON.stringify(updated));
+    return updated;
+  }
+
+  getCourseCheckpoint(courseId: string, userId = 'default_student'): CourseProgressCheckpoint | null {
+    const data = localStorage.getItem(`${this.checkpointKey}_${courseId}_${userId}`);
+    if (data) {
+      try {
+        return JSON.parse(data);
+      } catch (e) {}
+    }
+    return null;
+  }
+
+  saveCourseCheckpoint(courseId: string, checkpoint: CourseProgressCheckpoint, userId = 'default_student'): void {
+    localStorage.setItem(`${this.checkpointKey}_${courseId}_${userId}`, JSON.stringify(checkpoint));
+
+    const enrollments = this.getStoredEnrollments();
+    const userRecs = enrollments[userId] || [];
+    const updatedRecs = userRecs.map((rec) =>
+      rec.courseId === courseId ? { ...rec, progress: checkpoint.progressPercent } : rec
+    );
+    enrollments[userId] = updatedRecs;
+    this.saveStoredEnrollments(enrollments);
   }
 
   async getCourses(options: CourseFilterOptions = {}): Promise<CoursePaginationResult> {

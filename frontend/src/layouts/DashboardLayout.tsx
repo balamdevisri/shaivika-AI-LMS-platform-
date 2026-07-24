@@ -6,7 +6,6 @@ import {
   FileText,
   Calendar,
   Award,
-  BarChart3,
   Bell,
   Search,
   User,
@@ -57,7 +56,6 @@ export const DashboardLayout: React.FC = () => {
         { name: 'Assignments & Quizzes', href: '/dashboard?tab=assignments', icon: FileText },
         { name: 'Schedule & Calendar', href: '/dashboard?tab=calendar', icon: Calendar },
         { name: 'Certificates', href: '/dashboard?tab=certificates', icon: Award },
-        { name: 'Analytics & Reports', href: '/dashboard?tab=analytics', icon: BarChart3 },
       ];
 
   const sampleNotifications = [

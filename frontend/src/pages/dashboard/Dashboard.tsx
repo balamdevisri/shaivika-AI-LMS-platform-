@@ -15,10 +15,11 @@ import {
   Sparkles,
   PlusCircle,
   Compass,
+  Lock,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
-import { courseService } from '@/services/courseService';
+import { courseService, type XPClaimRecord } from '@/services/courseService';
 import type { ICourse } from '../../../../shared/types/course';
 
 export const Dashboard: React.FC = () => {
@@ -31,6 +32,17 @@ export const Dashboard: React.FC = () => {
   const [catalogCourses, setCatalogCourses] = useState<ICourse[]>([]);
   const [loadingCourses, setLoadingCourses] = useState(true);
 
+  // XP & Claims State
+  const [totalXP, setTotalXP] = useState(150);
+  const [xpClaims, setXpClaims] = useState<XPClaimRecord[]>([]);
+
+  // Completed courses check (only 100% completed courses unlock certificates)
+  const completedCourses = enrolledCourses.filter((course) => {
+    const checkpoint = courseService.getCourseCheckpoint(course.id, 'default_student');
+    return checkpoint && checkpoint.progressPercent >= 100;
+  });
+  const completedCoursesCount = completedCourses.length;
+
   // Quiz Modal State
   const [quizModalOpen, setQuizModalOpen] = useState(false);
   const [quizScore, setQuizScore] = useState<number | null>(null);
@@ -39,14 +51,20 @@ export const Dashboard: React.FC = () => {
   // Certificate Modal State
   const [certificateModalOpen, setCertificateModalOpen] = useState(false);
 
-  // Fetch courses dynamically from courseService
-  const loadDashboardCourses = useCallback(async () => {
+  // Fetch courses and XP claims dynamically from courseService
+  const loadDashboardData = useCallback(async () => {
     setLoadingCourses(true);
     try {
       const enrolled = await courseService.getEnrolledCourses('default_student');
       const catalogResult = await courseService.getCourses({ status: 'published', limit: 8 });
       setEnrolledCourses(enrolled);
       setCatalogCourses(catalogResult.courses);
+
+      // Load XP Points & Claims
+      const xp = courseService.getUserXPPoints('default_student');
+      const claims = courseService.getXPClaimLogs('default_student');
+      setTotalXP(xp);
+      setXpClaims(claims);
     } catch (err) {
       console.warn('Error loading dynamic dashboard courses:', err);
     } finally {
@@ -55,15 +73,15 @@ export const Dashboard: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    loadDashboardCourses();
-  }, [loadDashboardCourses]);
+    loadDashboardData();
+  }, [loadDashboardData]);
 
   const handleEnrollFree = async (course: ICourse) => {
     try {
       const res = await courseService.enrollCourse(course.id, 'default_student');
       if (res.success) {
         toast.success(`Enrolled free in "${course.title}"!`);
-        await loadDashboardCourses();
+        await loadDashboardData();
       }
     } catch (e) {
       toast.error('Failed to enroll.');
@@ -143,32 +161,35 @@ export const Dashboard: React.FC = () => {
               </div>
             </div>
 
-            <div className="glass-card-light p-5 border-l-4 border-l-purple-600 bg-white">
+            {/* Total Claimed XP Points Card */}
+            <div className="glass-card-light p-5 border-l-4 border-l-amber-500 bg-white">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Learning Time</span>
-                <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
-                  <Clock className="w-4 h-4" />
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Claimed XP</span>
+                <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                  <Zap className="w-4 h-4 text-amber-500 fill-current" />
                 </div>
               </div>
               <div className="mt-3 flex items-baseline gap-2">
-                <span className="font-heading font-extrabold text-2xl text-slate-900">42 hrs</span>
-                <span className="text-[11px] font-semibold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-md">
-                  +4 hrs this week
+                <span className="font-heading font-extrabold text-2xl text-slate-900">{totalXP} XP</span>
+                <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md">
+                  Level {Math.floor(totalXP / 100) + 1} Specialist
                 </span>
               </div>
             </div>
 
-            <div className="glass-card-light p-5 border-l-4 border-l-amber-500 bg-white">
+            <div className="glass-card-light p-5 border-l-4 border-l-purple-600 bg-white">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Certificates</span>
-                <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                <div className="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
                   <Award className="w-4 h-4" />
                 </div>
               </div>
               <div className="mt-3 flex items-baseline gap-2">
-                <span className="font-heading font-extrabold text-2xl text-slate-900">1 Issued</span>
-                <span className="text-[11px] font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md">
-                  Verified
+                <span className="font-heading font-extrabold text-2xl text-slate-900">
+                  {completedCoursesCount} Earned
+                </span>
+                <span className="text-[11px] font-semibold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-md">
+                  {completedCoursesCount > 0 ? 'Verified' : 'Locked (0/1 Complete)'}
                 </span>
               </div>
             </div>
@@ -189,14 +210,14 @@ export const Dashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* DYNAMIC: Currently Enrolled Tracks (Continue Learning) */}
+          {/* DYNAMIC: Currently Enrolled Tracks (Continue Learning from Middle Checkpoint) */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-heading font-bold text-xl text-slate-900 flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-blue-600" /> Continue Learning (Enrolled Tracks)
+                <BookOpen className="w-5 h-5 text-blue-600" /> Continue Learning (Resume Exact Position)
               </h3>
               <span className="text-xs font-semibold text-slate-500">
-                {enrolledCourses.length} Enrolled Course{enrolledCourses.length !== 1 ? 's' : ''}
+                {enrolledCourses.length} Active Track{enrolledCourses.length !== 1 ? 's' : ''}
               </span>
             </div>
 
@@ -217,7 +238,11 @@ export const Dashboard: React.FC = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {enrolledCourses.map((course) => {
-                  const progress = course.progress || 25;
+                  const checkpoint = courseService.getCourseCheckpoint(course.id, 'default_student');
+                  const progress = checkpoint?.progressPercent || course.progress || 25;
+                  const lastModule = checkpoint ? checkpoint.lastModuleIdx + 1 : 1;
+                  const lastSubtopicTitle = checkpoint?.lastSubtopicTitle || 'Kernel Architecture';
+
                   return (
                     <div
                       key={course.id}
@@ -229,21 +254,27 @@ export const Dashboard: React.FC = () => {
                             {course.category}
                           </span>
                           <span className="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                            Enrolled (Free)
+                            Saved Checkpoint Active
                           </span>
                         </div>
 
                         <h4 className="font-heading font-bold text-base text-slate-900 leading-snug">
                           {course.title}
                         </h4>
-                        <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed font-normal">
-                          {course.shortDescription}
-                        </p>
+                        
+                        {/* Saved Resume Position Indicator */}
+                        <div className="bg-sky-50 border border-sky-200/80 rounded-xl p-2.5 text-xs text-slate-700 flex items-center gap-2">
+                          <Clock className="w-4 h-4 text-sky-600 shrink-0" />
+                          <div>
+                            <span className="font-bold text-slate-900">Last Position: </span>
+                            <span className="text-sky-700 font-medium">Module {lastModule} ➔ {lastSubtopicTitle}</span>
+                          </div>
+                        </div>
                       </div>
 
                       <div className="space-y-1">
                         <div className="flex justify-between text-xs font-semibold text-slate-700">
-                          <span>Progress</span>
+                          <span>Overall Track Completion</span>
                           <span className="text-blue-600">{progress}% Completed</span>
                         </div>
                         <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
@@ -256,16 +287,74 @@ export const Dashboard: React.FC = () => {
 
                       <Link
                         to={`/course/${course.slug}`}
-                        className="btn-blue-primary text-xs py-2.5 justify-center font-bold"
+                        className="btn-blue-primary text-xs py-2.5 justify-center font-bold flex items-center gap-2"
                       >
                         <PlayCircle className="w-4 h-4" />
-                        <span>Resume Course Track</span>
+                        <span>Resume Course Track (Module {lastModule})</span>
                       </Link>
                     </div>
                   );
                 })}
               </div>
             )}
+          </div>
+
+          {/* DETAILED CLAIMED XP BREAKDOWN & HISTORY */}
+          <div className="bg-white/95 border border-amber-200/80 rounded-3xl p-6 space-y-4 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-amber-100 pb-3">
+              <div>
+                <h3 className="font-heading font-extrabold text-lg text-slate-900 flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-amber-500 fill-current" />
+                  <span>Claimed XP Rewards & Detailed Audit Log</span>
+                </h3>
+                <p className="text-xs text-slate-500 font-medium">
+                  Full historical log of all earned subtopic completions, quiz rewards, and lab achievements.
+                </p>
+              </div>
+
+              <div className="px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold self-start sm:self-auto">
+                Total Earned: {totalXP} XP
+              </div>
+            </div>
+
+            <div className="space-y-2.5">
+              {xpClaims.length === 0 ? (
+                <div className="py-6 text-center text-xs text-slate-500 font-medium">
+                  No XP claims logged yet. Complete course lessons to claim XP!
+                </div>
+              ) : (
+                xpClaims.map((claim) => (
+                  <div
+                    key={claim.id}
+                    className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-extrabold shrink-0 border border-amber-200">
+                        +{claim.xp}
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-slate-900 text-xs">{claim.title}</h4>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="text-[10px] font-semibold text-slate-500">{claim.courseTitle || 'Platform Learning'}</span>
+                          <span className="text-[9px] px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 font-bold border border-sky-200">
+                            {claim.category}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="text-[11px] font-medium text-slate-400 self-end sm:self-center shrink-0">
+                      {new Date(claim.timestamp).toLocaleString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
 
           {/* DYNAMIC: All Admin-Created Available Courses (Free to Enroll) */}
@@ -372,19 +461,67 @@ export const Dashboard: React.FC = () => {
       {/* ------------------- 3. CERTIFICATES TAB ------------------- */}
       {(currentTab === 'certificates' || certificateModalOpen) && (
         <div className="space-y-6 animate-in fade-in duration-300">
-          <div className="glass-card-light p-6 space-y-4 bg-white">
-            <div className="flex items-center justify-between">
+          <div className="bg-white border border-sky-200/80 rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm">
+            <div className="flex items-center justify-between border-b border-sky-100 pb-4">
               <div>
-                <h3 className="font-heading font-bold text-lg text-slate-900">Verified Accomplishments</h3>
-                <p className="text-xs text-slate-500 font-medium">Official SHAIVIKA AI LMS Certificates</p>
+                <h3 className="font-heading font-extrabold text-xl text-slate-900 flex items-center gap-2">
+                  <Award className="w-6 h-6 text-purple-600" /> Verified Course Certificates
+                </h3>
+                <p className="text-xs text-slate-500 font-medium">
+                  Official SHAIVIKA AI LMS verified digital certificates awarded upon 100% completion of technical tracks.
+                </p>
               </div>
-              <button
-                onClick={() => setCertificateModalOpen(true)}
-                className="btn-blue-primary text-xs py-2 px-3.5 cursor-pointer font-bold"
-              >
-                <Eye className="w-4 h-4" /> View Certificate
-              </button>
             </div>
+
+            {completedCoursesCount === 0 ? (
+              <div className="p-8 text-center bg-slate-50/80 rounded-2xl border border-sky-100 space-y-4 max-w-xl mx-auto">
+                <div className="w-14 h-14 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center mx-auto border border-purple-200 shadow-xs">
+                  <Lock className="w-7 h-7 text-purple-500" />
+                </div>
+
+                <div className="space-y-1">
+                  <h4 className="font-heading font-bold text-base text-slate-900">No Certificates Unlocked Yet</h4>
+                  <p className="text-xs text-slate-500 leading-relaxed font-medium">
+                    Certificates are awarded as a final reward upon 100% completing all subtopics, labs, and evaluations of a course track.
+                  </p>
+                </div>
+
+                <div className="bg-white p-3.5 rounded-xl border border-sky-100 space-y-1.5 text-left text-xs">
+                  <div className="flex justify-between font-bold text-slate-700">
+                    <span>Track Completion Requirement</span>
+                    <span className="text-purple-600">0% / 100% Completed</span>
+                  </div>
+                  <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                    <div className="h-full bg-purple-500 rounded-full w-0" />
+                  </div>
+                </div>
+
+                <Link to="/dashboard?tab=overview" className="btn-blue-primary text-xs py-2.5 px-5 font-bold inline-flex items-center gap-2">
+                  <PlayCircle className="w-4 h-4" /> Continue Learning to Unlock Reward
+                </Link>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {completedCourses.map((course) => (
+                  <div key={course.id} className="p-6 bg-linear-to-br from-purple-50 via-white to-sky-50 rounded-2xl border border-purple-200 space-y-4 shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <span className="px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 text-[10px] font-bold uppercase">
+                        100% Verified Completion
+                      </span>
+                      <Award className="w-5 h-5 text-purple-600" />
+                    </div>
+                    <h4 className="font-heading font-bold text-base text-slate-900">{course.title}</h4>
+                    <p className="text-xs text-slate-500 font-medium">ISO Digital Certificate ready for download.</p>
+                    <button
+                      onClick={() => setCertificateModalOpen(true)}
+                      className="btn-blue-primary text-xs py-2.5 px-4 font-bold flex items-center justify-center gap-2 w-full cursor-pointer"
+                    >
+                      <Eye className="w-4 h-4" /> View Verified Certificate
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

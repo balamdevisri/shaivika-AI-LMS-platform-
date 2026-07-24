@@ -178,11 +178,18 @@ export const CoursePlayerModal: React.FC<CoursePlayerModalProps> = ({
       ? MODULE_2_FULL_CURRICULUM
       : MODULE_1_FULL_CURRICULUM;
 
-  // Reset lesson & subtopic indexes on module change
+  // Restore saved checkpoint on mount
   useEffect(() => {
-    setCurrentLessonIdx(0);
-    setCurrentSubtopicIdx(0);
-  }, [activeModuleIdx]);
+    const saved = courseService.getCourseCheckpoint(course.id);
+    if (saved) {
+      if (typeof saved.lastModuleIdx === 'number') setActiveModuleIdx(saved.lastModuleIdx);
+      if (typeof saved.lastLessonIdx === 'number') setCurrentLessonIdx(saved.lastLessonIdx);
+      if (typeof saved.lastSubtopicIdx === 'number') setCurrentSubtopicIdx(saved.lastSubtopicIdx);
+      if (saved.completedSubtopics?.length) setCompletedSubtopics(saved.completedSubtopics);
+      if (saved.completedModules?.length) setCompletedModules(saved.completedModules);
+      toast.info(`📍 Resumed track from Module ${saved.lastModuleIdx + 1}, Lesson ${saved.lastLessonIdx + 1}`);
+    }
+  }, [course.id]);
 
   const activeModule = syllabus[activeModuleIdx] || {
     id: `m${activeModuleIdx + 1}`,
@@ -192,16 +199,36 @@ export const CoursePlayerModal: React.FC<CoursePlayerModalProps> = ({
   };
 
   const activeSlide = ARCHITECTURE_SLIDES[currentSlideIdx];
-  const progressPercent = Math.round((completedModules.length / Math.max(1, syllabus.length)) * 100);
+  const progressPercent = Math.round((completedSubtopics.length / 15) * 100);
   const activeCommands = MODULE_COMMAND_TABLES[activeModuleIdx] || MODULE_COMMAND_TABLES[0];
 
   const currentLesson = activeCurriculum[currentLessonIdx] || activeCurriculum[0];
-  const currentSubtopic: SubtopicDetail = currentLesson.subtopics[currentSubtopicIdx] || currentLesson.subtopics[0];
+  const currentSubtopic: SubtopicDetail = currentLesson?.subtopics?.[currentSubtopicIdx] || currentLesson?.subtopics?.[0];
+
+  // Auto-save checkpoint continuously whenever position or completion changes
+  useEffect(() => {
+    if (course.id && currentLesson && currentSubtopic) {
+      courseService.saveCourseCheckpoint(course.id, {
+        courseId: course.id,
+        progressPercent: Math.min(100, Math.max(5, progressPercent)),
+        lastModuleIdx: activeModuleIdx,
+        lastLessonIdx: currentLessonIdx,
+        lastSubtopicIdx: currentSubtopicIdx,
+        lastSubtopicTitle: currentSubtopic.title,
+        completedSubtopics,
+        completedModules,
+        lastUpdated: new Date().toISOString(),
+      });
+      if (onProgressUpdate) {
+        onProgressUpdate(Math.min(100, Math.max(5, progressPercent)));
+      }
+    }
+  }, [course.id, activeModuleIdx, currentLessonIdx, currentSubtopicIdx, completedSubtopics, completedModules, progressPercent, currentLesson, currentSubtopic]);
 
   // Quick & Fast Spend Timer: Auto-calculated between 5 to 15 seconds based on content length
   const requiredSubtopicSeconds = Math.min(
     15,
-    Math.max(5, Math.round((currentSubtopic.content || '').length / 200))
+    Math.max(5, Math.round((currentSubtopic?.content || '').length / 200))
   );
 
   useEffect(() => {
@@ -223,7 +250,7 @@ export const CoursePlayerModal: React.FC<CoursePlayerModalProps> = ({
   };
 
   const isSubtopicTimeMet = timerSeconds >= requiredSubtopicSeconds;
-  const isSubtopicCompleted = completedSubtopics.includes(currentSubtopic.id);
+  const isSubtopicCompleted = completedSubtopics.includes(currentSubtopic?.id || '');
 
   const handleCompleteSubtopic = () => {
     if (!isSubtopicTimeMet && !isSubtopicCompleted) {
@@ -231,10 +258,21 @@ export const CoursePlayerModal: React.FC<CoursePlayerModalProps> = ({
       return;
     }
 
-    if (!isSubtopicCompleted) {
+    if (!isSubtopicCompleted && currentSubtopic) {
       const newXP = courseService.addXPPoints(20);
       setUserXP(newXP);
       setCompletedSubtopics((prev) => [...prev, currentSubtopic.id]);
+
+      // Detailed Claim Log
+      courseService.addXPClaim({
+        id: `claim_${Date.now()}`,
+        title: `Subtopic ${currentSubtopic.id}: ${currentSubtopic.title}`,
+        xp: 20,
+        category: 'Subtopic Completion',
+        timestamp: new Date().toISOString(),
+        courseId: course.id,
+        courseTitle: course.title,
+      });
 
       const quote = MOTIVATION_QUOTES[Math.floor(Math.random() * MOTIVATION_QUOTES.length)];
       setCelebrationMessage(quote);
