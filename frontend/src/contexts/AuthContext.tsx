@@ -62,27 +62,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const targetRole: UserRole = isAdmin ? 'admin' : (initialRole || 'student');
 
+    const calculatedName = firebaseUser.displayName || (isAdmin ? 'Administrator' : 'Student User');
     const baseProfileData: Partial<UserProfile> = {
       uid: firebaseUser.uid,
-      name: firebaseUser.displayName || (isAdmin ? 'Administrator' : 'Student User'),
+      fullName: calculatedName,
+      name: calculatedName,
       email: firebaseUser.email || '',
       photoURL: firebaseUser.photoURL || null,
       isVerified: firebaseUser.emailVerified || isGithub || isAdmin || false,
+      provider: isGithub ? 'github.com' : 'password',
       providerId: isGithub ? 'github.com' : 'password',
+      status: 'Active',
       ...(calculatedUsername ? { githubUsername: calculatedUsername } : {}),
     };
 
     if (!db) {
       const fallback: UserProfile = {
         uid: firebaseUser.uid,
-        name: firebaseUser.displayName || (isAdmin ? 'Administrator' : 'Student User'),
+        fullName: calculatedName,
+        name: calculatedName,
         email: firebaseUser.email || '',
         photoURL: firebaseUser.photoURL || null,
         role: targetRole,
+        provider: isGithub ? 'github.com' : 'password',
+        providerId: isGithub ? 'github.com' : 'password',
+        status: 'Active',
         createdAt: new Date().toISOString(),
         lastLogin: new Date().toISOString(),
         isVerified: firebaseUser.emailVerified || isGithub || isAdmin || false,
-        providerId: isGithub ? 'github.com' : 'password',
         githubUsername: calculatedUsername,
       };
       setUserProfile(fallback);
@@ -112,7 +119,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (finalRole === 'student') {
           studentService.registerSignedUpStudent(
             firebaseUser.uid,
-            firebaseUser.displayName || 'Student',
+            calculatedName,
             firebaseUser.email || '',
             firebaseUser.photoURL || undefined
           );
@@ -123,14 +130,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } else {
         const newProfile: UserProfile = {
           uid: firebaseUser.uid,
-          name: firebaseUser.displayName || (isAdmin ? 'Administrator' : 'Student'),
+          fullName: calculatedName,
+          name: calculatedName,
           email: firebaseUser.email || '',
           photoURL: firebaseUser.photoURL || null,
           role: targetRole,
+          provider: isGithub ? 'github.com' : 'password',
+          providerId: isGithub ? 'github.com' : 'password',
+          status: 'Active',
           createdAt: new Date().toISOString(),
           lastLogin: new Date().toISOString(),
           isVerified: firebaseUser.emailVerified || isGithub || isAdmin || false,
-          providerId: isGithub ? 'github.com' : 'password',
           githubUsername: calculatedUsername,
         };
         await setDoc(userRef, newProfile);
@@ -138,7 +148,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (targetRole === 'student') {
           studentService.registerSignedUpStudent(
             firebaseUser.uid,
-            newProfile.name,
+            newProfile.fullName,
             newProfile.email,
             firebaseUser.photoURL || undefined
           );
@@ -151,14 +161,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.warn('Firestore sync notice:', error);
       const fallbackProfile: UserProfile = {
         uid: firebaseUser.uid,
-        name: firebaseUser.displayName || (isAdmin ? 'Administrator' : 'Student User'),
+        fullName: calculatedName,
+        name: calculatedName,
         email: firebaseUser.email || '',
         photoURL: firebaseUser.photoURL || null,
         role: targetRole,
+        provider: isGithub ? 'github.com' : 'password',
+        providerId: isGithub ? 'github.com' : 'password',
+        status: 'Active',
         createdAt: new Date().toISOString(),
         lastLogin: new Date().toISOString(),
         isVerified: firebaseUser.emailVerified || isGithub || isAdmin || false,
-        providerId: isGithub ? 'github.com' : 'password',
         githubUsername: calculatedUsername,
       };
       setUserProfile(fallbackProfile);
@@ -266,14 +279,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } catch (createErr) {
           const fallbackProfile: UserProfile = {
             uid: 'admin-fallback-id',
+            fullName: 'Administrator (Manoj)',
             name: 'Administrator (Manoj)',
             email: email,
             photoURL: null,
             role: 'admin',
+            provider: 'password',
+            providerId: 'password',
+            status: 'Active',
             createdAt: new Date().toISOString(),
             lastLogin: new Date().toISOString(),
             isVerified: true,
-            providerId: 'password',
           };
           setUserProfile(fallbackProfile);
           return fallbackProfile;

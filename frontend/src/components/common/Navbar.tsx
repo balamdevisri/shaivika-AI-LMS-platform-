@@ -61,6 +61,7 @@ export const Navbar: React.FC = () => {
     if (userProfile.role === 'admin') {
       return [
         { name: 'Dashboard', href: '/admin/dashboard' },
+        { name: 'Users', href: '/admin/users' },
         { name: 'Courses', href: '/#courses' },
         { name: 'Students', href: '/admin/students' },
         { name: 'Instructors', href: '/admin/instructors' },

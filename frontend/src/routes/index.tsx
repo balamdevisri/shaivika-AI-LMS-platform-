@@ -16,6 +16,8 @@ import { AdminDashboard } from '@/pages/admin/AdminDashboard';
 import { Courses } from '@/pages/admin/Courses';
 import { AdminStudents } from '@/pages/admin/AdminStudents';
 import { AdminInstructors } from '@/pages/admin/AdminInstructors';
+import { AdminUsers } from '@/pages/admin/AdminUsers';
+import { AdminUserProfile } from '@/pages/admin/AdminUserProfile';
 import { StudentRoute } from '@/components/auth/StudentRoute';
 import { AdminRoute } from '@/components/auth/AdminRoute';
 
@@ -57,7 +59,7 @@ const router = createBrowserRouter([
       { path: 'profile', element: <Profile /> },
     ],
   },
-  // Admin Protected Routes (/admin/dashboard, /admin/courses, /admin/students, /admin/instructors)
+  // Admin Protected Routes (/admin/dashboard, /admin/users, /admin/users/:id, /admin/courses, /admin/students, /admin/instructors)
   {
     path: '/admin',
     element: (
@@ -67,6 +69,8 @@ const router = createBrowserRouter([
     ),
     children: [
       { path: 'dashboard', element: <AdminDashboard /> },
+      { path: 'users', element: <AdminUsers /> },
+      { path: 'users/:id', element: <AdminUserProfile /> },
       { path: 'courses', element: <Courses /> },
       { path: 'students', element: <AdminStudents /> },
       { path: 'instructors', element: <AdminInstructors /> },
