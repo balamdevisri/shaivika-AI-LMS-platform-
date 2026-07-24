@@ -21,11 +21,12 @@ import { useCourses } from '@/contexts/CourseContext';
 import { gitLessonsData } from '@/data/gitLessonsData';
 
 export const CourseView: React.FC = () => {
-  const { courseId } = useParams();
+  const { courseId, slug } = useParams();
+  const idOrSlug = courseId || slug || '1';
   const { getCourseById } = useCourses();
-  const dynamicCourse = getCourseById(courseId || '1');
+  const dynamicCourse = getCourseById(idOrSlug);
 
-  const isGitCourse = courseId === 'git-github-mastery-course-id' || courseId === 'git-github-mastery' || dynamicCourse?.title?.toLowerCase().includes('git');
+  const isGitCourse = idOrSlug === 'git-github-mastery-course-id' || idOrSlug === 'git-github-mastery' || dynamicCourse?.title?.toLowerCase().includes('git');
 
   const renderMarkdown = (text: string) => {
     if (!text) return null;

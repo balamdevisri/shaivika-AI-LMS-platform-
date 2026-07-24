@@ -10,85 +10,78 @@ export class CourseController {
     this.courseService = new CourseService();
   }
 
-  createCourse = asyncHandler(async (req: Request, res: Response) => {
-    const createdBy = (req as any).user?.uid || 'anonymous';
-    const courseData = { ...req.body, createdBy };
-    const course = await this.courseService.createCourse(courseData);
-    res.status(201).json(formatResponse(true, course, 'Course created successfully'));
+  getCourses = asyncHandler(async (req: Request, res: Response) => {
+    const { search, category, level, status, featured, language, sortBy, sortOrder, page, limit } = req.query;
+
+    const result = await this.courseService.getCourses({
+      search: typeof search === 'string' ? search : undefined,
+      category: typeof category === 'string' ? category : undefined,
+      level: typeof level === 'string' ? (level as any) : undefined,
+      status: typeof status === 'string' ? (status as any) : undefined,
+      featured: featured === 'true',
+      language: typeof language === 'string' ? language : undefined,
+      sortBy: typeof sortBy === 'string' ? (sortBy as any) : undefined,
+      sortOrder: typeof sortOrder === 'string' ? (sortOrder as any) : undefined,
+      page: page ? Number(page) : 1,
+      limit: limit ? Number(limit) : 10,
+    });
+
+    res.json(formatResponse(true, result, 'Courses retrieved successfully'));
   });
 
-  updateCourse = asyncHandler(async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const course = await this.courseService.updateCourse(id as string, req.body);
-    res.status(200).json(formatResponse(true, course, 'Course updated successfully'));
-  });
+  getCourseByIdOrSlug = asyncHandler(async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    let course = await this.courseService.getCourseById(id);
+    if (!course) {
+      course = await this.courseService.getCourseBySlug(id);
+    }
 
-  deleteCourse = asyncHandler(async (req: Request, res: Response) => {
-    const { id } = req.params;
-    await this.courseService.deleteCourse(id as string);
-    res.status(200).json(formatResponse(true, null, 'Course deleted successfully'));
-  });
-
-  getCourseById = asyncHandler(async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const course = await this.courseService.getCourseById(id as string);
     if (!course) {
       res.status(404).json(formatResponse(false, null, 'Course not found'));
       return;
     }
 
-    const user = (req as any).user;
-    if (course.status !== 'published' && (!user || user.role !== 'admin')) {
-      res.status(403).json(formatResponse(false, null, 'Forbidden: Course is not published'));
-      return;
-    }
-
-    res.status(200).json(formatResponse(true, course, 'Course retrieved successfully'));
+    res.json(formatResponse(true, course, 'Course retrieved successfully'));
   });
 
-  getCourses = asyncHandler(async (req: Request, res: Response) => {
-    const user = (req as any).user;
-    let courses;
-    if (user && user.role === 'admin') {
-      courses = await this.courseService.getCourses();
-    } else {
-      courses = await this.courseService.getPublishedCourses();
-    }
-    res.status(200).json(formatResponse(true, courses, 'Courses retrieved successfully'));
+  createCourse = asyncHandler(async (req: Request, res: Response) => {
+    const course = await this.courseService.createCourse(req.body);
+    res.status(201).json(formatResponse(true, course, 'Course created successfully'));
   });
 
-  getPublishedCourses = asyncHandler(async (req: Request, res: Response) => {
-    const courses = await this.courseService.getPublishedCourses();
-    res.status(200).json(formatResponse(true, courses, 'Published courses retrieved successfully'));
+  updateCourse = asyncHandler(async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const course = await this.courseService.updateCourse(id, req.body);
+    res.json(formatResponse(true, course, 'Course updated successfully'));
   });
 
-  searchCourses = asyncHandler(async (req: Request, res: Response) => {
-    const { q } = req.query;
-    const queryStr = typeof q === 'string' ? q : '';
-    const courses = await this.courseService.searchCourses(queryStr);
-    res.status(200).json(formatResponse(true, courses, 'Search results retrieved successfully'));
+  deleteCourse = asyncHandler(async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    await this.courseService.deleteCourse(id);
+    res.json(formatResponse(true, null, 'Course deleted successfully'));
   });
 
-  filterCourses = asyncHandler(async (req: Request, res: Response) => {
-    const { category, level, language, status } = req.query;
-    const filters: any = {};
-    if (category) filters.category = category as string;
-    if (level) filters.level = level as string;
-    if (language) filters.language = language as string;
-
-    const user = (req as any).user;
-    if (status && user && user.role === 'admin') {
-      filters.status = status as string;
-    } else {
-      filters.status = 'published';
-    }
-
-    const courses = await this.courseService.filterCourses(filters);
-    res.status(200).json(formatResponse(true, courses, 'Filtered courses retrieved successfully'));
+  publishCourse = asyncHandler(async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const course = await this.courseService.publishCourse(id);
+    res.json(formatResponse(true, course, 'Course published successfully'));
   });
 
-  getFeaturedCourses = asyncHandler(async (req: Request, res: Response) => {
-    const courses = await this.courseService.getFeaturedCourses();
-    res.status(200).json(formatResponse(true, courses, 'Featured courses retrieved successfully'));
+  unpublishCourse = asyncHandler(async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const course = await this.courseService.unpublishCourse(id);
+    res.json(formatResponse(true, course, 'Course set to draft successfully'));
+  });
+
+  archiveCourse = asyncHandler(async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const course = await this.courseService.archiveCourse(id);
+    res.json(formatResponse(true, course, 'Course archived successfully'));
+  });
+
+  duplicateCourse = asyncHandler(async (req: Request, res: Response) => {
+    const id = req.params.id as string;
+    const course = await this.courseService.duplicateCourse(id);
+    res.status(201).json(formatResponse(true, course, 'Course duplicated successfully'));
   });
 }
