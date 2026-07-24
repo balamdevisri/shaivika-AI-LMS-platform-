@@ -460,7 +460,7 @@ export const AdminStudents: React.FC = () => {
 
               <div className="p-3 bg-slate-50 border border-sky-100 rounded-2xl flex items-center justify-between">
                 <span className="text-slate-500">Firestore Document ID</span>
-                <span className="font-mono text-sky-700 font-bold text-[11px] truncate max-w-[200px]">{inspectStudent.id}</span>
+                <span className="font-mono text-sky-700 font-bold text-[11px] truncate max-w-50">{inspectStudent.id}</span>
               </div>
 
               <div className="p-3 bg-slate-50 border border-sky-100 rounded-2xl flex items-center justify-between">
