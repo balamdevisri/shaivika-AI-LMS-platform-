@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, UserCheck, Mail, Plus, CheckCircle2, X, Loader2, Edit, Trash2, ShieldAlert, Radio } from 'lucide-react';
+import { Search, UserCheck, Mail, Plus, CheckCircle2, X, Loader2, Edit, Trash2, ShieldAlert, Radio, Eye, Database } from 'lucide-react';
 import { toast } from 'sonner';
 import { studentService, type StudentUser } from '@/services/studentService';
 
@@ -12,6 +12,7 @@ export const AdminStudents: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState<StudentUser | null>(null);
   const [deletingStudentId, setDeletingStudentId] = useState<string | null>(null);
+  const [inspectStudent, setInspectStudent] = useState<StudentUser | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Form State for Adding Student
@@ -218,6 +219,13 @@ export const AdminStudents: React.FC = () => {
                     <td className="py-3.5 px-4 text-right">
                       <div className="flex items-center justify-end gap-1.5">
                         <button
+                          onClick={() => setInspectStudent(st)}
+                          className="p-1.5 rounded-lg bg-white hover:bg-sky-100 text-sky-700 border border-sky-200 transition-all cursor-pointer"
+                          title="Inspect Firebase Details"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                        </button>
+                        <button
                           onClick={() => setEditingStudent(st)}
                           className="p-1.5 rounded-lg bg-white hover:bg-sky-100 text-sky-700 border border-sky-200 transition-all cursor-pointer"
                           title="Edit Student Profile"
@@ -413,6 +421,77 @@ export const AdminStudents: React.FC = () => {
                 className="py-2 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-xs transition-all cursor-pointer"
               >
                 Delete Account
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: INSPECT FIREBASE RECORD DETAILS */}
+      {inspectStudent && (
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-5 border border-sky-200 animate-in zoom-in-95 text-slate-900 font-['Sora']">
+            <div className="flex items-center justify-between border-b border-sky-100 pb-3">
+              <h3 className="font-heading font-bold text-lg text-slate-900 flex items-center gap-2">
+                <Database className="w-5 h-5 text-sky-600" /> Firebase Student Record Details
+              </h3>
+              <button onClick={() => setInspectStudent(null)} className="text-slate-400 hover:text-slate-900 cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs font-medium">
+              <div className="flex items-center gap-3 p-3 bg-sky-50/80 rounded-2xl border border-sky-100">
+                {inspectStudent.photoURL ? (
+                  <img src={inspectStudent.photoURL} alt={inspectStudent.name} className="w-12 h-12 rounded-full object-cover border-2 border-sky-400" />
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-sky-600 text-white font-extrabold text-base flex items-center justify-center border-2 border-sky-400">
+                    {inspectStudent.name.charAt(0)}
+                  </div>
+                )}
+                <div>
+                  <h4 className="font-heading font-bold text-sm text-slate-900">{inspectStudent.name}</h4>
+                  <p className="text-[11px] text-slate-500 font-medium">{inspectStudent.email}</p>
+                  <span className="inline-block mt-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[9px] font-bold">
+                    {inspectStudent.status} Student Account
+                  </span>
+                </div>
+              </div>
+
+              <div className="p-3 bg-slate-50 border border-sky-100 rounded-2xl flex items-center justify-between">
+                <span className="text-slate-500">Firestore Document ID</span>
+                <span className="font-mono text-sky-700 font-bold text-[11px] truncate max-w-[200px]">{inspectStudent.id}</span>
+              </div>
+
+              <div className="p-3 bg-slate-50 border border-sky-100 rounded-2xl flex items-center justify-between">
+                <span className="text-slate-500">Account Role</span>
+                <span className="font-mono text-slate-900 font-bold uppercase">{inspectStudent.role}</span>
+              </div>
+
+              <div className="p-3 bg-slate-50 border border-sky-100 rounded-2xl flex items-center justify-between">
+                <span className="text-slate-500">Enrolled Tracks</span>
+                <span className="font-bold text-sky-600">{inspectStudent.courses} Active Course Track(s)</span>
+              </div>
+
+              <div className="p-3 bg-slate-50 border border-sky-100 rounded-2xl flex items-center justify-between">
+                <span className="text-slate-500">Registration Date</span>
+                <span className="font-medium text-slate-800">{inspectStudent.joined}</span>
+              </div>
+
+              {inspectStudent.lastLogin && (
+                <div className="p-3 bg-slate-50 border border-sky-100 rounded-2xl flex items-center justify-between">
+                  <span className="text-slate-500">Last Login Activity</span>
+                  <span className="font-medium text-slate-800">{new Date(inspectStudent.lastLogin).toLocaleString()}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="pt-2 flex justify-end">
+              <button
+                onClick={() => setInspectStudent(null)}
+                className="btn-blue-primary text-xs py-2 px-5 font-bold cursor-pointer"
+              >
+                Close Record
               </button>
             </div>
           </div>
