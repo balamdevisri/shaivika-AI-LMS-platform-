@@ -16,6 +16,7 @@ import {
   X,
   UserCheck,
   GraduationCap,
+  Settings,
 } from 'lucide-react';
 import { BrandLogo } from '@/components/common/BrandLogo';
 import { useAuth } from '@/contexts/AuthContext';
@@ -43,10 +44,12 @@ export const DashboardLayout: React.FC = () => {
 
   const navItems = isAdminRoute
     ? [
-        { name: 'Admin Overview', href: '/admin/dashboard', icon: LayoutDashboard },
-        { name: 'Course Management', href: '/admin/courses', icon: BookOpen },
-        { name: 'Student Management', href: '/admin/students', icon: UserCheck },
-        { name: 'Instructor Management', href: '/admin/instructors', icon: GraduationCap },
+        { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
+        { name: 'Courses', href: '/admin/courses', icon: BookOpen },
+        { name: 'Students', href: '/admin/students', icon: UserCheck },
+        { name: 'Instructors', href: '/admin/instructors', icon: GraduationCap },
+        { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
+        { name: 'Settings', href: '/admin/settings', icon: Settings },
       ]
     : [
         { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },

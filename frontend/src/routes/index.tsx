@@ -13,7 +13,7 @@ import { Profile } from '@/pages/dashboard/Profile';
 import { CoursesList } from '@/pages/courses/CoursesList';
 import { CourseView } from '@/pages/courses/CourseView';
 import { AdminDashboard } from '@/pages/admin/AdminDashboard';
-import { AdminCourses } from '@/pages/admin/AdminCourses';
+import { Courses } from '@/pages/admin/Courses';
 import { AdminStudents } from '@/pages/admin/AdminStudents';
 import { AdminInstructors } from '@/pages/admin/AdminInstructors';
 import { StudentRoute } from '@/components/auth/StudentRoute';
@@ -65,9 +65,11 @@ const router = createBrowserRouter([
     ),
     children: [
       { path: 'dashboard', element: <AdminDashboard /> },
-      { path: 'courses', element: <AdminCourses /> },
+      { path: 'courses', element: <Courses /> },
       { path: 'students', element: <AdminStudents /> },
       { path: 'instructors', element: <AdminInstructors /> },
+      { path: 'analytics', element: <div className="p-8 bg-white border border-sky-100 rounded-3xl shadow-xs"><h1 className="font-heading font-extrabold text-2xl text-slate-900">Analytics</h1><p className="text-slate-500 mt-2">Kaizen Q analytics and reporting features are coming soon.</p></div> },
+      { path: 'settings', element: <div className="p-8 bg-white border border-sky-100 rounded-3xl shadow-xs"><h1 className="font-heading font-extrabold text-2xl text-slate-900">Settings</h1><p className="text-slate-500 mt-2">Kaizen Q administrative and configuration settings are coming soon.</p></div> },
     ],
   },
   // Fallback 404 / Unauthorized redirect

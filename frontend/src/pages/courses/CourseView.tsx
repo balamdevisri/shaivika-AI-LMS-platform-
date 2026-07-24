@@ -259,7 +259,7 @@ export const CourseView: React.FC = () => {
     duration: '20 Hours',
     category: 'Development Tools',
     level: 'Beginner to Advanced',
-    thumbnail: 'https://images.unsplash.com/photo-1618401471353-b98aedd07871?auto=format&fit=crop&w=600&q=80',
+    thumbnail: 'https://images.unsplash.com/photo-1618401471353-b98aedd07871?auto=format&fit=crop&w=1200&q=80',
     introText: [
       `Welcome to Git & GitHub Mastery! Version control is a foundational skill for all developers. This course will take you from Git basics to advanced pipelines.`,
       `You will learn local repository initialization, stage-commit lifecycles, remote repository synchronization, pull requests, code reviews, rebasing, and automated pipelines using GitHub Actions.`,
@@ -416,7 +416,48 @@ export const CourseView: React.FC = () => {
     ],
   };
 
-  const courseData = isGitCourse ? gitCourseData : linuxCourseData;
+  interface LessonItem {
+    id: string | number;
+    title: string;
+    duration: string;
+    type: string;
+  }
+
+  interface ModuleItem {
+    id: number;
+    title: string;
+    duration: string;
+    lessons: LessonItem[];
+  }
+
+  interface QuizQuestion {
+    id: number;
+    question: string;
+    options: string[];
+    correct: number;
+  }
+
+  interface CourseDataInterface {
+    id: string | number;
+    title: string;
+    subtitle: string;
+    instructor: string;
+    role: string;
+    avatar: string;
+    rating: number;
+    reviews: number;
+    students: string;
+    duration: string;
+    category: string;
+    level: string;
+    thumbnail: string;
+    introText: string[];
+    outcomes: string[];
+    modules: ModuleItem[];
+    quizQuestions: QuizQuestion[];
+  }
+
+  const courseData = (isGitCourse ? gitCourseData : linuxCourseData) as CourseDataInterface;
 
   // Reusable Interactive Command Box with Auto Terminal Execution
   const InteractiveCmd: React.FC<{ cmd: string; desc?: string }> = ({ cmd, desc }) => (
@@ -438,7 +479,7 @@ export const CourseView: React.FC = () => {
   );
 
   // Module 1 Lessons Rich Content Renderer
-  const module1LessonsContent: { [key: number]: any } = {
+  const module1LessonsContent: { [key: string | number]: any } = {
     101: {
       title: '1.1 Introduction to Unix & Linux Operating System Architecture',
       time: '45 mins',
@@ -1426,7 +1467,7 @@ export const CourseView: React.FC = () => {
     setTerminalInput('');
   };
 
-  const toggleLessonComplete = (lessonId: number) => {
+  const toggleLessonComplete = (lessonId: number | string) => {
     if (completedLessons.includes(lessonId)) {
       setCompletedLessons(completedLessons.filter((id) => id !== lessonId));
     } else {

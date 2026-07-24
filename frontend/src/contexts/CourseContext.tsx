@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { db } from '@/firebase';
-import { collection, getDocs, doc, setDoc, updateDoc } from 'firebase/firestore';
+import { CourseService } from '@/services/course/CourseService';
 
 export interface CourseItem {
   id: number | string;
@@ -21,6 +21,7 @@ export interface CourseItem {
   status: 'Published' | 'Draft';
   description: string;
   syllabus: string[];
+  createdAt?: string;
 }
 
 interface CourseContextType {
@@ -57,7 +58,36 @@ const initialDefaultCourses: CourseItem[] = [
       'Module 3: Process Management, Systemd Services & Cron Jobs',
       'Module 4: Bash Scripting, Networking & Security Hardening',
     ],
+    createdAt: new Date().toISOString(),
   },
+  {
+    id: 'git-github-mastery',
+    title: 'Git & GitHub Mastery',
+    subtitle: '⚡ Git & GitHub Mastery',
+    instructor: 'Kaizen Q Team',
+    role: 'Senior Technical Instructor',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+    rating: 5.0,
+    reviews: 180,
+    students: '0',
+    duration: '20 Hours',
+    category: 'Development Tools',
+    level: 'Beginner to Advanced',
+    badge: 'New Track',
+    tracks: '6 Modules (20 Hours)',
+    status: 'Published',
+    thumbnail: "https://images.unsplash.com/photo-1618401471353-b98aedd07871?auto=format&fit=crop&w=1200&q=80",
+    description: 'Learn Git & GitHub from beginner to professional, including version control, branching, pull requests, GitHub Actions, CI/CD, Codespaces, and Copilot.',
+    syllabus: [
+      'Module 1: Version Control & Git Basics',
+      'Module 2: GitHub Foundations',
+      'Module 3: Advanced Git',
+      'Module 4: Repository Management',
+      'Module 5: GitHub Actions',
+      'Module 6: Modern GitHub Ecosystem',
+    ],
+    createdAt: new Date().toISOString(),
+  }
 ];
 
 const CourseContext = createContext<CourseContextType | undefined>(undefined);
@@ -80,12 +110,8 @@ export const CourseProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const syncFirestoreCourses = async () => {
       if (!db) return;
       try {
-        const querySnapshot = await getDocs(collection(db, 'courses'));
-        if (!querySnapshot.empty) {
-          const loaded: CourseItem[] = [];
-          querySnapshot.forEach((docSnap) => {
-            loaded.push(docSnap.data() as CourseItem);
-          });
+        const loaded = await CourseService.getCourses();
+        if (loaded && loaded.length > 0) {
           setCourses(loaded);
           localStorage.setItem('shaivika_courses_data', JSON.stringify(loaded));
         }
@@ -128,17 +154,16 @@ export const CourseProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         'Module 3: Advanced Optimization & Security',
         'Module 4: Final Capstone Assessment',
       ],
+      createdAt: new Date().toISOString(),
     };
 
     const updated = [created, ...courses];
     setCourses(updated);
 
-    if (db) {
-      try {
-        await setDoc(doc(db, 'courses', String(newId)), created);
-      } catch (e) {
-        console.warn('Firestore setDoc notice:', e);
-      }
+    try {
+      await CourseService.addCourse(created);
+    } catch (e) {
+      console.warn('Firestore addCourse notice:', e);
     }
   };
 
@@ -153,21 +178,25 @@ export const CourseProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     setCourses(updated);
 
-    if (db) {
-      try {
-        const target = updated.find((c) => String(c.id) === String(id));
-        if (target) {
-          await updateDoc(doc(db, 'courses', String(id)), { status: target.status });
-        }
-      } catch (e) {
-        console.warn('Firestore updateDoc notice:', e);
+    try {
+      const target = updated.find((c) => String(c.id) === String(id));
+      if (target) {
+        await CourseService.updateCourse(id, { status: target.status });
       }
+    } catch (e) {
+      console.warn('Firestore toggle status notice:', e);
     }
   };
 
   const deleteCourse = async (id: number | string) => {
     const updated = courses.filter((c) => String(c.id) !== String(id));
     setCourses(updated);
+
+    try {
+      await CourseService.deleteCourse(id);
+    } catch (e) {
+      console.warn('Firestore delete course notice:', e);
+    }
   };
 
   const getCourseById = (id: number | string): CourseItem | undefined => {
