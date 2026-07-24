@@ -18,6 +18,7 @@ import {
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '@/firebase';
 import type { UserProfile, UserRole } from '@/types/user';
+import { studentService } from '@/services/studentService';
 
 interface AuthContextType {
   user: User | null;
@@ -108,6 +109,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           lastLogin: new Date().toISOString(),
         });
 
+        if (finalRole === 'student') {
+          studentService.registerSignedUpStudent(
+            firebaseUser.uid,
+            firebaseUser.displayName || 'Student',
+            firebaseUser.email || '',
+            firebaseUser.photoURL || undefined
+          );
+        }
+
         setUserProfile(updatedPayload);
         return updatedPayload;
       } else {
@@ -124,6 +134,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           githubUsername: calculatedUsername,
         };
         await setDoc(userRef, newProfile);
+
+        if (targetRole === 'student') {
+          studentService.registerSignedUpStudent(
+            firebaseUser.uid,
+            newProfile.name,
+            newProfile.email,
+            firebaseUser.photoURL || undefined
+          );
+        }
+
         setUserProfile(newProfile);
         return newProfile;
       }

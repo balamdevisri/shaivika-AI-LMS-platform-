@@ -70,9 +70,10 @@ class StudentService {
           snapshot.forEach((docSnap) => {
             const data = docSnap.data();
             const email = (data.email || '').toLowerCase();
+            const role = (data.role || 'student').toLowerCase();
 
             // Filter out mock data and only include actual registered student accounts
-            if (!MOCK_EMAILS.includes(email) && (!data.role || data.role === 'student')) {
+            if (!MOCK_EMAILS.includes(email) && (role === 'student' || role === 'user')) {
               firestoreStudents.push({
                 id: docSnap.id,
                 name: data.name || data.displayName || email.split('@')[0] || 'Student User',
@@ -81,7 +82,7 @@ class StudentService {
                   ? new Date(data.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
                   : 'Recently',
                 courses: data.enrolledCoursesCount || 1,
-                role: data.role || 'student',
+                role: 'student',
                 status: data.status || 'Active',
                 photoURL: data.photoURL || '',
                 createdAt: data.createdAt,
@@ -109,6 +110,28 @@ class StudentService {
     } catch (e) {
       console.warn('Realtime subscription error:', e);
       return () => {};
+    }
+  }
+
+  registerSignedUpStudent(uid: string, name: string, email: string, photoURL?: string): void {
+    if (MOCK_EMAILS.includes(email.toLowerCase())) return;
+    
+    const newStudent: StudentUser = {
+      id: uid || `st_${Date.now()}`,
+      name,
+      email,
+      joined: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      courses: 1,
+      role: 'student',
+      status: 'Active',
+      photoURL: photoURL || '',
+      createdAt: new Date().toISOString(),
+    };
+
+    const current = this.getLocalStudents();
+    if (!current.some((s) => s.email.toLowerCase() === email.toLowerCase())) {
+      const updated = [newStudent, ...current];
+      this.saveLocalStudents(updated);
     }
   }
 
