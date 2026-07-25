@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { db } from '@/firebase';
-import { CourseService } from '@/services/course/CourseService';
+import { collection, getDocs, doc, setDoc, updateDoc } from 'firebase/firestore';
 
 export interface CourseItem {
   id: number | string;
@@ -21,7 +21,6 @@ export interface CourseItem {
   status: 'Published' | 'Draft';
   description: string;
   syllabus: string[];
-  createdAt?: string;
 }
 
 interface CourseContextType {
@@ -31,9 +30,72 @@ interface CourseContextType {
   toggleCourseStatus: (id: number | string) => Promise<void>;
   deleteCourse: (id: number | string) => Promise<void>;
   getCourseById: (id: number | string) => CourseItem | undefined;
+  updateCourse: (id: number | string, updates: Partial<CourseItem>) => Promise<void>;
 }
 
-const initialDefaultCourses: CourseItem[] = [
+// Helper to enrich learning units with default content if missing
+const enrichCourseMockContent = (course: CourseItem): CourseItem => {
+  if (!course.modules) return course;
+  const enrichedModules = course.modules.map(m => {
+    const enrichedTopics = m.topics.map(t => {
+      const enrichedUnits = t.learningUnits.map(u => {
+        const enrichedUnit = { ...u };
+        if (u.type === 'Video' && !u.videoUrl) {
+          enrichedUnit.videoUrl = 'https://www.youtube.com/embed/dQw4w9WgXcQ';
+        } else if (u.type === 'Reading' && !u.readingContent) {
+          enrichedUnit.readingContent = `## ${u.title}\n\n${u.description}\n\n### Core Study Guide\nGit and system configurations are essential to maintain workspace integrity. Ensure that you follow step-by-step instructions carefully.\n\n#### Key Takeaways\n- Verify configuration details using validation flags.\n- Log descriptive commit titles to ease review actions.\n- Push changes early to prevent merge conflicts.`;
+        } else if (u.type === 'Quiz' && (!u.quizQuestions || u.quizQuestions.length === 0)) {
+          enrichedUnit.quizDifficulty = 'Medium';
+          enrichedUnit.quizPassingScore = 70;
+          enrichedUnit.quizTimer = 10;
+          enrichedUnit.quizQuestions = [
+            {
+              id: `q-${u.id}-1`,
+              questionText: `Which of the following describes the core goal of "${u.title}"?`,
+              options: [
+                'Establishing structural configuration guidelines',
+                'Simulating production environments locally',
+                'Optimizing workspace pipeline runs',
+                'All of the above'
+              ],
+              correctAnswerIndex: 3,
+              explanation: 'This topic covers configurations, local simulations, and optimization pipelines, which are all part of the core goals.',
+              marks: 5
+            },
+            {
+              id: `q-${u.id}-2`,
+              questionText: `What is a common best practice associated with this topic?`,
+              options: [
+                'Committing directly without branch validations',
+                'Using descriptive commit logs and peer reviews',
+                'Disabling branch protections for fast merges',
+                'Ignoring configuration scopes'
+              ],
+              correctAnswerIndex: 1,
+              explanation: 'Descriptive commit logs and robust peer review workflows maintain software codebase quality and tracking history.',
+              marks: 5
+            }
+          ];
+        } else if (u.type === 'Assignment' && !u.assignmentInstructions) {
+          enrichedUnit.assignmentMaxMarks = 100;
+          enrichedUnit.assignmentDeadline = '7 days after module start';
+          enrichedUnit.assignmentAllowedTypes = 'PDF, ZIP, MD';
+          enrichedUnit.assignmentReferenceFiles = 'git-cheat-sheet.pdf, lab-setup-guide.md';
+          enrichedUnit.assignmentRubric = 'Completeness (50%), Correctness (30%), Quality (20%)';
+          enrichedUnit.assignmentSubmissionStatus = 'Not Submitted';
+          enrichedUnit.assignmentTeacherFeedback = 'Assignment pending student upload response.';
+          enrichedUnit.assignmentInstructions = `### Practical Assignment: ${u.title}\n\n**Goal**: Implement the tasks described in the description: *${u.description}*.\n\n#### Instructions & Deliverables:\n1. Open your terminal or workspace panel.\n2. Perform the required steps as outlined in the lessons.\n3. Verify your configuration outputs run without errors.\n4. Write a short summary (150-300 words) describing your findings and commit your configuration file.\n\n#### Grading Rubric:\n- **Completeness (50%)**: All steps executed and logged.\n- **Correctness (30%)**: Correct parameters and inputs.\n- **Documentation (20%)**: Clean descriptions and summaries.`;
+        }
+        return enrichedUnit;
+      });
+      return { ...t, learningUnits: enrichedUnits };
+    });
+    return { ...m, topics: enrichedTopics };
+  });
+  return { ...course, modules: enrichedModules };
+};
+
+const initialDefaultCoursesRaw: CourseItem[] = [
   {
     id: 1,
     title: 'Introduction to Linux & System Administration',
@@ -58,36 +120,7 @@ const initialDefaultCourses: CourseItem[] = [
       'Module 3: Process Management, Systemd Services & Cron Jobs',
       'Module 4: Bash Scripting, Networking & Security Hardening',
     ],
-    createdAt: new Date().toISOString(),
   },
-  {
-    id: 'git-github-mastery',
-    title: 'Git & GitHub Mastery',
-    subtitle: '⚡ Git & GitHub Mastery',
-    instructor: 'Kaizen Q Team',
-    role: 'Senior Technical Instructor',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    rating: 5.0,
-    reviews: 180,
-    students: '0',
-    duration: '20 Hours',
-    category: 'Development Tools',
-    level: 'Beginner to Advanced',
-    badge: 'New Track',
-    tracks: '6 Modules (20 Hours)',
-    status: 'Published',
-    thumbnail: "https://images.unsplash.com/photo-1618401471353-b98aedd07871?auto=format&fit=crop&w=1200&q=80",
-    description: 'Learn Git & GitHub from beginner to professional, including version control, branching, pull requests, GitHub Actions, CI/CD, Codespaces, and Copilot.',
-    syllabus: [
-      'Module 1: Version Control & Git Basics',
-      'Module 2: GitHub Foundations',
-      'Module 3: Advanced Git',
-      'Module 4: Repository Management',
-      'Module 5: GitHub Actions',
-      'Module 6: Modern GitHub Ecosystem',
-    ],
-    createdAt: new Date().toISOString(),
-  }
 ];
 
 const CourseContext = createContext<CourseContextType | undefined>(undefined);
@@ -97,7 +130,26 @@ export const CourseProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const localSaved = localStorage.getItem('shaivika_courses_data');
     if (localSaved) {
       try {
-        return JSON.parse(localSaved);
+        const parsed = JSON.parse(localSaved) as CourseItem[];
+        // Auto-heal missing default modules or missing content fields
+        const merged = initialDefaultCourses.map((def) => {
+          const match = parsed.find((p) => String(p.id) === String(def.id));
+          if (!match) return def;
+          // Auto-heal modules if missing or significantly different count
+          if ((!match.modules || match.modules.length < def.modules!.length) && def.modules && def.modules.length > 0) {
+            return enrichCourseMockContent({ ...match, modules: def.modules });
+          }
+          return enrichCourseMockContent(match);
+        });
+
+        // Retain other custom admin courses
+        parsed.forEach((p) => {
+          if (!merged.find((m) => String(m.id) === String(p.id))) {
+            merged.push(enrichCourseMockContent(p));
+          }
+        });
+
+        return merged;
       } catch (e) {
         console.warn('LocalStorage courses parse warning:', e);
       }
@@ -110,8 +162,12 @@ export const CourseProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const syncFirestoreCourses = async () => {
       if (!db) return;
       try {
-        const loaded = await CourseService.getCourses();
-        if (loaded && loaded.length > 0) {
+        const querySnapshot = await getDocs(collection(db, 'courses'));
+        if (!querySnapshot.empty) {
+          const loaded: CourseItem[] = [];
+          querySnapshot.forEach((docSnap) => {
+            loaded.push(docSnap.data() as CourseItem);
+          });
           setCourses(loaded);
           localStorage.setItem('shaivika_courses_data', JSON.stringify(loaded));
         }
@@ -157,13 +213,16 @@ export const CourseProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       createdAt: new Date().toISOString(),
     };
 
-    const updated = [created, ...courses];
+    const enriched = enrichCourseMockContent(created);
+    const updated = [enriched, ...courses];
     setCourses(updated);
 
-    try {
-      await CourseService.addCourse(created);
-    } catch (e) {
-      console.warn('Firestore addCourse notice:', e);
+    if (db) {
+      try {
+        await setDoc(doc(db, 'courses', String(newId)), created);
+      } catch (e) {
+        console.warn('Firestore setDoc notice:', e);
+      }
     }
   };
 
@@ -203,6 +262,24 @@ export const CourseProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return courses.find((c) => String(c.id) === String(id)) || initialDefaultCourses[0];
   };
 
+  const updateCourse = async (id: number | string, updates: Partial<CourseItem>) => {
+    const updated = courses.map((c) => {
+      if (String(c.id) === String(id)) {
+        return { ...c, ...updates };
+      }
+      return c;
+    });
+    setCourses(updated);
+
+    if (db) {
+      try {
+        await updateDoc(doc(db, 'courses', String(id)), updates);
+      } catch (e) {
+        console.warn('Firestore updateCourse notice:', e);
+      }
+    }
+  };
+
   return (
     <CourseContext.Provider
       value={{
@@ -212,6 +289,7 @@ export const CourseProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         toggleCourseStatus,
         deleteCourse,
         getCourseById,
+        updateCourse,
       }}
     >
       {children}

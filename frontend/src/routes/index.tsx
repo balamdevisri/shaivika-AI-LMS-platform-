@@ -13,7 +13,7 @@ import { Profile } from '@/pages/dashboard/Profile';
 import { CoursesList } from '@/pages/courses/CoursesList';
 import { CourseView } from '@/pages/courses/CourseView';
 import { AdminDashboard } from '@/pages/admin/AdminDashboard';
-import { Courses } from '@/pages/admin/Courses';
+import { AdminCourses } from '@/pages/admin/AdminCourses';
 import { AdminStudents } from '@/pages/admin/AdminStudents';
 import { AdminInstructors } from '@/pages/admin/AdminInstructors';
 import { AdminUsers } from '@/pages/admin/AdminUsers';
@@ -69,9 +69,7 @@ const router = createBrowserRouter([
     ),
     children: [
       { path: 'dashboard', element: <AdminDashboard /> },
-      { path: 'users', element: <AdminUsers /> },
-      { path: 'users/:id', element: <AdminUserProfile /> },
-      { path: 'courses', element: <Courses /> },
+      { path: 'courses', element: <AdminCourses /> },
       { path: 'students', element: <AdminStudents /> },
       { path: 'instructors', element: <AdminInstructors /> },
       { path: 'analytics', element: <div className="p-8 bg-white border border-sky-100 rounded-3xl shadow-xs"><h1 className="font-heading font-extrabold text-2xl text-slate-900">Analytics</h1><p className="text-slate-500 mt-2">Kaizen Q analytics and reporting features are coming soon.</p></div> },
